@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
-import { Plus, Download, Filter, FileCheck, X, Upload } from 'lucide-react';
+import { Plus, Download, Eye, FileCheck, X, Upload } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
 import { Badge } from '../ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Card } from '../ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 
 const outdoorSamplingData = [
   {
@@ -109,96 +109,13 @@ function getCertificateBadge(certificate: string) {
 }
 
 export function OutdoorSampling() {
-  const [showForm, setShowForm] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAllRecords, setShowAllRecords] = useState(false);
   
   return (
     <div className="p-6 space-y-6">
       <FilterBar />
 
-      {showForm && (
-        <Card className="p-6 mt-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2>Add Sample Entry</h2>
-            <button 
-              onClick={() => setShowForm(false)}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              ✕
-            </button>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <Label>Sample Date</Label>
-              <Input type="date" />
-            </div>
-            <div>
-              <Label>Crop Name</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select crop" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="rose">Rose</SelectItem>
-                  <SelectItem value="gerbera">Gerbera</SelectItem>
-                  <SelectItem value="carnation">Carnation</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Batch Name</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select batch" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="b2024-1145">B-2024-1145</SelectItem>
-                  <SelectItem value="b2024-1144">B-2024-1144</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Stage</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select stage" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="primary">Primary Hardening</SelectItem>
-                  <SelectItem value="secondary">Secondary Hardening</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Tunnel No</Label>
-              <Input placeholder="e.g., T3" />
-            </div>
-            <div>
-              <Label>Tray No</Label>
-              <Input placeholder="e.g., TR-45" />
-            </div>
-            <div>
-              <Label>Sent Date</Label>
-              <Input type="date" />
-            </div>
-            <div className="col-span-2">
-              <Label>Reason (if rejected)</Label>
-              <Input placeholder="Optional" />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 mt-6">
-            <Button variant="outline" onClick={() => setShowForm(false)}>
-              Cancel
-            </Button>
-            <Button className="bg-[#4CAF50] hover:bg-[#66BB6A]">
-              Save Sample
-            </Button>
-          </div>
-        </Card>
-      )}
-
-      {/* Stats Summary */}
       <div className="grid grid-cols-4 gap-4 mb-6">
         <Card className="p-4 bg-white border border-gray-200 rounded-lg">
           <div className="text-xs text-gray-600 mb-0.5">Total Outdoor Samples</div>
@@ -222,23 +139,102 @@ export function OutdoorSampling() {
         <div className="flex justify-between items-center mb-4">
           <h2>Outdoor Sampling Register</h2>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Filter className="w-4 h-4 mr-2" />
-              Advanced Filters
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setShowAllRecords(!showAllRecords)}
+            >
+              <Eye className="w-4 h-4 mr-2" />
+              {showAllRecords ? 'Show Today Only' : 'View All Records'}
             </Button>
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" />
               Export
             </Button>
-            <Button 
-              size="sm"
-              className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white border-0"
-              onClick={() => setShowForm(true)}
-              style={{ backgroundColor: '#4CAF50', color: 'white' }}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Sample
-            </Button>
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  size="sm"
+                  className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white border-0"
+                  style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Sample
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Add Sample Entry</DialogTitle>
+                </DialogHeader>
+                <div className="grid grid-cols-3 gap-4 py-4">
+                  <div>
+                    <Label>Sample Date</Label>
+                    <Input type="date" />
+                  </div>
+                  <div>
+                    <Label>Crop Name</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select crop" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="rose">Rose</SelectItem>
+                        <SelectItem value="gerbera">Gerbera</SelectItem>
+                        <SelectItem value="carnation">Carnation</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Batch Name</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select batch" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="b2024-1145">B-2024-1145</SelectItem>
+                        <SelectItem value="b2024-1144">B-2024-1144</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Stage</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select stage" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="primary">Primary Hardening</SelectItem>
+                        <SelectItem value="secondary">Secondary Hardening</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Tunnel No</Label>
+                    <Input placeholder="e.g., T3" />
+                  </div>
+                  <div>
+                    <Label>Tray No</Label>
+                    <Input placeholder="e.g., TR-45" />
+                  </div>
+                  <div>
+                    <Label>Sent Date</Label>
+                    <Input type="date" />
+                  </div>
+                  <div className="col-span-2">
+                    <Label>Reason (if rejected)</Label>
+                    <Input placeholder="Optional" />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 mt-4">
+                  <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button className="bg-[#4CAF50] hover:bg-[#66BB6A]">
+                    Save Sample
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 

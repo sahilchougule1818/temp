@@ -3,11 +3,11 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
-import { Plus, Download, Filter, ArrowRight } from 'lucide-react';
+import { Plus, Download, Eye, ArrowRight } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
 import { DataTable } from '../common/DataTable';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Card } from '../ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 
 const secondaryData = [
   {
@@ -33,7 +33,8 @@ const secondaryData = [
 ];
 
 export function SecondaryHardening() {
-  const [showForm, setShowForm] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showAllRecords, setShowAllRecords] = useState(false);
 
   const columns = [
     { key: 'transferDate', label: 'Transfer Date' },
@@ -49,153 +50,147 @@ export function SecondaryHardening() {
     <div className="p-6 space-y-6">
       <FilterBar />
 
-      {showForm && (
-        <Card className="p-6 mt-6">
-          <div className="flex justify-between items-center mb-4">
-            <h2>Transfer to Secondary Hardening</h2>
-            <button 
-              onClick={() => setShowForm(false)}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              ✕
-            </button>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label>Transfer Date</Label>
-              <Input type="date" />
-            </div>
-            <div>
-              <Label>Crop Name</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select crop" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="rose">Rose</SelectItem>
-                  <SelectItem value="gerbera">Gerbera</SelectItem>
-                  <SelectItem value="carnation">Carnation</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label>Batch Name</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select batch" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="b2024-1145">B-2024-1145</SelectItem>
-                  <SelectItem value="b2024-1144">B-2024-1144</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* From Section */}
-            <div className="col-span-2 border-t pt-4 mt-2">
-              <h3 className="mb-3 flex items-center gap-2">
-                <span>From — Primary Location</span>
-              </h3>
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label>Tunnel</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select tunnel" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="t1">Tunnel T1</SelectItem>
-                      <SelectItem value="t2">Tunnel T2</SelectItem>
-                      <SelectItem value="t3">Tunnel T3</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Tray</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select tray" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="tray12">Tray 12</SelectItem>
-                      <SelectItem value="tray8">Tray 8</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Cavity</Label>
-                  <Input placeholder="e.g., C1-C50" />
-                </div>
-              </div>
-            </div>
-
-            <div className="col-span-2 flex justify-center py-2">
-              <ArrowRight className="w-6 h-6 text-[#4CAF50]" />
-            </div>
-
-            {/* To Section */}
-            <div className="col-span-2 border-t pt-4">
-              <h3 className="mb-3">To — Secondary Bed</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Bed</Label>
-                  <Select>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select bed" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="b1">Bed B1 (Available: 1500)</SelectItem>
-                      <SelectItem value="b2">Bed B2 (Available: 1200)</SelectItem>
-                      <SelectItem value="b3">Bed B3 (Available: 2000)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label>Number of Plants</Label>
-                  <Input type="number" placeholder="e.g., 1200" />
-                </div>
-              </div>
-            </div>
-
-            <div className="col-span-2">
-              <Label>Notes</Label>
-              <Textarea placeholder="Enter transfer notes..." />
-            </div>
-          </div>
-
-          <div className="flex justify-end gap-2 mt-6">
-            <Button variant="outline" onClick={() => setShowForm(false)}>
-              Cancel
-            </Button>
-            <Button className="bg-[#4CAF50] hover:bg-[#66BB6A]">
-              Save Transfer
-            </Button>
-          </div>
-        </Card>
-      )}
-
       <div className="mt-6">
         <div className="flex justify-between items-center mb-4">
           <h2>Secondary Hardening Register</h2>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm">
-              <Filter className="w-4 h-4 mr-2" />
-              Filters
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setShowAllRecords(!showAllRecords)}
+            >
+              <Eye className="w-4 h-4 mr-2" />
+              {showAllRecords ? 'Show Today Only' : 'View All Records'}
             </Button>
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" />
               Export
             </Button>
-            <Button 
-              size="sm"
-              className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white border-0"
-              onClick={() => setShowForm(true)}
-              style={{ backgroundColor: '#4CAF50', color: 'white' }}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Transfer
-            </Button>
+            <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  size="sm"
+                  className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white border-0"
+                  style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add Transfer
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Transfer to Secondary Hardening</DialogTitle>
+                </DialogHeader>
+                <div className="grid grid-cols-2 gap-4 py-4">
+                  <div>
+                    <Label>Transfer Date</Label>
+                    <Input type="date" />
+                  </div>
+                  <div>
+                    <Label>Crop Name</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select crop" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="rose">Rose</SelectItem>
+                        <SelectItem value="gerbera">Gerbera</SelectItem>
+                        <SelectItem value="carnation">Carnation</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Batch Name</Label>
+                    <Select>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select batch" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="b2024-1145">B-2024-1145</SelectItem>
+                        <SelectItem value="b2024-1144">B-2024-1144</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="col-span-2 border-t pt-4 mt-2">
+                    <h3 className="mb-3 flex items-center gap-2">
+                      <span>From — Primary Location</span>
+                    </h3>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <Label>Tunnel</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select tunnel" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="t1">Tunnel T1</SelectItem>
+                            <SelectItem value="t2">Tunnel T2</SelectItem>
+                            <SelectItem value="t3">Tunnel T3</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Tray</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select tray" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="tray12">Tray 12</SelectItem>
+                            <SelectItem value="tray8">Tray 8</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Cavity</Label>
+                        <Input placeholder="e.g., C1-C50" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-span-2 flex justify-center py-2">
+                    <ArrowRight className="w-6 h-6 text-[#4CAF50]" />
+                  </div>
+
+                  <div className="col-span-2 border-t pt-4">
+                    <h3 className="mb-3">To — Secondary Bed</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Bed</Label>
+                        <Select>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select bed" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="b1">Bed B1 (Available: 1500)</SelectItem>
+                            <SelectItem value="b2">Bed B2 (Available: 1200)</SelectItem>
+                            <SelectItem value="b3">Bed B3 (Available: 2000)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Number of Plants</Label>
+                        <Input type="number" placeholder="e.g., 1200" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="col-span-2">
+                    <Label>Notes</Label>
+                    <Textarea placeholder="Enter transfer notes..." />
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2 mt-4">
+                  <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button className="bg-[#4CAF50] hover:bg-[#66BB6A]">
+                    Save Transfer
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
 
