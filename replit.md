@@ -56,6 +56,23 @@ This is a comprehensive ERP (Enterprise Resource Planning) UI application design
 - `npm run build` - Build for production
 
 ## Recent Changes
+- **2025-11-21**: UI Improvements and Terminology Updates
+  - **Media Preparation Module**:
+    - Verified "Save Changes" buttons are present in both Autoclave and Media Batch edit dialogs
+    - Confirmed pre-popup date and media code selection functionality works correctly
+  - **Incubation Module**:
+    - Renamed "Contamination Record" to "Mortality Record" throughout the module
+    - Updated tab name from "Contamination Register" to "Mortality Record"
+    - Changed button text from "Record Contamination" to "Record Mortality"
+    - Updated table column header from "Type of Contamination" to "Type of Mortality"
+    - Updated all dialog titles and labels to use "Mortality" terminology
+  - **Subculturing Module**:
+    - Renamed "Contamination" column to "Mortality" in table and forms
+    - Updated all form labels to use "Mortality" terminology
+  - **FilterBar Component**:
+    - Verified Search button is visible and styled next to the Crop Name dropdown
+    - Search button is present in all outdoor modules that use FilterBar
+
 - **2025-11-21**: Project imported to Replit
   - Successfully imported GitHub repository
   - Installed all Node.js dependencies (206 packages)
