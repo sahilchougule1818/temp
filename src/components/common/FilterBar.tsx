@@ -38,8 +38,9 @@ export function FilterBar() {
         </div>
 
         <div>
+          <label className="block text-sm mb-1.5 invisible">Action</label>
           <Button 
-            className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white font-medium shadow-sm"
+            className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white font-medium shadow-sm h-10"
             onClick={() => console.log('Search clicked')}
           >
             <Search className="w-4 h-4 mr-2" />
