@@ -73,6 +73,7 @@ export function Fertilization() {
               Export
             </Button>
             <Button 
+              size="sm"
               className="bg-[#4CAF50] hover:bg-[#66BB6A]"
               onClick={() => console.log('Add Activity clicked - Form will open')}
             >

@@ -192,6 +192,7 @@ export function SecondaryHardening() {
               Export
             </Button>
             <Button 
+              size="sm"
               className="bg-[#4CAF50] hover:bg-[#66BB6A]"
               onClick={() => setShowForm(true)}
             >

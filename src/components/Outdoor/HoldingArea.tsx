@@ -96,6 +96,7 @@ export function HoldingArea() {
               Export
             </Button>
             <Button 
+              size="sm"
               className="bg-[#4CAF50] hover:bg-[#66BB6A]"
               onClick={() => console.log('Add to Holding clicked - Form will open')}
             >
