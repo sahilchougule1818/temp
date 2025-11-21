@@ -63,7 +63,7 @@ export function Shifting() {
             </Button>
             <Button 
               size="sm"
-              className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+              className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white"
               onClick={() => console.log('Add Shift clicked - Form will open')}
             >
               <Plus className="w-4 h-4 mr-2" />
