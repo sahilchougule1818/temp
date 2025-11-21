@@ -286,6 +286,14 @@ export function Incubation() {
     resetContaminationForm();
   };
 
+  const handleDelete = () => {
+    if (editingIncubationId) {
+      handleDeleteIncubationEntry();
+    } else if (editingContaminationId) {
+      handleDeleteContaminationEntry();
+    }
+  };
+
   const resetIncubationForm = () => {
     setSelectedIncubationDate('');
     setSelectedIncubationBatch('');
@@ -357,7 +365,7 @@ export function Incubation() {
             <TabsContent value="incubation">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
-                  <Dialog open={isIncubationModalOpen} onOpenChange={(open) => {
+                  <Dialog open={isIncubationModalOpen} onOpenChange={(open: boolean) => {
                     setIsIncubationModalOpen(open);
                     if (!open) resetIncubationForm();
                   }}>
@@ -382,7 +390,7 @@ export function Incubation() {
                         </div>
                         <div className="space-y-2">
                           <Label>Stage</Label>
-                          <Select value={incubationForm.stage} onValueChange={(value) => setIncubationForm({...incubationForm, stage: value})}>
+                          <Select value={incubationForm.stage} onValueChange={(value: string) => setIncubationForm({...incubationForm, stage: value})}>
                             <SelectTrigger>
                               <SelectValue placeholder="Select stage" />
                             </SelectTrigger>
@@ -534,7 +542,7 @@ export function Incubation() {
                           </div>
                           <div>
                             <Label>Stage</Label>
-                            <Select value={incubationForm.stage} onValueChange={(value) => setIncubationForm({...incubationForm, stage: value})}>
+                            <Select value={incubationForm.stage} onValueChange={(value: string) => setIncubationForm({...incubationForm, stage: value})}>
                               <SelectTrigger>
                                 <SelectValue placeholder="Select stage" />
                               </SelectTrigger>
@@ -667,7 +675,7 @@ export function Incubation() {
             <TabsContent value="contamination">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
-                  <Dialog open={isContaminationModalOpen} onOpenChange={(open) => {
+                  <Dialog open={isContaminationModalOpen} onOpenChange={(open: boolean) => {
                     setIsContaminationModalOpen(open);
                     if (!open) resetContaminationForm();
                   }}>
