@@ -97,18 +97,25 @@ export function OutdoorDashboard() {
 
               {/* Tray Grid Preview */}
               <div className="grid grid-cols-5 gap-1 mb-3">
-                {Array.from({ length: 20 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className={`h-4 rounded ${
-                      i < (tunnel.occupied / 5)
-                        ? tunnel.status === 'mortality' 
-                          ? 'bg-red-400' 
-                          : 'bg-green-400'
-                        : 'bg-gray-200'
-                    }`}
-                  />
-                ))}
+                {Array.from({ length: 20 }).map((_, i) => {
+                  let trayClass = 'bg-gray-200';
+                  
+                  if (tunnel.status === 'mortality') {
+                    // For T3, all trays are red (mortality alert)
+                    trayClass = 'bg-red-400';
+                  } else {
+                    // Calculate number of occupied trays (out of 20)
+                    const occupiedTrays = Math.floor((tunnel.occupied / tunnel.capacity) * 20);
+                    trayClass = i < occupiedTrays ? 'bg-green-400' : 'bg-gray-200';
+                  }
+                  
+                  return (
+                    <div
+                      key={i}
+                      className={`h-4 rounded ${trayClass}`}
+                    />
+                  );
+                })}
               </div>
 
               <div className="text-xs text-gray-500 text-center">
