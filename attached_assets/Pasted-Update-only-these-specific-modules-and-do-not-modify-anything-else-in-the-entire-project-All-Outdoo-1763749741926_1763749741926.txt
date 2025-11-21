@@ -1,0 +1,65 @@
+Update only these specific modules and do not modify anything else in the entire project:
+All Outdoor submodules
+Indoor → Sampling module only
+🔥 CHANGES REQUIRED (APPLY TO ALL OUTDOOR SUBMODULES + INDOOR SAMPLING)
+1. Remove the “Filter” Tab
+Completely remove the Filter tab from:
+Every Outdoor submodule
+Indoor → Sampling module
+2. Fix the Add Entry (Green Button) Behavior
+Currently it opens a dropdown form.
+I want the behaviour changed to:
+✔ Open a Popup (Modal Window)
+When clicking green Add Entry:
+Open a modal popup (same style as Indoor module popups).
+No dropdown forms.
+Popup should contain all data fields required for that submodule.
+✔ Add Save Button
+Inside the popup:
+Add Save button next to Cancel button.
+User must be able to Save or Cancel the data entry.
+Connect Save button to the existing submit function for that form.
+3. Add a Search Button to the Search Panel
+In the top search/filter row where Batch Name and Crop Name dropdowns exist:
+Add a Search button.
+Use the same behaviour already present in Indoor modules.
+Search should trigger data fetch based on:
+Batch Name
+Crop Name
+4. Fix UI Layout & Sizing Issues
+Outdoor — Search Panels
+Make sure dropdowns and the new Search button align properly.
+No overlap.
+Consistent height & width across all Outdoor submodules.
+Indoor → Sampling
+The search panel layout is overlapping; fix spacing & alignment.
+Make it clean, properly sized, and identical to Outdoor alignment standards.
+5. Outdoor → Batch Timeline Fix
+In Outdoor modules, the Batch Timeline section has issues:
+✔ Show Current Status in Upper Panel
+Fix so “Current Status” appears in the top area of the Batch Timeline.
+✔ Fix the Layout & Sizing
+Align boxes properly
+Fix spacing
+Make the timeline visually clean without broken layout
+6. Add “View All Records” Tab to All Outdoor Modules
+Indoor modules already have a working View All Records tab:
+Clicking it shows full history (recent + older entries)
+Default table view still shows today’s records
+✔ Copy this behaviour to all Outdoor submodules
+Do NOT change Indoor behaviour
+Just add the same tab to all Outdoor modules
+🚫 VERY IMPORTANT RESTRICTIONS
+Do NOT:
+Change any backend APIs
+Rename any files or components
+Modify anything outside:
+✔ Outdoor submodules
+✔ Indoor → Sampling module only
+Touch Indoor modules other than Sampling
+Change table structure or existing logic, except where instructed
+🎯 WHAT YOU MUST DO
+Go through each Outdoor submodule and Indoor → Sampling
+Apply all UI changes exactly as described
+Add/modify only what is needed
+Ensure everything compiles and keeps existing behaviour untouched except where required
