@@ -1,5 +1,10 @@
+import { useState } from 'react';
 import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
 import { Plus, Download, Filter, FileCheck, X, Upload } from 'lucide-react';
+import { FilterBar } from '../common/FilterBar';
 import { Badge } from '../ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Card } from '../ui/card';
@@ -104,86 +109,94 @@ function getCertificateBadge(certificate: string) {
 }
 
 export function OutdoorSampling() {
+  const [showForm, setShowForm] = useState(false);
+  
   return (
     <div className="p-6 space-y-6">
-      <Card className="p-5 mb-6">
-        <div className="grid grid-cols-5 gap-4">
-          <div>
-            <label className="block text-sm mb-1.5">Crop Name</label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="All crops" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Crops</SelectItem>
-                <SelectItem value="rose">Rose</SelectItem>
-                <SelectItem value="gerbera">Gerbera</SelectItem>
-                <SelectItem value="carnation">Carnation</SelectItem>
-                <SelectItem value="orchid">Orchid</SelectItem>
-              </SelectContent>
-            </Select>
+      <FilterBar />
+
+      {showForm && (
+        <Card className="p-6 mt-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2>Add Sample Entry</h2>
+            <button 
+              onClick={() => setShowForm(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
           </div>
 
-          <div>
-            <label className="block text-sm mb-1.5">Batch Name</label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="All batches" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Batches</SelectItem>
-                <SelectItem value="b2024-1145">B-2024-1145</SelectItem>
-                <SelectItem value="b2024-1142">B-2024-1142</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <Label>Sample Date</Label>
+              <Input type="date" />
+            </div>
+            <div>
+              <Label>Crop Name</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select crop" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="rose">Rose</SelectItem>
+                  <SelectItem value="gerbera">Gerbera</SelectItem>
+                  <SelectItem value="carnation">Carnation</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Batch Name</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select batch" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="b2024-1145">B-2024-1145</SelectItem>
+                  <SelectItem value="b2024-1144">B-2024-1144</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Stage</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select stage" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="primary">Primary Hardening</SelectItem>
+                  <SelectItem value="secondary">Secondary Hardening</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Tunnel No</Label>
+              <Input placeholder="e.g., T3" />
+            </div>
+            <div>
+              <Label>Tray No</Label>
+              <Input placeholder="e.g., TR-45" />
+            </div>
+            <div>
+              <Label>Sent Date</Label>
+              <Input type="date" />
+            </div>
+            <div className="col-span-2">
+              <Label>Reason (if rejected)</Label>
+              <Input placeholder="Optional" />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm mb-1.5">Stage</label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="All stages" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Stages</SelectItem>
-                <SelectItem value="primary">Primary Hardening</SelectItem>
-                <SelectItem value="secondary">Secondary Hardening</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="flex justify-end gap-2 mt-6">
+            <Button variant="outline" onClick={() => setShowForm(false)}>
+              Cancel
+            </Button>
+            <Button className="bg-[#4CAF50] hover:bg-[#66BB6A]">
+              Save Sample
+            </Button>
           </div>
-
-          <div>
-            <label className="block text-sm mb-1.5">Status</label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="All status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="not-sent">Not Sent</SelectItem>
-                <SelectItem value="sent">Sent</SelectItem>
-                <SelectItem value="received">Received</SelectItem>
-                <SelectItem value="rejected">Rejected</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <label className="block text-sm mb-1.5">Govt Certificate</label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="All" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="yes">Yes</SelectItem>
-                <SelectItem value="no">No</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      </Card>
+        </Card>
+      )}
 
       {/* Stats Summary */}
       <div className="grid grid-cols-4 gap-4 mb-6">
@@ -220,7 +233,7 @@ export function OutdoorSampling() {
             <Button 
               size="sm"
               className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white border-0"
-              onClick={() => console.log('Add Sample clicked - Form will open')}
+              onClick={() => setShowForm(true)}
               style={{ backgroundColor: '#4CAF50', color: 'white' }}
             >
               <Plus className="w-4 h-4 mr-2" />

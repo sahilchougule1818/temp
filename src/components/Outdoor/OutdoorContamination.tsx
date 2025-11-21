@@ -1,9 +1,14 @@
+import { useState } from 'react';
 import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
 import { Plus, Download, Filter, AlertTriangle } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
 import { DataTable } from '../common/DataTable';
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 const mortalityData = [
   {
@@ -42,6 +47,8 @@ const mortalityData = [
 ];
 
 export function Mortality() {
+  const [showForm, setShowForm] = useState(false);
+  
   const columns = [
     { key: 'date', label: 'Date' },
     { key: 'cropName', label: 'Crop Name' },
@@ -55,12 +62,92 @@ export function Mortality() {
 
   return (
     <div className="p-6 space-y-6">
-      <FilterBar 
-        showCropFilter 
-        showBatchFilter 
-        showTunnel
-        showDateRange
-      />
+      <FilterBar />
+
+      {showForm && (
+        <Card className="p-6 mt-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2>Report Mortality/Contamination</h2>
+            <button 
+              onClick={() => setShowForm(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <Label>Date</Label>
+              <Input type="date" />
+            </div>
+            <div>
+              <Label>Crop Name</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select crop" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="rose">Rose</SelectItem>
+                  <SelectItem value="gerbera">Gerbera</SelectItem>
+                  <SelectItem value="carnation">Carnation</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Batch</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select batch" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="b2024-1145">B-2024-1145</SelectItem>
+                  <SelectItem value="b2024-1144">B-2024-1144</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Location</Label>
+              <Input placeholder="e.g., T3 / Tray 6 / C12-C20" />
+            </div>
+            <div>
+              <Label>Mortality Type</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="fungal">Fungal</SelectItem>
+                  <SelectItem value="bacterial">Bacterial</SelectItem>
+                  <SelectItem value="physiological">Physiological</SelectItem>
+                  <SelectItem value="viral">Viral</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Affected Plants</Label>
+              <Input type="number" placeholder="e.g., 47" />
+            </div>
+            <div className="col-span-3">
+              <Label>Action Taken</Label>
+              <Input placeholder="e.g., Removed & disposed, area sterilized" />
+            </div>
+            <div className="col-span-3">
+              <Label>Notes</Label>
+              <Textarea placeholder="Enter notes..." />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 mt-6">
+            <Button variant="outline" onClick={() => setShowForm(false)}>
+              Cancel
+            </Button>
+            <Button className="bg-[#4CAF50] hover:bg-[#66BB6A]">
+              Save Report
+            </Button>
+          </div>
+        </Card>
+      )}
 
       {/* Alert Banner */}
       <Card className="p-4 mt-6 bg-red-50 border-red-200">
@@ -108,7 +195,7 @@ export function Mortality() {
             <Button 
               size="sm"
               className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white border-0"
-              onClick={() => console.log('Report Mortality clicked - Form will open')}
+              onClick={() => setShowForm(true)}
               style={{ backgroundColor: '#4CAF50', color: 'white' }}
             >
               <Plus className="w-4 h-4 mr-2" />

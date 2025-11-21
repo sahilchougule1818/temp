@@ -1,7 +1,13 @@
+import { useState } from 'react';
 import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
 import { Plus, Download, Filter } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
 import { DataTable } from '../common/DataTable';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Card } from '../ui/card';
 
 const shiftingData = [
   {
@@ -29,6 +35,8 @@ const shiftingData = [
 ];
 
 export function Shifting() {
+  const [showForm, setShowForm] = useState(false);
+  
   const columns = [
     { key: 'date', label: 'Date' },
     { key: 'cropName', label: 'Crop Name' },
@@ -42,12 +50,82 @@ export function Shifting() {
 
   return (
     <div className="p-6 space-y-6">
-      <FilterBar 
-        showCropFilter 
-        showBatchFilter 
-        showTunnel
-        showDateRange
-      />
+      <FilterBar />
+
+      {showForm && (
+        <Card className="p-6 mt-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2>Add Shift Entry</h2>
+            <button 
+              onClick={() => setShowForm(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <Label>Date</Label>
+              <Input type="date" />
+            </div>
+            <div>
+              <Label>Crop Name</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select crop" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="rose">Rose</SelectItem>
+                  <SelectItem value="gerbera">Gerbera</SelectItem>
+                  <SelectItem value="carnation">Carnation</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Batch</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select batch" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="b2024-1145">B-2024-1145</SelectItem>
+                  <SelectItem value="b2024-1144">B-2024-1144</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Old Location</Label>
+              <Input placeholder="e.g., T1 / Tray 5 / C10-C20" />
+            </div>
+            <div>
+              <Label>New Location</Label>
+              <Input placeholder="e.g., T2 / Tray 12 / C1-C11" />
+            </div>
+            <div>
+              <Label>Number of Plants</Label>
+              <Input type="number" placeholder="e.g., 264" />
+            </div>
+            <div className="col-span-3">
+              <Label>Reason for Shift</Label>
+              <Input placeholder="e.g., Better light exposure" />
+            </div>
+            <div className="col-span-3">
+              <Label>Notes</Label>
+              <Textarea placeholder="Enter notes..." />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 mt-6">
+            <Button variant="outline" onClick={() => setShowForm(false)}>
+              Cancel
+            </Button>
+            <Button className="bg-[#4CAF50] hover:bg-[#66BB6A]">
+              Save Shift
+            </Button>
+          </div>
+        </Card>
+      )}
 
       <div className="mt-6">
         <div className="flex justify-between items-center mb-4">
@@ -64,7 +142,7 @@ export function Shifting() {
             <Button 
               size="sm"
               className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white border-0"
-              onClick={() => console.log('Add Shift clicked - Form will open')}
+              onClick={() => setShowForm(true)}
               style={{ backgroundColor: '#4CAF50', color: 'white' }}
             >
               <Plus className="w-4 h-4 mr-2" />

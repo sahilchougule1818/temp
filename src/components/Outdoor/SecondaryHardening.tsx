@@ -47,11 +47,7 @@ export function SecondaryHardening() {
 
   return (
     <div className="p-6 space-y-6">
-      <FilterBar 
-        showCropFilter 
-        showBatchFilter 
-        showDateRange
-      />
+      <FilterBar />
 
       {showForm && (
         <Card className="p-6 mt-6">
