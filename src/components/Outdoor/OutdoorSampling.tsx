@@ -219,8 +219,9 @@ export function OutdoorSampling() {
             </Button>
             <Button 
               size="sm"
-              className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white"
+              className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white border-0"
               onClick={() => console.log('Add Sample clicked - Form will open')}
+              style={{ backgroundColor: '#4CAF50', color: 'white' }}
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Sample

@@ -193,8 +193,9 @@ export function SecondaryHardening() {
             </Button>
             <Button 
               size="sm"
-              className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white"
+              className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white border-0"
               onClick={() => setShowForm(true)}
+              style={{ backgroundColor: '#4CAF50', color: 'white' }}
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Transfer
