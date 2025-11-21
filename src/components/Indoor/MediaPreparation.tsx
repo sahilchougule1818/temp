@@ -317,19 +317,7 @@ export function MediaPreparation() {
     <div className="p-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Media Preparation</CardTitle>
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                onClick={handleEditBatch}
-                className="flex items-center gap-2"
-              >
-                <Edit2 className="w-4 h-4" />
-                Edit Batch
-              </Button>
-            </div>
-          </div>
+          <CardTitle>Media Preparation</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -341,7 +329,31 @@ export function MediaPreparation() {
             <TabsContent value="autoclave">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
-                  <Dialog open={isAutoclaveModalOpen} onOpenChange={(open) => {
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setEditingAutoclaveId(null);
+                      setAutoclaveForm({
+                        date: '',
+                        mediaCode: '',
+                        operator: '',
+                        typeOfMedia: '',
+                        autoclaveOn: '',
+                        mediaLoading: '',
+                        pressure: '',
+                        off: '',
+                        open: '',
+                        mediaTotal: '',
+                        remark: ''
+                      });
+                      setIsEditAutoclaveModalOpen(true);
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    Edit
+                  </Button>
+                  <Dialog open={isAutoclaveModalOpen} onOpenChange={(open: boolean) => {
                     setIsAutoclaveModalOpen(open);
                     if (!open) resetAutoclaveForm();
                   }}>
@@ -459,7 +471,7 @@ export function MediaPreparation() {
                 </div>
 
                 {/* Edit Dialog */}
-                <Dialog open={isEditAutoclaveModalOpen} onOpenChange={(open) => {
+                <Dialog open={isEditAutoclaveModalOpen} onOpenChange={(open: boolean) => {
                   setIsEditAutoclaveModalOpen(open);
                   if (!open) {
                     resetAutoclaveForm();
@@ -645,7 +657,26 @@ export function MediaPreparation() {
             <TabsContent value="batch">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
-                  <Dialog open={isBatchModalOpen} onOpenChange={(open) => {
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setEditingBatchId(null);
+                      setBatchForm({
+                        date: '',
+                        mediaCode: '',
+                        operator: '',
+                        quantity: '',
+                        bottles: '',
+                        contamination: ''
+                      });
+                      setIsEditBatchModalOpen(true);
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    Edit
+                  </Button>
+                  <Dialog open={isBatchModalOpen} onOpenChange={(open: boolean) => {
                     setIsBatchModalOpen(open);
                     if (!open) resetBatchForm();
                   }}>
@@ -724,7 +755,7 @@ export function MediaPreparation() {
                 </div>
 
                 {/* Edit Batch Dialog */}
-                <Dialog open={isEditBatchModalOpen} onOpenChange={(open) => {
+                <Dialog open={isEditBatchModalOpen} onOpenChange={(open: boolean) => {
                   setIsEditBatchModalOpen(open);
                   if (!open) {
                     resetBatchForm();

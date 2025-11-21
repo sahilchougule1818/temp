@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
-import { Plus, Download, FileCheck, X, Upload } from 'lucide-react';
+import { Plus, Download, FileCheck, X, Upload, Edit2 } from 'lucide-react';
 import { FilterBar } from '../../common/FilterBar';
 import { Badge } from '../../ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
@@ -87,6 +87,7 @@ function getCertificateBadge(certificate: string) {
 
 export function Sampling() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const filteredData = samplingData;
   
@@ -121,6 +122,15 @@ export function Sampling() {
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" />
               Export
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setIsEditModalOpen(true)}
+              className="flex items-center gap-2"
+            >
+              <Edit2 className="w-4 h-4" />
+              Edit
             </Button>
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
               <DialogTrigger asChild>
@@ -242,6 +252,53 @@ export function Sampling() {
             </Dialog>
           </div>
         </div>
+
+        {/* Edit Dialog */}
+        <Dialog open={isEditModalOpen} onOpenChange={(open: boolean) => setIsEditModalOpen(open)}>
+          <DialogContent className="max-w-xl">
+            <DialogHeader>
+              <DialogTitle>Edit Sample Entry</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div>
+                <Label>Sample Date</Label>
+                <Input type="date" />
+              </div>
+              <div>
+                <Label>Batch Name</Label>
+                <Select>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select batch" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="b2024-1145">B-2024-1145</SelectItem>
+                    <SelectItem value="b2024-1144">B-2024-1144</SelectItem>
+                    <SelectItem value="b2024-1140">B-2024-1140</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="flex justify-between gap-3">
+              <Button 
+                variant="destructive"
+                onClick={() => setIsEditModalOpen(false)}
+              >
+                Delete Entry
+              </Button>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
+                  Cancel
+                </Button>
+                <Button 
+                  className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                  onClick={() => setIsEditModalOpen(false)}
+                >
+                  Save Changes
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <Card className="overflow-hidden">
           <div className="overflow-x-auto">

@@ -305,27 +305,7 @@ export function CleaningRecord() {
     <div className="p-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Cleaning Register</CardTitle>
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  if (activeTab === 'cleaning') {
-                    resetCleaningForm();
-                    setIsEditCleaningModalOpen(true);
-                  } else {
-                    resetDeepCleaningForm();
-                    setIsEditDeepCleaningModalOpen(true);
-                  }
-                }}
-                className="flex items-center gap-2"
-              >
-                <Edit2 className="w-4 h-4" />
-                Edit
-              </Button>
-            </div>
-          </div>
+          <CardTitle>Cleaning Register</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -337,7 +317,18 @@ export function CleaningRecord() {
             <TabsContent value="cleaning">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
-                  <Dialog open={isCleaningModalOpen} onOpenChange={(open) => {
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      resetCleaningForm();
+                      setIsEditCleaningModalOpen(true);
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    Edit
+                  </Button>
+                  <Dialog open={isCleaningModalOpen} onOpenChange={(open: boolean) => {
                     setIsCleaningModalOpen(open);
                     if (!open) resetCleaningForm();
                   }}>
@@ -370,7 +361,7 @@ export function CleaningRecord() {
                   </div>
                   <div className="space-y-2">
                     <Label>Area Cleaned</Label>
-                          <Select value={cleaningForm.area} onValueChange={(value) => setCleaningForm({...cleaningForm, area: value})}>
+                          <Select value={cleaningForm.area} onValueChange={(value: string) => setCleaningForm({...cleaningForm, area: value})}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select area" />
                       </SelectTrigger>
@@ -552,7 +543,18 @@ export function CleaningRecord() {
             <TabsContent value="deepCleaning">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
-                  <Dialog open={isDeepCleaningModalOpen} onOpenChange={(open) => {
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      resetDeepCleaningForm();
+                      setIsEditDeepCleaningModalOpen(true);
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    Edit
+                  </Button>
+                  <Dialog open={isDeepCleaningModalOpen} onOpenChange={(open: boolean) => {
                     setIsDeepCleaningModalOpen(open);
                     if (!open) resetDeepCleaningForm();
                   }}>

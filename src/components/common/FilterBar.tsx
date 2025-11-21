@@ -39,7 +39,7 @@ export function FilterBar() {
 
         <div>
           <Button 
-            className="bg-[#2196F3] hover:bg-[#1976D2] text-white"
+            className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white font-medium shadow-sm"
             onClick={() => console.log('Search clicked')}
           >
             <Search className="w-4 h-4 mr-2" />

@@ -333,27 +333,7 @@ export function Incubation() {
     <div className="p-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Incubation Module</CardTitle>
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  if (activeTab === 'incubation') {
-                    resetIncubationForm();
-                    setIsEditIncubationModalOpen(true);
-                  } else {
-                    resetContaminationForm();
-                    setIsEditContaminationModalOpen(true);
-                  }
-                }}
-                className="flex items-center gap-2"
-              >
-                <Edit2 className="w-4 h-4" />
-                Edit
-              </Button>
-            </div>
-          </div>
+          <CardTitle>Incubation Module</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -365,6 +345,17 @@ export function Incubation() {
             <TabsContent value="incubation">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      resetIncubationForm();
+                      setIsEditIncubationModalOpen(true);
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    Edit
+                  </Button>
                   <Dialog open={isIncubationModalOpen} onOpenChange={(open: boolean) => {
                     setIsIncubationModalOpen(open);
                     if (!open) resetIncubationForm();
@@ -675,6 +666,17 @@ export function Incubation() {
             <TabsContent value="contamination">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      resetContaminationForm();
+                      setIsEditContaminationModalOpen(true);
+                    }}
+                    className="flex items-center gap-2"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    Edit
+                  </Button>
                   <Dialog open={isContaminationModalOpen} onOpenChange={(open: boolean) => {
                     setIsContaminationModalOpen(open);
                     if (!open) resetContaminationForm();
