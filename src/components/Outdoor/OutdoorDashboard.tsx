@@ -14,48 +14,48 @@ export function OutdoorDashboard() {
     <div className="p-6 space-y-6">
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
-        <Card className="p-5 bg-white border border-gray-200 rounded-lg">
-          <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 rounded-lg bg-green-100 text-green-600 flex items-center justify-center">
-              <Sprout className="w-5 h-5" />
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-9 h-9 rounded-lg bg-green-100 text-green-600 flex items-center justify-center">
+              <Sprout className="w-4 h-4" />
             </div>
-            <Badge className="bg-green-100 text-green-700 px-2.5 py-0.5 text-xs font-medium">Active</Badge>
+            <Badge className="bg-green-100 text-green-700 px-2 py-0.5 text-xs font-medium border-0">Active</Badge>
           </div>
-          <div className="text-3xl font-bold mb-1">24</div>
-          <div className="text-sm text-gray-600">Batches in Primary</div>
+          <div className="text-2xl font-bold mb-0.5">24</div>
+          <div className="text-xs text-gray-600">Batches in Primary</div>
         </Card>
 
-        <Card className="p-5 bg-white border border-gray-200 rounded-lg">
-          <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
-              <TreeDeciduous className="w-5 h-5" />
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-9 h-9 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+              <TreeDeciduous className="w-4 h-4" />
             </div>
-            <Badge className="bg-blue-100 text-blue-700 px-2.5 py-0.5 text-xs font-medium">Active</Badge>
+            <Badge className="bg-blue-100 text-blue-700 px-2 py-0.5 text-xs font-medium border-0">Active</Badge>
           </div>
-          <div className="text-3xl font-bold mb-1">18</div>
-          <div className="text-sm text-gray-600">Batches in Secondary</div>
+          <div className="text-2xl font-bold mb-0.5">18</div>
+          <div className="text-xs text-gray-600">Batches in Secondary</div>
         </Card>
 
-        <Card className="p-5 bg-white border border-gray-200 rounded-lg">
-          <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
-              <Package className="w-5 h-5" />
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-9 h-9 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center">
+              <Package className="w-4 h-4" />
             </div>
-            <Badge className="bg-amber-100 text-amber-700 px-2.5 py-0.5 text-xs font-medium">Holding</Badge>
+            <Badge className="bg-amber-100 text-amber-700 px-2 py-0.5 text-xs font-medium border-0">Holding</Badge>
           </div>
-          <div className="text-3xl font-bold mb-1">6</div>
-          <div className="text-sm text-gray-600">Unsold Batches</div>
+          <div className="text-2xl font-bold mb-0.5">6</div>
+          <div className="text-xs text-gray-600">Unsold Batches</div>
         </Card>
 
-        <Card className="p-5 bg-white border border-gray-200 rounded-lg">
-          <div className="flex items-center justify-between mb-3">
-            <div className="w-10 h-10 rounded-lg bg-red-100 text-red-600 flex items-center justify-center">
-              <AlertTriangle className="w-5 h-5" />
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="flex items-center justify-between mb-2">
+            <div className="w-9 h-9 rounded-lg bg-red-100 text-red-600 flex items-center justify-center">
+              <AlertTriangle className="w-4 h-4" />
             </div>
-            <Badge className="bg-red-100 text-red-700 px-2.5 py-0.5 text-xs font-medium">Alert</Badge>
+            <Badge className="bg-red-100 text-red-700 px-2 py-0.5 text-xs font-medium border-0">Alert</Badge>
           </div>
-          <div className="text-3xl font-bold mb-1">47</div>
-          <div className="text-sm text-gray-600">Mortality Cases Today</div>
+          <div className="text-2xl font-bold mb-0.5">47</div>
+          <div className="text-xs text-gray-600">Mortality Cases Today</div>
         </Card>
       </div>
 

@@ -64,22 +64,22 @@ export function HoldingArea() {
       />
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-5 mt-6">
-        <Card className="p-5">
-          <div className="text-sm text-gray-600 mb-1">Total Batches</div>
-          <div className="text-2xl font-semibold">6</div>
+      <div className="grid grid-cols-4 gap-4 mt-6">
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="text-xs text-gray-600 mb-0.5">Total Batches</div>
+          <div className="text-2xl font-bold">6</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-sm text-gray-600 mb-1">Fresh (0-7 days)</div>
-          <div className="text-2xl font-semibold text-green-600">2</div>
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="text-xs text-gray-600 mb-0.5">Fresh (0-7 days)</div>
+          <div className="text-2xl font-bold text-green-600">2</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-sm text-gray-600 mb-1">Moderate (8-21 days)</div>
-          <div className="text-2xl font-semibold text-amber-600">2</div>
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="text-xs text-gray-600 mb-0.5">Moderate (8-21 days)</div>
+          <div className="text-2xl font-bold text-amber-600">2</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-sm text-gray-600 mb-1">Ageing (22+ days)</div>
-          <div className="text-2xl font-semibold text-red-600">2</div>
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="text-xs text-gray-600 mb-0.5">Ageing (22+ days)</div>
+          <div className="text-2xl font-bold text-red-600">2</div>
         </Card>
       </div>
 
