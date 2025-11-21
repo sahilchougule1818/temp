@@ -46,6 +46,14 @@ export function SecondaryHardening() {
     { key: 'notes', label: 'Notes' },
   ];
 
+  const filteredData = showAllRecords ? secondaryData : secondaryData.filter(record => {
+    const recordDate = new Date(record.transferDate);
+    const today = new Date();
+    const diffTime = Math.abs(today.getTime() - recordDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 7;
+  });
+
   return (
     <div className="p-6 space-y-6">
       <FilterBar />
@@ -185,7 +193,10 @@ export function SecondaryHardening() {
                   <Button variant="outline" onClick={() => setIsModalOpen(false)}>
                     Cancel
                   </Button>
-                  <Button className="bg-[#4CAF50] hover:bg-[#66BB6A]">
+                  <Button 
+                    className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                    onClick={() => setIsModalOpen(false)}
+                  >
                     Save Transfer
                   </Button>
                 </div>
@@ -196,7 +207,7 @@ export function SecondaryHardening() {
 
         <DataTable 
           columns={columns} 
-          data={secondaryData}
+          data={filteredData}
           onEdit={(row) => console.log('Edit', row)}
           onDelete={(row) => console.log('Delete', row)}
         />

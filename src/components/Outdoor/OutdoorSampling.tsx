@@ -111,6 +111,14 @@ function getCertificateBadge(certificate: string) {
 export function OutdoorSampling() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAllRecords, setShowAllRecords] = useState(false);
+
+  const filteredData = showAllRecords ? outdoorSamplingData : outdoorSamplingData.filter(record => {
+    const recordDate = new Date(record.sampleDate);
+    const today = new Date();
+    const diffTime = Math.abs(today.getTime() - recordDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 7;
+  });
   
   return (
     <div className="p-6 space-y-6">
@@ -229,7 +237,10 @@ export function OutdoorSampling() {
                   <Button variant="outline" onClick={() => setIsModalOpen(false)}>
                     Cancel
                   </Button>
-                  <Button className="bg-[#4CAF50] hover:bg-[#66BB6A]">
+                  <Button 
+                    className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                    onClick={() => setIsModalOpen(false)}
+                  >
                     Save Sample
                   </Button>
                 </div>
@@ -259,7 +270,7 @@ export function OutdoorSampling() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {outdoorSamplingData.map((sample) => (
+                {filteredData.map((sample) => (
                   <TableRow key={sample.id}>
                     <TableCell>{sample.sampleDate}</TableCell>
                     <TableCell>{sample.cropName}</TableCell>

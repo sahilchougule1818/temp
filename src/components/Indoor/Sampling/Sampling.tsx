@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Button } from '../../ui/button';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
-import { Plus, Download, FileCheck, X, Upload, Search } from 'lucide-react';
+import { Plus, Download, FileCheck, X, Upload } from 'lucide-react';
+import { FilterBar } from '../../common/FilterBar';
 import { Badge } from '../../ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 import { Card } from '../../ui/card';
@@ -86,52 +87,12 @@ function getCertificateBadge(certificate: string) {
 
 export function Sampling() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const filteredData = samplingData;
   
   return (
     <div className="p-6 space-y-6">
-      <Card className="p-5 mb-6">
-        <div className="flex gap-4 items-end">
-          <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm mb-1.5">Batch Name</label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select batch" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="b2024-1145">B-2024-1145</SelectItem>
-                <SelectItem value="b2024-1144">B-2024-1144</SelectItem>
-                <SelectItem value="b2024-1143">B-2024-1143</SelectItem>
-                <SelectItem value="b2024-1142">B-2024-1142</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex-1 min-w-[200px]">
-            <label className="block text-sm mb-1.5">Crop Name</label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Select crop" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="rose">Rose</SelectItem>
-                <SelectItem value="gerbera">Gerbera</SelectItem>
-                <SelectItem value="carnation">Carnation</SelectItem>
-                <SelectItem value="orchid">Orchid</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Button 
-              className="bg-[#2196F3] hover:bg-[#1976D2] text-white"
-              onClick={() => console.log('Search clicked')}
-            >
-              <Search className="w-4 h-4 mr-2" />
-              Search
-            </Button>
-          </div>
-        </div>
-      </Card>
+      <FilterBar />
 
       {/* Stats Summary */}
       <div className="grid grid-cols-4 gap-4 mb-6">
@@ -270,7 +231,10 @@ export function Sampling() {
                   <Button variant="outline" onClick={() => setIsModalOpen(false)}>
                     Cancel
                   </Button>
-                  <Button className="bg-[#4CAF50] hover:bg-[#66BB6A]">
+                  <Button 
+                    className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                    onClick={() => setIsModalOpen(false)}
+                  >
                     Save Sample
                   </Button>
                 </div>
@@ -298,7 +262,7 @@ export function Sampling() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {samplingData.map((sample) => (
+                {filteredData.map((sample) => (
                   <TableRow key={sample.id}>
                     <TableCell>{sample.sampleDate}</TableCell>
                     <TableCell>{sample.cropName}</TableCell>

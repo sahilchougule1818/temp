@@ -49,6 +49,14 @@ export function Shifting() {
     { key: 'notes', label: 'Notes' },
   ];
 
+  const filteredData = showAllRecords ? shiftingData : shiftingData.filter(record => {
+    const recordDate = new Date(record.date);
+    const today = new Date();
+    const diffTime = Math.abs(today.getTime() - recordDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 7;
+  });
+
   return (
     <div className="p-6 space-y-6">
       <FilterBar />
@@ -139,7 +147,10 @@ export function Shifting() {
                   <Button variant="outline" onClick={() => setIsModalOpen(false)}>
                     Cancel
                   </Button>
-                  <Button className="bg-[#4CAF50] hover:bg-[#66BB6A]">
+                  <Button 
+                    className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                    onClick={() => setIsModalOpen(false)}
+                  >
                     Save Shift
                   </Button>
                 </div>
@@ -150,7 +161,7 @@ export function Shifting() {
 
         <DataTable 
           columns={columns} 
-          data={shiftingData}
+          data={filteredData}
           onEdit={(row) => console.log('Edit', row)}
           onDelete={(row) => console.log('Delete', row)}
         />

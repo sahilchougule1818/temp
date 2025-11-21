@@ -63,6 +63,14 @@ function getAgeBadge(days: number) {
 export function HoldingArea() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showAllRecords, setShowAllRecords] = useState(false);
+
+  const filteredData = showAllRecords ? holdingData : holdingData.filter(record => {
+    const recordDate = new Date(record.dateEntered);
+    const today = new Date();
+    const diffTime = Math.abs(today.getTime() - recordDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays <= 7;
+  });
   
   return (
     <div className="p-6 space-y-6">
@@ -161,7 +169,10 @@ export function HoldingArea() {
                   <Button variant="outline" onClick={() => setIsModalOpen(false)}>
                     Cancel
                   </Button>
-                  <Button className="bg-[#4CAF50] hover:bg-[#66BB6A]">
+                  <Button 
+                    className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                    onClick={() => setIsModalOpen(false)}
+                  >
                     Save to Holding
                   </Button>
                 </div>
@@ -182,11 +193,11 @@ export function HoldingArea() {
                   <TableHead>Days in Holding</TableHead>
                   <TableHead>Age Status</TableHead>
                   <TableHead>Remarks</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {holdingData.map((row) => (
+                {filteredData.map((row) => (
                   <TableRow key={row.id}>
                     <TableCell className="font-medium">{row.batchName}</TableCell>
                     <TableCell>{row.cropName}</TableCell>
