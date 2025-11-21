@@ -168,22 +168,22 @@ export function Sampling() {
       </Card>
 
       {/* Stats Summary */}
-      <div className="grid grid-cols-4 gap-5 mb-6">
-        <Card className="p-5">
-          <div className="text-sm text-gray-600 mb-1">Total Samples</div>
-          <div className="text-2xl font-semibold">48</div>
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="text-xs text-gray-600 mb-0.5">Total Samples</div>
+          <div className="text-2xl font-bold">48</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-sm text-gray-600 mb-1">Pending Lab Results</div>
-          <div className="text-2xl font-semibold text-blue-600">12</div>
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="text-xs text-gray-600 mb-0.5">Pending Lab Results</div>
+          <div className="text-2xl font-bold text-blue-600">12</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-sm text-gray-600 mb-1">Certified</div>
-          <div className="text-2xl font-semibold text-green-600">32</div>
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="text-xs text-gray-600 mb-0.5">Certified</div>
+          <div className="text-2xl font-bold text-green-600">32</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-sm text-gray-600 mb-1">Rejected</div>
-          <div className="text-2xl font-semibold text-red-600">4</div>
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="text-xs text-gray-600 mb-0.5">Rejected</div>
+          <div className="text-2xl font-bold text-red-600">4</div>
         </Card>
       </div>
 
@@ -199,7 +199,10 @@ export function Sampling() {
               <Download className="w-4 h-4 mr-2" />
               Export
             </Button>
-            <Button className="bg-[#4CAF50] hover:bg-[#66BB6A]">
+            <Button 
+              className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+              onClick={() => console.log('Add Sample clicked - Form will open')}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Add Sample
             </Button>
