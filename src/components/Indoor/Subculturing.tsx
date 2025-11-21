@@ -289,7 +289,7 @@ export function Subculturing() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Contamination</Label>
+                      <Label>Mortality</Label>
                       <Input 
                         placeholder="None or specify" 
                         value={subcultureForm.contamination}
@@ -401,7 +401,7 @@ export function Subculturing() {
                       <Input value={subcultureForm.operator} onChange={(e) => setSubcultureForm({...subcultureForm, operator: e.target.value})} />
                     </div>
                     <div>
-                      <Label>Contamination</Label>
+                      <Label>Mortality</Label>
                       <Input value={subcultureForm.contamination} onChange={(e) => setSubcultureForm({...subcultureForm, contamination: e.target.value})} />
                     </div>
                     <div className="col-span-2">
@@ -447,7 +447,7 @@ export function Subculturing() {
                   <th className="px-4 py-3 text-left text-xs text-gray-600">No. of Vessels</th>
                   <th className="px-4 py-3 text-left text-xs text-gray-600">No. of Shoots</th>
                   <th className="px-4 py-3 text-left text-xs text-gray-600">Operator Name</th>
-                  <th className="px-4 py-3 text-left text-xs text-gray-600">Contamination</th>
+                  <th className="px-4 py-3 text-left text-xs text-gray-600">Mortality</th>
                   <th className="px-4 py-3 text-left text-xs text-gray-600">Remark</th>
                 </tr>
               </thead>

@@ -339,7 +339,7 @@ export function Incubation() {
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-6">
               <TabsTrigger value="incubation">Incubation Register</TabsTrigger>
-              <TabsTrigger value="contamination">Contamination Register</TabsTrigger>
+              <TabsTrigger value="contamination">Mortality Record</TabsTrigger>
             </TabsList>
 
             <TabsContent value="incubation">
@@ -684,12 +684,12 @@ export function Incubation() {
                     <DialogTrigger asChild>
                       <Button className="bg-red-600 hover:bg-red-700" onClick={() => resetContaminationForm()}>
                         <Plus className="w-4 h-4 mr-2" />
-                        Record Contamination
+                        Record Mortality
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="max-w-xl">
                       <DialogHeader>
-                        <DialogTitle>Record Contamination</DialogTitle>
+                        <DialogTitle>Record Mortality</DialogTitle>
                       </DialogHeader>
                       <div className="grid gap-4 py-4">
                         <div className="space-y-2">
@@ -718,7 +718,7 @@ export function Incubation() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Type of Contamination</Label>
+                          <Label>Type of Mortality</Label>
                           <Input 
                             placeholder="Bacterial / Fungal" 
                             value={contaminationForm.type}
@@ -759,7 +759,7 @@ export function Incubation() {
                 <Dialog open={isEditContaminationModalOpen} onOpenChange={setIsEditContaminationModalOpen}>
                   <DialogContent className="max-w-xl">
                     <DialogHeader>
-                      <DialogTitle>Edit Contamination Record</DialogTitle>
+                      <DialogTitle>Edit Mortality Record</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="grid grid-cols-2 gap-4">
@@ -806,7 +806,7 @@ export function Incubation() {
                             <Input type="number" value={contaminationForm.vesselCount} onChange={(e) => setContaminationForm({...contaminationForm, vesselCount: e.target.value})} />
                           </div>
                           <div>
-                            <Label>Type of Contamination</Label>
+                            <Label>Type of Mortality</Label>
                             <Input value={contaminationForm.type} onChange={(e) => setContaminationForm({...contaminationForm, type: e.target.value})} />
                           </div>
                           <div>
@@ -851,7 +851,7 @@ export function Incubation() {
                         <th className="px-4 py-3 text-left text-xs text-gray-600">Date</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600">Batch Number</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600">Vessel Count</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Type of Contamination</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Type of Mortality</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600">Possible Source</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600">Disposal Method</th>
                       </tr>
