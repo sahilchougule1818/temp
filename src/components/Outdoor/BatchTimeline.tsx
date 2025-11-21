@@ -90,15 +90,14 @@ export function BatchTimeline() {
   const [selectedBatch, setSelectedBatch] = useState('b2024-1145');
 
   return (
-    <div className="p-6">
-      {/* Batch Selector */}
-      <Card className="p-5 mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div>
-              <label className="block text-sm text-gray-600 mb-1.5">Select Batch</label>
+    <div className="p-6 space-y-6">
+      <Card className="p-6">
+        <div className="flex items-center justify-between gap-6">
+          <div className="flex items-center gap-6">
+            <div className="min-w-[280px]">
+              <label className="block text-sm text-gray-600 mb-2">Select Batch</label>
               <Select value={selectedBatch} onValueChange={setSelectedBatch}>
-                <SelectTrigger className="w-[280px]">
+                <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -109,19 +108,19 @@ export function BatchTimeline() {
               </Select>
             </div>
 
-            <div className="border-l pl-4">
-              <div className="text-sm text-gray-600">Current Status</div>
-              <Badge className="bg-[#4CAF50] mt-1">In Holding Area</Badge>
+            <div className="border-l border-gray-200 pl-6">
+              <div className="text-sm text-gray-600 mb-1">Current Status</div>
+              <Badge className="bg-[#4CAF50] hover:bg-[#4CAF50] text-white">In Holding Area</Badge>
             </div>
 
-            <div className="border-l pl-4">
-              <div className="text-sm text-gray-600">Total Plants</div>
-              <div className="text-xl font-semibold">1,188</div>
+            <div className="border-l border-gray-200 pl-6">
+              <div className="text-sm text-gray-600 mb-1">Total Plants</div>
+              <div className="text-2xl font-semibold">1,188</div>
             </div>
 
-            <div className="border-l pl-4">
-              <div className="text-sm text-gray-600">Days Active</div>
-              <div className="text-xl font-semibold">17</div>
+            <div className="border-l border-gray-200 pl-6">
+              <div className="text-sm text-gray-600 mb-1">Days Active</div>
+              <div className="text-2xl font-semibold">17</div>
             </div>
           </div>
 
