@@ -5,7 +5,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Badge } from '../ui/badge';
-import { Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
@@ -55,8 +55,9 @@ export function Subculturing() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [showAllRecords, setShowAllRecords] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedBatch, setSelectedBatch] = useState('');
   
   const [subcultureForm, setSubcultureForm] = useState({
     transferDate: '',
@@ -93,36 +94,22 @@ export function Subculturing() {
     resetForm();
   };
 
-  // Get available media codes for selected date (from Media Preparation)
-  const availableMediaCodes = useMemo(() => {
-    if (!subcultureForm.transferDate) return [];
-    const cyclesForDate = mediaPrepAutoclaveCycles.filter(cycle => cycle.date === subcultureForm.transferDate);
-    return Array.from(new Set(cyclesForDate.map(cycle => cycle.mediaCode)));
-  }, [subcultureForm.transferDate]);
+  // Get all available dates from subcultureData (sorted)
+  const availableDates = useMemo(() => {
+    return Array.from(new Set(subcultureData.map(record => record.transferDate))).sort();
+  }, [subcultureData]);
 
-  // Get available batch codes for selected date and media code
-  const availableBatchesForEdit = useMemo(() => {
-    if (!subcultureForm.transferDate || !subcultureForm.mediaCode) return [];
-    const batchesForDateAndMedia = subcultureData.filter(item => 
-      item.transferDate === subcultureForm.transferDate && item.mediaCode === subcultureForm.mediaCode
-    );
-    // Return objects with id, and a display string for the dropdown
-    return batchesForDateAndMedia.map(item => ({
-      id: item.id,
-      display: `${item.transferDate} - ${item.batchCode}`
-    }));
-  }, [subcultureForm.transferDate, subcultureForm.mediaCode, subcultureData]);
+  // Get available batch codes for selected date
+  const availableBatches = useMemo(() => {
+    if (!selectedDate) return [];
+    return Array.from(new Set(subcultureData.filter(record => record.transferDate === selectedDate).map(record => record.batchCode)));
+  }, [selectedDate, subcultureData]);
 
-  const handleEditBatch = () => {
-    setEditingId(null);
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${year}-${month}-${day}`;
-    
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
+    setSelectedBatch('');
     setSubcultureForm({
-      transferDate: todayStr,
+      transferDate: '',
       stageNumber: '',
       batchCode: '',
       mediaCode: '',
@@ -133,28 +120,56 @@ export function Subculturing() {
       contamination: '',
       remark: ''
     });
-    setIsEditModalOpen(true);
+    setEditingId(null);
   };
 
-  const handleDelete = () => {
-    if (editingId) {
-      setSubcultureData(subcultureData.filter(item => item.id !== editingId));
-      setDeleteConfirmOpen(false);
-      setIsEditModalOpen(false);
-      resetForm();
+  const handleBatchSelect = (batch: string) => {
+    setSelectedBatch(batch);
+    const recordData = subcultureData.find(record => record.transferDate === selectedDate && record.batchCode === batch);
+    if (recordData) {
+      setSubcultureForm({
+        transferDate: recordData.transferDate,
+        stageNumber: recordData.stageNumber,
+        batchCode: recordData.batchCode,
+        mediaCode: recordData.mediaCode,
+        species: recordData.species,
+        vessels: String(recordData.vessels),
+        shoots: String(recordData.shoots),
+        operator: recordData.operator,
+        contamination: recordData.contamination,
+        remark: recordData.remark
+      });
+      setEditingId(recordData.id);
     }
   };
 
+  const handleSaveChanges = () => {
+    if (editingId) {
+      setSubcultureData(subcultureData.map(item => 
+        item.id === editingId 
+          ? { ...item, ...subcultureForm, vessels: parseInt(subcultureForm.vessels) || 0, shoots: parseInt(subcultureForm.shoots) || 0 }
+          : item
+      ));
+    }
+    setIsEditModalOpen(false);
+    resetForm();
+  };
+
+  const handleDeleteEntry = () => {
+    if (editingId) {
+      setSubcultureData(subcultureData.filter(item => item.id !== editingId));
+    }
+    setIsEditModalOpen(false);
+    setDeleteConfirmOpen(false);
+    resetForm();
+  };
+
   const resetForm = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${year}-${month}-${day}`;
-    
+    setSelectedDate('');
+    setSelectedBatch('');
     setEditingId(null);
     setSubcultureForm({
-      transferDate: todayStr,
+      transferDate: '',
       stageNumber: '',
       batchCode: '',
       mediaCode: '',
@@ -167,22 +182,6 @@ export function Subculturing() {
     });
   };
 
-  // Get today's date in YYYY-MM-DD format (use function to get current date each time)
-  const getToday = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-  
-  // Filter data based on showAllRecords
-  const filteredData = showAllRecords 
-    ? subcultureData 
-    : (subcultureData || []).filter(item => {
-        const today = getToday();
-        return item?.transferDate === today;
-      });
 
   return (
     <div className="p-6">
@@ -193,19 +192,14 @@ export function Subculturing() {
             <div className="flex gap-2">
               <Button 
                 variant="outline" 
-                onClick={() => setShowAllRecords(!showAllRecords)}
+                onClick={() => {
+                  resetForm();
+                  setIsEditModalOpen(true);
+                }}
                 className="flex items-center gap-2"
               >
-                <Eye className="w-4 h-4" />
-                {showAllRecords ? 'Show Today Only' : 'View All Records'}
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={handleEditBatch}
-                className="flex items-center gap-2"
-              >
-                <Edit className="w-4 h-4" />
-                Edit Batch
+                <Edit2 className="w-4 h-4" />
+                Edit
               </Button>
               <Dialog open={isModalOpen} onOpenChange={(open: boolean) => {
                 setIsModalOpen(open);
@@ -327,181 +321,116 @@ export function Subculturing() {
         </CardHeader>
         <CardContent>
           {/* Edit Dialog */}
-          <Dialog open={isEditModalOpen} onOpenChange={(open: boolean) => {
-            setIsEditModalOpen(open);
-            if (!open) {
-              resetForm();
-              setEditingId(null);
-            }
-          }}>
+          <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>Edit Subculture Transfer</DialogTitle>
               </DialogHeader>
-              <div className="grid grid-cols-2 gap-4 py-4">
-                <div className="space-y-2">
-                  <Label>Transfer Date</Label>
-                  <Input 
-                    type="date" 
-                    value={subcultureForm.transferDate}
-                    onChange={(e) => {
-                      setSubcultureForm({...subcultureForm, transferDate: e.target.value, mediaCode: '', batchCode: ''});
-                      setEditingId(null);
-                    }}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Stage Number</Label>
-                  <Select value={subcultureForm.stageNumber} onValueChange={(value: string) => setSubcultureForm({...subcultureForm, stageNumber: value})}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select stage" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Stage 1">Stage 1</SelectItem>
-                      <SelectItem value="Stage 2">Stage 2</SelectItem>
-                      <SelectItem value="Stage 3">Stage 3</SelectItem>
-                      <SelectItem value="Stage 4">Stage 4</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Media Code</Label>
-                  {subcultureForm.transferDate ? (
-                    <Select 
-                      value={subcultureForm.mediaCode} 
-                      onValueChange={(value: string) => {
-                        setSubcultureForm({...subcultureForm, mediaCode: value, batchCode: ''});
-                        setEditingId(null);
-                      }}
-                    >
+              <div className="space-y-4 py-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>Select Date</Label>
+                    <Select value={selectedDate} onValueChange={handleDateSelect}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select media code" />
+                        <SelectValue placeholder="Select date" />
                       </SelectTrigger>
                       <SelectContent>
-                        {availableMediaCodes.map(code => (
-                          <SelectItem key={code} value={code}>{code}</SelectItem>
+                        {availableDates.map(date => (
+                          <SelectItem key={date} value={date}>{date}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                  ) : (
-                    <Input placeholder="Select date first" disabled />
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label>Batch Code</Label>
-                  {subcultureForm.transferDate && subcultureForm.mediaCode ? (
-                    <Select 
-                      value={editingId ? editingId.toString() : ''} // Use editingId as value to uniquely identify selected item
-                      onValueChange={(value: string) => {
-                        const selectedId = parseInt(value);
-                        const found = subcultureData.find(item => item.id === selectedId);
-                        if (found) {
-                          setSubcultureForm({
-                            transferDate: found.transferDate,
-                            stageNumber: found.stageNumber,
-                            batchCode: found.batchCode,
-                            mediaCode: found.mediaCode,
-                            species: found.species,
-                            vessels: found.vessels.toString(),
-                            shoots: found.shoots.toString(),
-                            operator: found.operator,
-                            contamination: found.contamination,
-                            remark: found.remark
-                          });
-                          setEditingId(found.id);
-                        } else {
-                          // If no item found, reset batchCode and editingId
-                          setSubcultureForm({...subcultureForm, batchCode: ''});
-                          setEditingId(null);
-                        }
-                      }}
-                    >
+                  </div>
+                  <div>
+                    <Label>Select Batch Code</Label>
+                    <Select value={selectedBatch} onValueChange={handleBatchSelect} disabled={!selectedDate}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select batch code" />
+                        <SelectValue placeholder="Select batch" />
                       </SelectTrigger>
                       <SelectContent>
-                        {availableBatchesForEdit.map(batch => (
-                          <SelectItem key={batch.id} value={batch.id.toString()}>{batch.display}</SelectItem>
+                        {availableBatches.map(batch => (
+                          <SelectItem key={batch} value={batch}>{batch}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                  ) : (
-                    <Input placeholder="Select date and media code first" disabled />
-                  )}
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label>Species</Label>
-                  <Input 
-                    placeholder="Banana" 
-                    value={subcultureForm.species}
-                    onChange={(e) => setSubcultureForm({...subcultureForm, species: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Number of Vessels</Label>
-                  <Input 
-                    type="number" 
-                    placeholder="120" 
-                    value={subcultureForm.vessels}
-                    onChange={(e) => setSubcultureForm({...subcultureForm, vessels: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>No. of Shoots</Label>
-                  <Input 
-                    type="number" 
-                    placeholder="2400" 
-                    value={subcultureForm.shoots}
-                    onChange={(e) => setSubcultureForm({...subcultureForm, shoots: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Operator Name</Label>
-                  <Input 
-                    placeholder="Enter name" 
-                    value={subcultureForm.operator}
-                    onChange={(e) => setSubcultureForm({...subcultureForm, operator: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Contamination</Label>
-                  <Input 
-                    placeholder="None or specify" 
-                    value={subcultureForm.contamination}
-                    onChange={(e) => setSubcultureForm({...subcultureForm, contamination: e.target.value})}
-                  />
-                </div>
-                <div className="space-y-2 col-span-2">
-                  <Label>Remark</Label>
-                  <Textarea 
-                    placeholder="Add any remarks..." 
-                    value={subcultureForm.remark}
-                    onChange={(e) => setSubcultureForm({...subcultureForm, remark: e.target.value})}
-                  />
-                </div>
+                
+                {editingId && (
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+                    <div>
+                      <Label>Transfer Date</Label>
+                      <Input type="date" value={subcultureForm.transferDate} onChange={(e) => setSubcultureForm({...subcultureForm, transferDate: e.target.value})} />
+                    </div>
+                    <div>
+                      <Label>Stage Number</Label>
+                      <Select value={subcultureForm.stageNumber} onValueChange={(value: string) => setSubcultureForm({...subcultureForm, stageNumber: value})}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select stage" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Stage 1">Stage 1</SelectItem>
+                          <SelectItem value="Stage 2">Stage 2</SelectItem>
+                          <SelectItem value="Stage 3">Stage 3</SelectItem>
+                          <SelectItem value="Stage 4">Stage 4</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Batch Code</Label>
+                      <Input value={subcultureForm.batchCode} onChange={(e) => setSubcultureForm({...subcultureForm, batchCode: e.target.value})} />
+                    </div>
+                    <div>
+                      <Label>Media Code</Label>
+                      <Input value={subcultureForm.mediaCode} onChange={(e) => setSubcultureForm({...subcultureForm, mediaCode: e.target.value})} />
+                    </div>
+                    <div>
+                      <Label>Species</Label>
+                      <Input value={subcultureForm.species} onChange={(e) => setSubcultureForm({...subcultureForm, species: e.target.value})} />
+                    </div>
+                    <div>
+                      <Label>Number of Vessels</Label>
+                      <Input type="number" value={subcultureForm.vessels} onChange={(e) => setSubcultureForm({...subcultureForm, vessels: e.target.value})} />
+                    </div>
+                    <div>
+                      <Label>No. of Shoots</Label>
+                      <Input type="number" value={subcultureForm.shoots} onChange={(e) => setSubcultureForm({...subcultureForm, shoots: e.target.value})} />
+                    </div>
+                    <div>
+                      <Label>Operator Name</Label>
+                      <Input value={subcultureForm.operator} onChange={(e) => setSubcultureForm({...subcultureForm, operator: e.target.value})} />
+                    </div>
+                    <div>
+                      <Label>Contamination</Label>
+                      <Input value={subcultureForm.contamination} onChange={(e) => setSubcultureForm({...subcultureForm, contamination: e.target.value})} />
+                    </div>
+                    <div className="col-span-2">
+                      <Label>Remark</Label>
+                      <Textarea value={subcultureForm.remark} onChange={(e) => setSubcultureForm({...subcultureForm, remark: e.target.value})} />
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="flex justify-between gap-3">
-                <Button 
-                  variant="destructive" 
-                  onClick={() => {
-                    if (editingId) {
-                      setDeleteConfirmOpen(true);
-                    }
-                  }}
-                  disabled={!editingId}
-                >
-                  <Trash2 className="w-4 h-4 mr-2" />
-                  Delete
+              <div className="flex justify-end gap-2 mt-4">
+                <Button variant="outline" onClick={() => { setIsEditModalOpen(false); resetForm(); }}>
+                  Cancel
                 </Button>
-                <div className="flex gap-3">
-                  <Button variant="outline" onClick={() => {
-                    setIsEditModalOpen(false);
-                    resetForm();
-                  }}>Cancel</Button>
-                  <Button className="bg-green-600 hover:bg-green-700" onClick={handleSave}>
-                    Save Changes
-                  </Button>
-                </div>
+                {editingId && (
+                  <>
+                    <Button 
+                      variant="destructive"
+                      onClick={() => setDeleteConfirmOpen(true)}
+                    >
+                      Delete Entry
+                    </Button>
+                    <Button 
+                      className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                      onClick={handleSaveChanges}
+                    >
+                      Save Changes
+                    </Button>
+                  </>
+                )}
               </div>
             </DialogContent>
           </Dialog>
@@ -523,7 +452,7 @@ export function Subculturing() {
                 </tr>
               </thead>
               <tbody>
-                {filteredData.map((item) => (
+                {subcultureData.map((item) => (
                   <tr key={item.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm">{item.transferDate}</td>
                     <td className="px-4 py-3 text-sm">
@@ -563,14 +492,14 @@ export function Subculturing() {
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogTitle>Delete Entry</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete this record.
+              Are you sure you want to delete this entry? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
+            <AlertDialogAction onClick={handleDeleteEntry} className="bg-red-600 hover:bg-red-700">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

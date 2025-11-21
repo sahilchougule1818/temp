@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
-import { Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
@@ -59,10 +59,13 @@ export function CleaningRecord() {
   const [activeTab, setActiveTab] = useState('cleaning');
   const [editingCleaningId, setEditingCleaningId] = useState<number | null>(null);
   const [editingDeepCleaningId, setEditingDeepCleaningId] = useState<number | null>(null);
-  const [showAllCleaningRecords, setShowAllCleaningRecords] = useState(false);
-  const [showAllDeepCleaningRecords, setShowAllDeepCleaningRecords] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ type: 'cleaning' | 'deepCleaning', id: number } | null>(null);
+  
+  const [selectedCleaningDate, setSelectedCleaningDate] = useState('');
+  const [selectedCleaningArea, setSelectedCleaningArea] = useState('');
+  const [selectedDeepCleaningDate, setSelectedDeepCleaningDate] = useState('');
+  const [selectedDeepCleaningMachine, setSelectedDeepCleaningMachine] = useState('');
   
   const [cleaningForm, setCleaningForm] = useState({
     date: '',
@@ -134,6 +137,94 @@ export function CleaningRecord() {
     return Array.from(new Set(recordsForDate.map(item => item.machineName)));
   }, [deepCleaningForm.date, deepCleaningData]);
 
+  // Edit modal useMemos - Cleaning
+  const availableCleaningDates = useMemo(() => {
+    return Array.from(new Set(cleaningData.map(record => record.date))).sort().reverse();
+  }, [cleaningData]);
+
+  const availableCleaningAreas = useMemo(() => {
+    if (!selectedCleaningDate) return [];
+    return Array.from(new Set(cleaningData.filter(record => record.date === selectedCleaningDate).map(record => record.area)));
+  }, [selectedCleaningDate, cleaningData]);
+
+  // Edit modal useMemos - Deep Cleaning
+  const availableDeepCleaningDates = useMemo(() => {
+    return Array.from(new Set(deepCleaningData.map(record => record.date))).sort().reverse();
+  }, [deepCleaningData]);
+
+  const availableDeepCleaningMachines = useMemo(() => {
+    if (!selectedDeepCleaningDate) return [];
+    return Array.from(new Set(deepCleaningData.filter(record => record.date === selectedDeepCleaningDate).map(record => record.machineName)));
+  }, [selectedDeepCleaningDate, deepCleaningData]);
+
+  // Cleaning Edit handlers
+  const handleCleaningDateSelect = (date: string) => {
+    setSelectedCleaningDate(date);
+    setSelectedCleaningArea('');
+    setCleaningForm({ date: '', operator: '', area: '' });
+    setEditingCleaningId(null);
+  };
+
+  const handleCleaningAreaSelect = (area: string) => {
+    setSelectedCleaningArea(area);
+    const recordData = cleaningData.find(record => record.date === selectedCleaningDate && record.area === area);
+    if (recordData) {
+      setCleaningForm({ date: recordData.date, operator: recordData.operator, area: recordData.area });
+      setEditingCleaningId(recordData.id);
+    }
+  };
+
+  const handleSaveCleaningChanges = () => {
+    if (editingCleaningId) {
+      setCleaningData(cleaningData.map(item => item.id === editingCleaningId ? { ...item, ...cleaningForm } : item));
+    }
+    setIsEditCleaningModalOpen(false);
+    resetCleaningForm();
+  };
+
+  const handleDeleteCleaningEntry = () => {
+    if (editingCleaningId) {
+      setCleaningData(cleaningData.filter(item => item.id !== editingCleaningId));
+    }
+    setIsEditCleaningModalOpen(false);
+    setDeleteConfirmOpen(false);
+    resetCleaningForm();
+  };
+
+  // Deep Cleaning Edit handlers
+  const handleDeepCleaningDateSelect = (date: string) => {
+    setSelectedDeepCleaningDate(date);
+    setSelectedDeepCleaningMachine('');
+    setDeepCleaningForm({ machineName: '', cleanedBy: '', date: '', sign: '' });
+    setEditingDeepCleaningId(null);
+  };
+
+  const handleDeepCleaningMachineSelect = (machine: string) => {
+    setSelectedDeepCleaningMachine(machine);
+    const recordData = deepCleaningData.find(record => record.date === selectedDeepCleaningDate && record.machineName === machine);
+    if (recordData) {
+      setDeepCleaningForm({ machineName: recordData.machineName, cleanedBy: recordData.cleanedBy, date: recordData.date, sign: recordData.sign });
+      setEditingDeepCleaningId(recordData.id);
+    }
+  };
+
+  const handleSaveDeepCleaningChanges = () => {
+    if (editingDeepCleaningId) {
+      setDeepCleaningData(deepCleaningData.map(item => item.id === editingDeepCleaningId ? { ...item, ...deepCleaningForm } : item));
+    }
+    setIsEditDeepCleaningModalOpen(false);
+    resetDeepCleaningForm();
+  };
+
+  const handleDeleteDeepCleaningEntry = () => {
+    if (editingDeepCleaningId) {
+      setDeepCleaningData(deepCleaningData.filter(item => item.id !== editingDeepCleaningId));
+    }
+    setIsEditDeepCleaningModalOpen(false);
+    setDeleteConfirmOpen(false);
+    resetDeepCleaningForm();
+  };
+
   const handleEditBatch = () => {
     if (activeTab === 'cleaning') {
       setEditingCleaningId(null);
@@ -187,59 +278,28 @@ export function CleaningRecord() {
   };
 
   const resetCleaningForm = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${year}-${month}-${day}`;
-    
+    setSelectedCleaningDate('');
+    setSelectedCleaningArea('');
     setEditingCleaningId(null);
     setCleaningForm({
-      date: todayStr,
+      date: '',
       operator: '',
       area: ''
     });
   };
 
   const resetDeepCleaningForm = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${year}-${month}-${day}`;
-    
+    setSelectedDeepCleaningDate('');
+    setSelectedDeepCleaningMachine('');
     setEditingDeepCleaningId(null);
     setDeepCleaningForm({
       machineName: '',
       cleanedBy: '',
-      date: todayStr,
+      date: '',
       sign: ''
     });
   };
 
-  // Get today's date in YYYY-MM-DD format (use function to get current date each time)
-  const getToday = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-  
-  // Filter data based on showAllRecords
-  const filteredCleaningData = showAllCleaningRecords 
-    ? cleaningData 
-    : (cleaningData || []).filter(item => {
-        const today = getToday();
-        return item?.date === today;
-      });
-
-  const filteredDeepCleaningData = showAllDeepCleaningRecords 
-    ? deepCleaningData 
-    : (deepCleaningData || []).filter(item => {
-        const today = getToday();
-        return item?.date === today;
-      });
 
   return (
     <div className="p-6">
@@ -250,11 +310,19 @@ export function CleaningRecord() {
             <div className="flex gap-2">
               <Button 
                 variant="outline" 
-                onClick={handleEditBatch}
+                onClick={() => {
+                  if (activeTab === 'cleaning') {
+                    resetCleaningForm();
+                    setIsEditCleaningModalOpen(true);
+                  } else {
+                    resetDeepCleaningForm();
+                    setIsEditDeepCleaningModalOpen(true);
+                  }
+                }}
                 className="flex items-center gap-2"
               >
-                <Edit className="w-4 h-4" />
-                Edit Batch
+                <Edit2 className="w-4 h-4" />
+                Edit
               </Button>
             </div>
           </div>
@@ -269,14 +337,6 @@ export function CleaningRecord() {
             <TabsContent value="cleaning">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowAllCleaningRecords(!showAllCleaningRecords)}
-                    className="flex items-center gap-2"
-                  >
-                    <Eye className="w-4 h-4" />
-                    {showAllCleaningRecords ? 'Show Today Only' : 'View All Records'}
-                  </Button>
                   <Dialog open={isCleaningModalOpen} onOpenChange={(open) => {
                     setIsCleaningModalOpen(open);
                     if (!open) resetCleaningForm();
@@ -472,7 +532,7 @@ export function CleaningRecord() {
                 </tr>
               </thead>
               <tbody>
-                      {filteredCleaningData.map((item) => (
+                      {cleaningData.map((item) => (
                   <tr key={item.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm">{item.date}</td>
                     <td className="px-4 py-3 text-sm">{item.operator}</td>
@@ -492,14 +552,6 @@ export function CleaningRecord() {
             <TabsContent value="deepCleaning">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowAllDeepCleaningRecords(!showAllDeepCleaningRecords)}
-                    className="flex items-center gap-2"
-                  >
-                    <Eye className="w-4 h-4" />
-                    {showAllDeepCleaningRecords ? 'Show Today Only' : 'View All Records'}
-                  </Button>
                   <Dialog open={isDeepCleaningModalOpen} onOpenChange={(open) => {
                     setIsDeepCleaningModalOpen(open);
                     if (!open) resetDeepCleaningForm();
@@ -675,7 +727,7 @@ export function CleaningRecord() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredDeepCleaningData.map((item) => (
+                      {deepCleaningData.map((item) => (
                         <tr key={item.id} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm">{item.machineName}</td>
                           <td className="px-4 py-3 text-sm">{item.cleanedBy}</td>

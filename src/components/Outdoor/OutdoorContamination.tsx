@@ -1,15 +1,16 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
-import { Plus, Download, Eye, AlertTriangle } from 'lucide-react';
+import { Plus, Download, Edit2, AlertTriangle } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
 import { DataTable } from '../common/DataTable';
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 
 const mortalityData = [
   {
@@ -49,7 +50,22 @@ const mortalityData = [
 
 export function Mortality() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showAllRecords, setShowAllRecords] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedBatch, setSelectedBatch] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  
+  const [formData, setFormData] = useState({
+    date: '',
+    cropName: '',
+    batch: '',
+    location: '',
+    mortalityType: '',
+    affectedPlants: '',
+    actionTaken: '',
+    notes: ''
+  });
   
   const columns = [
     { key: 'date', label: 'Date' },
@@ -62,13 +78,77 @@ export function Mortality() {
     { key: 'notes', label: 'Notes' },
   ];
 
-  const filteredData = showAllRecords ? mortalityData : mortalityData.filter(record => {
-    const recordDate = new Date(record.date);
-    const today = new Date();
-    const diffTime = Math.abs(today.getTime() - recordDate.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays <= 7;
-  });
+  const availableDates = useMemo(() => {
+    return Array.from(new Set(mortalityData.map(record => record.date))).sort();
+  }, []);
+
+  const availableBatches = useMemo(() => {
+    if (!selectedDate) return [];
+    return Array.from(new Set(mortalityData.filter(record => record.date === selectedDate).map(record => record.batch)));
+  }, [selectedDate]);
+
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
+    setSelectedBatch('');
+    setFormData({
+      date: '',
+      cropName: '',
+      batch: '',
+      location: '',
+      mortalityType: '',
+      affectedPlants: '',
+      actionTaken: '',
+      notes: ''
+    });
+    setEditingId(null);
+  };
+
+  const handleBatchSelect = (batch: string) => {
+    setSelectedBatch(batch);
+    const recordData = mortalityData.find(record => record.date === selectedDate && record.batch === batch);
+    if (recordData) {
+      setFormData({
+        date: recordData.date,
+        cropName: recordData.cropName,
+        batch: recordData.batch,
+        location: recordData.location,
+        mortalityType: recordData.mortalityType,
+        affectedPlants: String(recordData.affectedPlants),
+        actionTaken: recordData.actionTaken,
+        notes: recordData.notes
+      });
+      setEditingId(recordData.id);
+    }
+  };
+
+  const handleSaveChanges = () => {
+    console.log('Saving changes:', formData);
+    setIsEditModalOpen(false);
+    resetForm();
+  };
+
+  const handleDeleteEntry = () => {
+    console.log('Deleting entry:', editingId);
+    setIsEditModalOpen(false);
+    setDeleteConfirmOpen(false);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setSelectedDate('');
+    setSelectedBatch('');
+    setEditingId(null);
+    setFormData({
+      date: '',
+      cropName: '',
+      batch: '',
+      location: '',
+      mortalityType: '',
+      affectedPlants: '',
+      actionTaken: '',
+      notes: ''
+    });
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -108,14 +188,121 @@ export function Mortality() {
         <div className="flex justify-between items-center mb-4">
           <h2>Outdoor Mortality Register</h2>
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setShowAllRecords(!showAllRecords)}
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              {showAllRecords ? 'Show Today Only' : 'View All Records'}
-            </Button>
+            <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => resetForm()}
+                >
+                  <Edit2 className="w-4 h-4 mr-2" />
+                  Edit
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Edit Mortality Entry</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Select Date</Label>
+                      <Select value={selectedDate} onValueChange={handleDateSelect}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select date" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableDates.map(date => (
+                            <SelectItem key={date} value={date}>{date}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Select Batch Code</Label>
+                      <Select value={selectedBatch} onValueChange={handleBatchSelect} disabled={!selectedDate}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select batch" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableBatches.map(batch => (
+                            <SelectItem key={batch} value={batch}>{batch}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  {editingId && (
+                    <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+                      <div>
+                        <Label>Date</Label>
+                        <Input type="date" value={formData.date} onChange={(e) => setFormData({...formData, date: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Crop Name</Label>
+                        <Input value={formData.cropName} onChange={(e) => setFormData({...formData, cropName: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Batch</Label>
+                        <Input value={formData.batch} onChange={(e) => setFormData({...formData, batch: e.target.value})} />
+                      </div>
+                      <div className="col-span-2">
+                        <Label>Location</Label>
+                        <Input value={formData.location} onChange={(e) => setFormData({...formData, location: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Mortality Type</Label>
+                        <Select value={formData.mortalityType} onValueChange={(value) => setFormData({...formData, mortalityType: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Fungal">Fungal</SelectItem>
+                            <SelectItem value="Bacterial">Bacterial</SelectItem>
+                            <SelectItem value="Physiological">Physiological</SelectItem>
+                            <SelectItem value="Viral">Viral</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Affected Plants</Label>
+                        <Input type="number" value={formData.affectedPlants} onChange={(e) => setFormData({...formData, affectedPlants: e.target.value})} />
+                      </div>
+                      <div className="col-span-2">
+                        <Label>Action Taken</Label>
+                        <Input value={formData.actionTaken} onChange={(e) => setFormData({...formData, actionTaken: e.target.value})} />
+                      </div>
+                      <div className="col-span-3">
+                        <Label>Notes</Label>
+                        <Textarea value={formData.notes} onChange={(e) => setFormData({...formData, notes: e.target.value})} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {editingId && (
+                  <div className="flex justify-between mt-4">
+                    <Button 
+                      variant="destructive" 
+                      onClick={() => setDeleteConfirmOpen(true)}
+                    >
+                      Delete Entry
+                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" onClick={() => { setIsEditModalOpen(false); resetForm(); }}>
+                        Cancel
+                      </Button>
+                      <Button 
+                        className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                        onClick={handleSaveChanges}
+                      >
+                        Save Changes
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" />
               Export
@@ -214,11 +401,27 @@ export function Mortality() {
 
         <DataTable 
           columns={columns} 
-          data={filteredData}
-          onEdit={(row) => console.log('Edit', row)}
-          onDelete={(row) => console.log('Delete', row)}
+          data={mortalityData}
+          showActions={false}
         />
       </div>
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this mortality entry.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteEntry} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

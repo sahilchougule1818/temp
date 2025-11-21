@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
-import { Plus, Download, Eye, ArrowRight } from 'lucide-react';
+import { Plus, Download, Edit2, ArrowRight } from 'lucide-react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 import { FilterBar } from '../common/FilterBar';
 import { DataTable } from '../common/DataTable';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
@@ -34,7 +35,21 @@ const secondaryData = [
 
 export function SecondaryHardening() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showAllRecords, setShowAllRecords] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedBatch, setSelectedBatch] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  
+  const [formData, setFormData] = useState({
+    transferDate: '',
+    cropName: '',
+    batchName: '',
+    from: '',
+    toBed: '',
+    plants: '',
+    notes: ''
+  });
 
   const columns = [
     { key: 'transferDate', label: 'Transfer Date' },
@@ -46,13 +61,74 @@ export function SecondaryHardening() {
     { key: 'notes', label: 'Notes' },
   ];
 
-  const filteredData = showAllRecords ? secondaryData : secondaryData.filter(record => {
-    const recordDate = new Date(record.transferDate);
-    const today = new Date();
-    const diffTime = Math.abs(today.getTime() - recordDate.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays <= 7;
-  });
+  const availableDates = useMemo(() => {
+    return Array.from(new Set(secondaryData.map(record => record.transferDate))).sort();
+  }, []);
+
+  const availableBatches = useMemo(() => {
+    if (!selectedDate) return [];
+    return Array.from(new Set(secondaryData.filter(record => record.transferDate === selectedDate).map(record => record.batchName)));
+  }, [selectedDate]);
+
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
+    setSelectedBatch('');
+    setFormData({
+      transferDate: '',
+      cropName: '',
+      batchName: '',
+      from: '',
+      toBed: '',
+      plants: '',
+      notes: ''
+    });
+    setEditingId(null);
+  };
+
+  const handleBatchSelect = (batch: string) => {
+    setSelectedBatch(batch);
+    const recordData = secondaryData.find(record => record.transferDate === selectedDate && record.batchName === batch);
+    if (recordData) {
+      setFormData({
+        transferDate: recordData.transferDate,
+        cropName: recordData.cropName,
+        batchName: recordData.batchName,
+        from: recordData.from,
+        toBed: recordData.toBed,
+        plants: String(recordData.plants),
+        notes: recordData.notes
+      });
+      setEditingId(recordData.id);
+    }
+  };
+
+  const handleSaveChanges = () => {
+    console.log('Saving changes:', formData);
+    setIsEditModalOpen(false);
+    resetForm();
+  };
+
+  const handleDeleteEntry = () => {
+    console.log('Deleting entry:', editingId);
+    setIsEditModalOpen(false);
+    setDeleteConfirmOpen(false);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setSelectedDate('');
+    setSelectedBatch('');
+    setEditingId(null);
+    setFormData({
+      transferDate: '',
+      cropName: '',
+      batchName: '',
+      from: '',
+      toBed: '',
+      plants: '',
+      notes: ''
+    });
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -62,14 +138,107 @@ export function SecondaryHardening() {
         <div className="flex justify-between items-center mb-4">
           <h2>Secondary Hardening Register</h2>
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setShowAllRecords(!showAllRecords)}
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              {showAllRecords ? 'Show Today Only' : 'View All Records'}
-            </Button>
+            <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => resetForm()}
+                >
+                  <Edit2 className="w-4 h-4 mr-2" />
+                  Edit
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Edit Secondary Hardening Entry</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Select Date</Label>
+                      <Select value={selectedDate} onValueChange={handleDateSelect}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select date" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableDates.map(date => (
+                            <SelectItem key={date} value={date}>{date}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Select Batch Code</Label>
+                      <Select value={selectedBatch} onValueChange={handleBatchSelect} disabled={!selectedDate}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select batch" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableBatches.map(batch => (
+                            <SelectItem key={batch} value={batch}>{batch}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  {editingId && (
+                    <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+                      <div>
+                        <Label>Transfer Date</Label>
+                        <Input type="date" value={formData.transferDate} onChange={(e) => setFormData({...formData, transferDate: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Crop Name</Label>
+                        <Input value={formData.cropName} onChange={(e) => setFormData({...formData, cropName: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Batch Name</Label>
+                        <Input value={formData.batchName} onChange={(e) => setFormData({...formData, batchName: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>From (Primary)</Label>
+                        <Input value={formData.from} onChange={(e) => setFormData({...formData, from: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>To Bed (Secondary)</Label>
+                        <Input value={formData.toBed} onChange={(e) => setFormData({...formData, toBed: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Plants</Label>
+                        <Input type="number" value={formData.plants} onChange={(e) => setFormData({...formData, plants: e.target.value})} />
+                      </div>
+                      <div className="col-span-2">
+                        <Label>Notes</Label>
+                        <Textarea value={formData.notes} onChange={(e) => setFormData({...formData, notes: e.target.value})} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="flex justify-end gap-2 mt-4">
+                  <Button variant="outline" onClick={() => { setIsEditModalOpen(false); resetForm(); }}>
+                    Cancel
+                  </Button>
+                  {editingId && (
+                    <>
+                      <Button 
+                        variant="destructive"
+                        onClick={() => setDeleteConfirmOpen(true)}
+                      >
+                        Delete Entry
+                      </Button>
+                      <Button 
+                        className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                        onClick={handleSaveChanges}
+                      >
+                        Save Changes
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" />
               Export
@@ -207,11 +376,27 @@ export function SecondaryHardening() {
 
         <DataTable 
           columns={columns} 
-          data={filteredData}
-          onEdit={(row) => console.log('Edit', row)}
-          onDelete={(row) => console.log('Delete', row)}
+          data={secondaryData}
+          showActions={false}
         />
       </div>
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Entry</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this entry? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteEntry} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

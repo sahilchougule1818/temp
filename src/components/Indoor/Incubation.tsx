@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
-import { Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
@@ -75,10 +75,11 @@ export function Incubation() {
   const [activeTab, setActiveTab] = useState('incubation');
   const [editingIncubationId, setEditingIncubationId] = useState<number | null>(null);
   const [editingContaminationId, setEditingContaminationId] = useState<number | null>(null);
-  const [showAllIncubationRecords, setShowAllIncubationRecords] = useState(false);
-  const [showAllContaminationRecords, setShowAllContaminationRecords] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<{ type: 'incubation' | 'contamination', id: number } | null>(null);
+  const [selectedIncubationDate, setSelectedIncubationDate] = useState('');
+  const [selectedIncubationBatch, setSelectedIncubationBatch] = useState('');
+  const [selectedContaminationDate, setSelectedContaminationDate] = useState('');
+  const [selectedContaminationBatch, setSelectedContaminationBatch] = useState('');
   
   // Incubation form state
   const [incubationForm, setIncubationForm] = useState({
@@ -149,102 +150,148 @@ export function Incubation() {
     resetContaminationForm();
   };
 
-  // Get available media codes for selected date (from Media Preparation)
-  const availableMediaCodes = useMemo(() => {
-    if (!incubationForm.subcultureDate) return [];
-    const cyclesForDate = mediaPrepAutoclaveCycles.filter(cycle => cycle.date === incubationForm.subcultureDate);
-    return Array.from(new Set(cyclesForDate.map(cycle => cycle.mediaCode)));
-  }, [incubationForm.subcultureDate]);
+  // Incubation Edit: Get all available dates and batches
+  const availableIncubationDates = useMemo(() => {
+    return Array.from(new Set(incubationData.map(record => record.subcultureDate))).sort();
+  }, [incubationData]);
 
-  // Get available batch numbers for selected date and media code
-  const availableBatchNumbers = useMemo(() => {
-    if (!incubationForm.subcultureDate || !incubationForm.mediaCode) return [];
-    const batchesForDateAndMedia = incubationData.filter(item => 
-      item.subcultureDate === incubationForm.subcultureDate && item.mediaCode === incubationForm.mediaCode
-    );
-    return Array.from(new Set(batchesForDateAndMedia.map(item => item.batchNumber)));
-  }, [incubationForm.subcultureDate, incubationForm.mediaCode, incubationData]);
+  const availableIncubationBatches = useMemo(() => {
+    if (!selectedIncubationDate) return [];
+    return Array.from(new Set(incubationData.filter(record => record.subcultureDate === selectedIncubationDate).map(record => record.batchNumber)));
+  }, [selectedIncubationDate, incubationData]);
 
-  // Get available batch numbers for contamination (from incubation data for selected date)
-  const availableContaminationBatchNumbers = useMemo(() => {
-    if (!contaminationForm.date) return [];
-    const batchesForDate = incubationData.filter(item => item.subcultureDate === contaminationForm.date);
-    return Array.from(new Set(batchesForDate.map(item => item.batchNumber)));
-  }, [contaminationForm.date, incubationData]);
+  // Contamination Edit: Get all available dates and batches
+  const availableContaminationDates = useMemo(() => {
+    return Array.from(new Set(contaminationData.map(record => record.date))).sort();
+  }, [contaminationData]);
 
-  const handleEditBatch = () => {
-    if (activeTab === 'incubation') {
-      setEditingIncubationId(null);
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
-      const todayStr = `${year}-${month}-${day}`;
-      
+  const availableContaminationBatches = useMemo(() => {
+    if (!selectedContaminationDate) return [];
+    return Array.from(new Set(contaminationData.filter(record => record.date === selectedContaminationDate).map(record => record.batchNumber)));
+  }, [selectedContaminationDate, contaminationData]);
+
+  // Incubation handlers
+  const handleIncubationDateSelect = (date: string) => {
+    setSelectedIncubationDate(date);
+    setSelectedIncubationBatch('');
+    setIncubationForm({
+      subcultureDate: '',
+      stage: '',
+      batchNumber: '',
+      mediaCode: '',
+      operator: '',
+      species: '',
+      vessels: '',
+      shoots: '',
+      temp: '',
+      humidity: '',
+      photoperiod: '',
+      lightIntensity: ''
+    });
+    setEditingIncubationId(null);
+  };
+
+  const handleIncubationBatchSelect = (batch: string) => {
+    setSelectedIncubationBatch(batch);
+    const recordData = incubationData.find(record => record.subcultureDate === selectedIncubationDate && record.batchNumber === batch);
+    if (recordData) {
       setIncubationForm({
-        subcultureDate: todayStr,
-        stage: '',
-        batchNumber: '',
-        mediaCode: '',
-        operator: '',
-        species: '',
-        vessels: '',
-        shoots: '',
-        temp: '',
-        humidity: '',
-        photoperiod: '',
-        lightIntensity: ''
+        subcultureDate: recordData.subcultureDate,
+        stage: recordData.stage,
+        batchNumber: recordData.batchNumber,
+        mediaCode: recordData.mediaCode,
+        operator: recordData.operator,
+        species: recordData.species,
+        vessels: String(recordData.vessels),
+        shoots: String(recordData.shoots),
+        temp: recordData.temp,
+        humidity: recordData.humidity,
+        photoperiod: recordData.photoperiod,
+        lightIntensity: recordData.lightIntensity
       });
-      setIsEditIncubationModalOpen(true);
-    } else {
-      setEditingContaminationId(null);
-      const today = new Date();
-      const year = today.getFullYear();
-      const month = String(today.getMonth() + 1).padStart(2, '0');
-      const day = String(today.getDate()).padStart(2, '0');
-      const todayStr = `${year}-${month}-${day}`;
-      
-      setContaminationForm({
-        date: todayStr,
-        batchNumber: '',
-        vesselCount: '',
-        type: '',
-        possibleSource: '',
-        disposalMethod: ''
-      });
-      setIsEditContaminationModalOpen(true);
+      setEditingIncubationId(recordData.id);
     }
   };
 
-  const handleDelete = () => {
-    if (!itemToDelete) return;
-    if (itemToDelete.type === 'incubation') {
-      setIncubationData(incubationData.filter(item => item.id !== itemToDelete.id));
-    } else {
-      setContaminationData(contaminationData.filter(item => item.id !== itemToDelete.id));
+  const handleSaveIncubationChanges = () => {
+    if (editingIncubationId) {
+      setIncubationData(incubationData.map(item => 
+        item.id === editingIncubationId 
+          ? { ...item, ...incubationForm, vessels: parseInt(incubationForm.vessels) || 0, shoots: parseInt(incubationForm.shoots) || 0 }
+          : item
+      ));
     }
+    setIsEditIncubationModalOpen(false);
+    resetIncubationForm();
+  };
+
+  const handleDeleteIncubationEntry = () => {
+    if (editingIncubationId) {
+      setIncubationData(incubationData.filter(item => item.id !== editingIncubationId));
+    }
+    setIsEditIncubationModalOpen(false);
     setDeleteConfirmOpen(false);
-    setItemToDelete(null);
-    if (isEditIncubationModalOpen) {
-      setIsEditIncubationModalOpen(false);
-      resetIncubationForm();
+    resetIncubationForm();
+  };
+
+  // Contamination handlers
+  const handleContaminationDateSelect = (date: string) => {
+    setSelectedContaminationDate(date);
+    setSelectedContaminationBatch('');
+    setContaminationForm({
+      date: '',
+      batchNumber: '',
+      vesselCount: '',
+      type: '',
+      possibleSource: '',
+      disposalMethod: ''
+    });
+    setEditingContaminationId(null);
+  };
+
+  const handleContaminationBatchSelect = (batch: string) => {
+    setSelectedContaminationBatch(batch);
+    const recordData = contaminationData.find(record => record.date === selectedContaminationDate && record.batchNumber === batch);
+    if (recordData) {
+      setContaminationForm({
+        date: recordData.date,
+        batchNumber: recordData.batchNumber,
+        vesselCount: String(recordData.vesselCount),
+        type: recordData.type,
+        possibleSource: recordData.possibleSource,
+        disposalMethod: recordData.disposalMethod
+      });
+      setEditingContaminationId(recordData.id);
     }
-    if (isEditContaminationModalOpen) {
-      setIsEditContaminationModalOpen(false);
-      resetContaminationForm();
+  };
+
+  const handleSaveContaminationChanges = () => {
+    if (editingContaminationId) {
+      setContaminationData(contaminationData.map(item => 
+        item.id === editingContaminationId 
+          ? { ...item, ...contaminationForm, vesselCount: parseInt(contaminationForm.vesselCount) || 0 }
+          : item
+      ));
     }
+    setIsEditContaminationModalOpen(false);
+    resetContaminationForm();
+  };
+
+  const handleDeleteContaminationEntry = () => {
+    if (editingContaminationId) {
+      setContaminationData(contaminationData.filter(item => item.id !== editingContaminationId));
+    }
+    setIsEditContaminationModalOpen(false);
+    setDeleteConfirmOpen(false);
+    resetContaminationForm();
   };
 
   const resetIncubationForm = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${year}-${month}-${day}`;
-    
+    setSelectedIncubationDate('');
+    setSelectedIncubationBatch('');
     setEditingIncubationId(null);
     setIncubationForm({
-      subcultureDate: todayStr,
+      subcultureDate: '',
       stage: '',
       batchNumber: '',
       mediaCode: '',
@@ -260,15 +307,11 @@ export function Incubation() {
   };
 
   const resetContaminationForm = () => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const todayStr = `${year}-${month}-${day}`;
-    
+    setSelectedContaminationDate('');
+    setSelectedContaminationBatch('');
     setEditingContaminationId(null);
     setContaminationForm({
-      date: todayStr,
+      date: '',
       batchNumber: '',
       vesselCount: '',
       type: '',
@@ -277,29 +320,6 @@ export function Incubation() {
     });
   };
 
-  // Get today's date in YYYY-MM-DD format (use function to get current date each time)
-  const getToday = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-  
-  // Filter data based on showAllRecords
-  const filteredIncubationData = showAllIncubationRecords 
-    ? incubationData 
-    : (incubationData || []).filter(item => {
-        const today = getToday();
-        return item?.subcultureDate === today;
-      });
-
-  const filteredContaminationData = showAllContaminationRecords 
-    ? contaminationData 
-    : (contaminationData || []).filter(item => {
-        const today = getToday();
-        return item?.date === today;
-      });
 
   return (
     <div className="p-6">
@@ -310,11 +330,19 @@ export function Incubation() {
             <div className="flex gap-2">
               <Button 
                 variant="outline" 
-                onClick={handleEditBatch}
+                onClick={() => {
+                  if (activeTab === 'incubation') {
+                    resetIncubationForm();
+                    setIsEditIncubationModalOpen(true);
+                  } else {
+                    resetContaminationForm();
+                    setIsEditContaminationModalOpen(true);
+                  }
+                }}
                 className="flex items-center gap-2"
               >
-                <Edit className="w-4 h-4" />
-                Edit Batch
+                <Edit2 className="w-4 h-4" />
+                Edit
               </Button>
             </div>
           </div>
@@ -329,14 +357,6 @@ export function Incubation() {
             <TabsContent value="incubation">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowAllIncubationRecords(!showAllIncubationRecords)}
-                    className="flex items-center gap-2"
-                  >
-                    <Eye className="w-4 h-4" />
-                    {showAllIncubationRecords ? 'Show Today Only' : 'View All Records'}
-                  </Button>
                   <Dialog open={isIncubationModalOpen} onOpenChange={(open) => {
                     setIsIncubationModalOpen(open);
                     if (!open) resetIncubationForm();
@@ -471,201 +491,124 @@ export function Incubation() {
                 </div>
 
                 {/* Edit Incubation Dialog */}
-                <Dialog open={isEditIncubationModalOpen} onOpenChange={(open) => {
-                  setIsEditIncubationModalOpen(open);
-                  if (!open) {
-                    resetIncubationForm();
-                    setEditingIncubationId(null);
-                  }
-                }}>
+                <Dialog open={isEditIncubationModalOpen} onOpenChange={setIsEditIncubationModalOpen}>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
                       <DialogTitle>Edit Incubation Record</DialogTitle>
                     </DialogHeader>
-                    <div className="grid grid-cols-2 gap-4 py-4">
-                      <div className="space-y-2">
-                        <Label>Subculture Date</Label>
-                        <Input 
-                          type="date" 
-                          value={incubationForm.subcultureDate}
-                          onChange={(e) => {
-                            setIncubationForm({...incubationForm, subcultureDate: e.target.value, mediaCode: '', batchNumber: ''});
-                            setEditingIncubationId(null);
-                          }}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Stage</Label>
-                        <Select value={incubationForm.stage} onValueChange={(value) => setIncubationForm({...incubationForm, stage: value})}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select stage" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Stage 1">Stage 1</SelectItem>
-                            <SelectItem value="Stage 2">Stage 2</SelectItem>
-                            <SelectItem value="Stage 3">Stage 3</SelectItem>
-                            <SelectItem value="Stage 4">Stage 4</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Media Code</Label>
-                        {incubationForm.subcultureDate ? (
-                          <Select 
-                            value={incubationForm.mediaCode} 
-                            onValueChange={(value) => {
-                              setIncubationForm({...incubationForm, mediaCode: value, batchNumber: ''});
-                              setEditingIncubationId(null);
-                            }}
-                          >
+                    <div className="space-y-4 py-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label>Select Date</Label>
+                          <Select value={selectedIncubationDate} onValueChange={handleIncubationDateSelect}>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select media code" />
+                              <SelectValue placeholder="Select date" />
                             </SelectTrigger>
                             <SelectContent>
-                              {availableMediaCodes.map(code => (
-                                <SelectItem key={code} value={code}>{code}</SelectItem>
+                              {availableIncubationDates.map(date => (
+                                <SelectItem key={date} value={date}>{date}</SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                        ) : (
-                          <Input placeholder="Select date first" disabled />
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Batch Number</Label>
-                        {incubationForm.subcultureDate && incubationForm.mediaCode ? (
-                          <Select 
-                            value={incubationForm.batchNumber} 
-                            onValueChange={(value) => {
-                              const found = incubationData.find(item => 
-                                item.subcultureDate === incubationForm.subcultureDate && 
-                                item.mediaCode === incubationForm.mediaCode && 
-                                item.batchNumber === value
-                              );
-                              if (found) {
-                                setIncubationForm({
-                                  subcultureDate: found.subcultureDate,
-                                  stage: found.stage,
-                                  batchNumber: found.batchNumber,
-                                  mediaCode: found.mediaCode,
-                                  operator: found.operator,
-                                  species: found.species,
-                                  vessels: found.vessels.toString(),
-                                  shoots: found.shoots.toString(),
-                                  temp: found.temp,
-                                  humidity: found.humidity,
-                                  photoperiod: found.photoperiod,
-                                  lightIntensity: found.lightIntensity
-                                });
-                                setEditingIncubationId(found.id);
-                              } else {
-                                setIncubationForm({...incubationForm, batchNumber: value});
-                              }
-                            }}
-                          >
+                        </div>
+                        <div>
+                          <Label>Select Batch Number</Label>
+                          <Select value={selectedIncubationBatch} onValueChange={handleIncubationBatchSelect} disabled={!selectedIncubationDate}>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select batch number" />
+                              <SelectValue placeholder="Select batch" />
                             </SelectTrigger>
                             <SelectContent>
-                              {availableBatchNumbers.map(batch => (
+                              {availableIncubationBatches.map(batch => (
                                 <SelectItem key={batch} value={batch}>{batch}</SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                        ) : (
-                          <Input placeholder="Select date and media code first" disabled />
-                        )}
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label>Operator Name</Label>
-                        <Input 
-                          placeholder="Enter name" 
-                          value={incubationForm.operator}
-                          onChange={(e) => setIncubationForm({...incubationForm, operator: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Species</Label>
-                        <Input 
-                          placeholder="Banana" 
-                          value={incubationForm.species}
-                          onChange={(e) => setIncubationForm({...incubationForm, species: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>No. of Vessels</Label>
-                        <Input 
-                          type="number" 
-                          placeholder="120" 
-                          value={incubationForm.vessels}
-                          onChange={(e) => setIncubationForm({...incubationForm, vessels: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>No. of Shoots</Label>
-                        <Input 
-                          type="number" 
-                          placeholder="2400" 
-                          value={incubationForm.shoots}
-                          onChange={(e) => setIncubationForm({...incubationForm, shoots: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Temp</Label>
-                        <Input 
-                          placeholder="25°C" 
-                          value={incubationForm.temp}
-                          onChange={(e) => setIncubationForm({...incubationForm, temp: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Humidity</Label>
-                        <Input 
-                          placeholder="65%" 
-                          value={incubationForm.humidity}
-                          onChange={(e) => setIncubationForm({...incubationForm, humidity: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Photo Period</Label>
-                        <Input 
-                          placeholder="16/8" 
-                          value={incubationForm.photoperiod}
-                          onChange={(e) => setIncubationForm({...incubationForm, photoperiod: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Light Intensity</Label>
-                        <Input 
-                          placeholder="3000 lux" 
-                          value={incubationForm.lightIntensity}
-                          onChange={(e) => setIncubationForm({...incubationForm, lightIntensity: e.target.value})}
-                        />
-                      </div>
+                      
+                      {editingIncubationId && (
+                        <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+                          <div>
+                            <Label>Subculture Date</Label>
+                            <Input type="date" value={incubationForm.subcultureDate} onChange={(e) => setIncubationForm({...incubationForm, subcultureDate: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>Stage</Label>
+                            <Select value={incubationForm.stage} onValueChange={(value) => setIncubationForm({...incubationForm, stage: value})}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select stage" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="Stage 1">Stage 1</SelectItem>
+                                <SelectItem value="Stage 2">Stage 2</SelectItem>
+                                <SelectItem value="Stage 3">Stage 3</SelectItem>
+                                <SelectItem value="Stage 4">Stage 4</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label>Batch Number</Label>
+                            <Input value={incubationForm.batchNumber} onChange={(e) => setIncubationForm({...incubationForm, batchNumber: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>Media Code</Label>
+                            <Input value={incubationForm.mediaCode} onChange={(e) => setIncubationForm({...incubationForm, mediaCode: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>Operator Name</Label>
+                            <Input value={incubationForm.operator} onChange={(e) => setIncubationForm({...incubationForm, operator: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>Species</Label>
+                            <Input value={incubationForm.species} onChange={(e) => setIncubationForm({...incubationForm, species: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>No. of Vessels</Label>
+                            <Input type="number" value={incubationForm.vessels} onChange={(e) => setIncubationForm({...incubationForm, vessels: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>No. of Shoots</Label>
+                            <Input type="number" value={incubationForm.shoots} onChange={(e) => setIncubationForm({...incubationForm, shoots: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>Temp</Label>
+                            <Input value={incubationForm.temp} onChange={(e) => setIncubationForm({...incubationForm, temp: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>Humidity</Label>
+                            <Input value={incubationForm.humidity} onChange={(e) => setIncubationForm({...incubationForm, humidity: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>Photo Period</Label>
+                            <Input value={incubationForm.photoperiod} onChange={(e) => setIncubationForm({...incubationForm, photoperiod: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>Light Intensity</Label>
+                            <Input value={incubationForm.lightIntensity} onChange={(e) => setIncubationForm({...incubationForm, lightIntensity: e.target.value})} />
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex justify-between gap-3">
-                      <Button 
-                        variant="destructive" 
-                        onClick={() => {
-                          if (editingIncubationId) {
-                            setItemToDelete({ type: 'incubation', id: editingIncubationId });
-                            setDeleteConfirmOpen(true);
-                          }
-                        }}
-                        disabled={!editingIncubationId}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
+                    <div className="flex justify-end gap-2 mt-4">
+                      <Button variant="outline" onClick={() => { setIsEditIncubationModalOpen(false); resetIncubationForm(); }}>
+                        Cancel
                       </Button>
-                      <div className="flex gap-3">
-                        <Button variant="outline" onClick={() => {
-                          setIsEditIncubationModalOpen(false);
-                          resetIncubationForm();
-                        }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveIncubation}>
-                          Save Changes
-                        </Button>
-                      </div>
+                      {editingIncubationId && (
+                        <>
+                          <Button 
+                            variant="destructive"
+                            onClick={() => setDeleteConfirmOpen(true)}
+                          >
+                            Delete Entry
+                          </Button>
+                          <Button 
+                            className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                            onClick={handleSaveIncubationChanges}
+                          >
+                            Save Changes
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </DialogContent>
                 </Dialog>
@@ -689,7 +632,7 @@ export function Incubation() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredIncubationData.map((item) => (
+                      {incubationData.map((item) => (
                         <tr key={item.id} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm whitespace-nowrap">{item.subcultureDate}</td>
                           <td className="px-4 py-3 text-sm whitespace-nowrap">
@@ -724,14 +667,6 @@ export function Incubation() {
             <TabsContent value="contamination">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowAllContaminationRecords(!showAllContaminationRecords)}
-                    className="flex items-center gap-2"
-                  >
-                    <Eye className="w-4 h-4" />
-                    {showAllContaminationRecords ? 'Show Today Only' : 'View All Records'}
-                  </Button>
                   <Dialog open={isContaminationModalOpen} onOpenChange={(open) => {
                     setIsContaminationModalOpen(open);
                     if (!open) resetContaminationForm();
@@ -811,123 +746,90 @@ export function Incubation() {
                 </div>
 
                 {/* Edit Contamination Dialog */}
-                <Dialog open={isEditContaminationModalOpen} onOpenChange={(open) => {
-                  setIsEditContaminationModalOpen(open);
-                  if (!open) {
-                    resetContaminationForm();
-                    setEditingContaminationId(null);
-                  }
-                }}>
+                <Dialog open={isEditContaminationModalOpen} onOpenChange={setIsEditContaminationModalOpen}>
                   <DialogContent className="max-w-xl">
                     <DialogHeader>
                       <DialogTitle>Edit Contamination Record</DialogTitle>
                     </DialogHeader>
-                    <div className="grid gap-4 py-4">
-                      <div className="space-y-2">
-                        <Label>Date</Label>
-                        <Input 
-                          type="date" 
-                          value={contaminationForm.date}
-                          onChange={(e) => {
-                            setContaminationForm({...contaminationForm, date: e.target.value, batchNumber: ''});
-                            setEditingContaminationId(null);
-                          }}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Batch Number</Label>
-                        {contaminationForm.date ? (
-                          <Select 
-                            value={contaminationForm.batchNumber} 
-                            onValueChange={(value) => {
-                              const found = contaminationData.find(item => 
-                                item.date === contaminationForm.date && item.batchNumber === value
-                              );
-                              if (found) {
-                                setContaminationForm({
-                                  date: found.date,
-                                  batchNumber: found.batchNumber,
-                                  vesselCount: found.vesselCount.toString(),
-                                  type: found.type,
-                                  possibleSource: found.possibleSource,
-                                  disposalMethod: found.disposalMethod
-                                });
-                                setEditingContaminationId(found.id);
-                              } else {
-                                setContaminationForm({...contaminationForm, batchNumber: value});
-                              }
-                            }}
-                          >
+                    <div className="space-y-4 py-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label>Select Date</Label>
+                          <Select value={selectedContaminationDate} onValueChange={handleContaminationDateSelect}>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select batch number" />
+                              <SelectValue placeholder="Select date" />
                             </SelectTrigger>
                             <SelectContent>
-                              {availableContaminationBatchNumbers.map(batch => (
+                              {availableContaminationDates.map(date => (
+                                <SelectItem key={date} value={date}>{date}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label>Select Batch Number</Label>
+                          <Select value={selectedContaminationBatch} onValueChange={handleContaminationBatchSelect} disabled={!selectedContaminationDate}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select batch" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableContaminationBatches.map(batch => (
                                 <SelectItem key={batch} value={batch}>{batch}</SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                        ) : (
-                          <Input placeholder="Select date first" disabled />
-                        )}
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label>Vessel Count</Label>
-                        <Input 
-                          type="number" 
-                          placeholder="2" 
-                          value={contaminationForm.vesselCount}
-                          onChange={(e) => setContaminationForm({...contaminationForm, vesselCount: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Type of Contamination</Label>
-                        <Input 
-                          placeholder="Bacterial / Fungal" 
-                          value={contaminationForm.type}
-                          onChange={(e) => setContaminationForm({...contaminationForm, type: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Possible Source</Label>
-                        <Input 
-                          placeholder="Media preparation, handling, etc." 
-                          value={contaminationForm.possibleSource}
-                          onChange={(e) => setContaminationForm({...contaminationForm, possibleSource: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Disposal Method</Label>
-                        <Input 
-                          placeholder="Autoclaved and discarded" 
-                          value={contaminationForm.disposalMethod}
-                          onChange={(e) => setContaminationForm({...contaminationForm, disposalMethod: e.target.value})}
-                        />
-                      </div>
+                      
+                      {editingContaminationId && (
+                        <div className="grid gap-4 pt-4 border-t">
+                          <div>
+                            <Label>Date</Label>
+                            <Input type="date" value={contaminationForm.date} onChange={(e) => setContaminationForm({...contaminationForm, date: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>Batch Number</Label>
+                            <Input value={contaminationForm.batchNumber} onChange={(e) => setContaminationForm({...contaminationForm, batchNumber: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>Vessel Count</Label>
+                            <Input type="number" value={contaminationForm.vesselCount} onChange={(e) => setContaminationForm({...contaminationForm, vesselCount: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>Type of Contamination</Label>
+                            <Input value={contaminationForm.type} onChange={(e) => setContaminationForm({...contaminationForm, type: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>Possible Source</Label>
+                            <Input value={contaminationForm.possibleSource} onChange={(e) => setContaminationForm({...contaminationForm, possibleSource: e.target.value})} />
+                          </div>
+                          <div>
+                            <Label>Disposal Method</Label>
+                            <Input value={contaminationForm.disposalMethod} onChange={(e) => setContaminationForm({...contaminationForm, disposalMethod: e.target.value})} />
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <div className="flex justify-between gap-3">
-                      <Button 
-                        variant="destructive" 
-                        onClick={() => {
-                          if (editingContaminationId) {
-                            setItemToDelete({ type: 'contamination', id: editingContaminationId });
-                            setDeleteConfirmOpen(true);
-                          }
-                        }}
-                        disabled={!editingContaminationId}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
+                    <div className="flex justify-end gap-2 mt-4">
+                      <Button variant="outline" onClick={() => { setIsEditContaminationModalOpen(false); resetContaminationForm(); }}>
+                        Cancel
                       </Button>
-                      <div className="flex gap-3">
-                        <Button variant="outline" onClick={() => {
-                          setIsEditContaminationModalOpen(false);
-                          resetContaminationForm();
-                        }}>Cancel</Button>
-                        <Button className="bg-red-600 hover:bg-red-700" onClick={handleSaveContamination}>
-                          Save Changes
-                        </Button>
-                      </div>
+                      {editingContaminationId && (
+                        <>
+                          <Button 
+                            variant="destructive"
+                            onClick={() => setDeleteConfirmOpen(true)}
+                          >
+                            Delete Entry
+                          </Button>
+                          <Button 
+                            className="bg-red-600 hover:bg-red-700"
+                            onClick={handleSaveContaminationChanges}
+                          >
+                            Save Changes
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </DialogContent>
                 </Dialog>
@@ -945,7 +847,7 @@ export function Incubation() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredContaminationData.map((item) => (
+                      {contaminationData.map((item) => (
                         <tr key={item.id} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm">{item.date}</td>
                           <td className="px-4 py-3 text-sm">

@@ -1,13 +1,14 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
-import { Plus, Download, Eye } from 'lucide-react';
+import { Plus, Download, Edit2 } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
 import { DataTable } from '../common/DataTable';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 
 const primaryData = [
   {
@@ -40,7 +41,25 @@ const primaryData = [
 
 export function PrimaryHardening() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showAllRecords, setShowAllRecords] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedBatch, setSelectedBatch] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
+  
+  const [formData, setFormData] = useState({
+    date: '',
+    cropName: '',
+    batchName: '',
+    tunnel: '',
+    tray: '',
+    cavity: '',
+    plants: '',
+    workers: '',
+    waitingPeriod: '',
+    notes: ''
+  });
 
   const columns = [
     { key: 'date', label: 'Date' },
@@ -55,13 +74,83 @@ export function PrimaryHardening() {
     { key: 'notes', label: 'Notes' },
   ];
 
-  const filteredData = showAllRecords ? primaryData : primaryData.filter(record => {
-    const recordDate = new Date(record.date);
-    const today = new Date();
-    const diffTime = Math.abs(today.getTime() - recordDate.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays <= 7;
-  });
+  const availableDates = useMemo(() => {
+    return Array.from(new Set(primaryData.map(record => record.date))).sort();
+  }, []);
+
+  const availableBatches = useMemo(() => {
+    if (!selectedDate) return [];
+    return Array.from(new Set(primaryData.filter(record => record.date === selectedDate).map(record => record.batchName)));
+  }, [selectedDate]);
+
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
+    setSelectedBatch('');
+    setFormData({
+      date: '',
+      cropName: '',
+      batchName: '',
+      tunnel: '',
+      tray: '',
+      cavity: '',
+      plants: '',
+      workers: '',
+      waitingPeriod: '',
+      notes: ''
+    });
+    setEditingId(null);
+  };
+
+  const handleBatchSelect = (batch: string) => {
+    setSelectedBatch(batch);
+    const recordData = primaryData.find(record => record.date === selectedDate && record.batchName === batch);
+    if (recordData) {
+      setFormData({
+        date: recordData.date,
+        cropName: recordData.cropName,
+        batchName: recordData.batchName,
+        tunnel: recordData.tunnel,
+        tray: recordData.tray,
+        cavity: recordData.cavity,
+        plants: String(recordData.plants),
+        workers: String(recordData.workers),
+        waitingPeriod: String(recordData.waitingPeriod),
+        notes: recordData.notes
+      });
+      setEditingId(recordData.id);
+    }
+  };
+
+  const handleSaveChanges = () => {
+    console.log('Saving changes:', formData);
+    setIsEditModalOpen(false);
+    resetForm();
+  };
+
+  const handleDeleteEntry = () => {
+    console.log('Deleting entry:', editingId);
+    setIsEditModalOpen(false);
+    setDeleteConfirmOpen(false);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setSelectedDate('');
+    setSelectedBatch('');
+    setEditingId(null);
+    setFormData({
+      date: '',
+      cropName: '',
+      batchName: '',
+      tunnel: '',
+      tray: '',
+      cavity: '',
+      plants: '',
+      workers: '',
+      waitingPeriod: '',
+      notes: ''
+    });
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -71,14 +160,119 @@ export function PrimaryHardening() {
         <div className="flex justify-between items-center mb-4">
           <h2>Primary Hardening Register</h2>
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setShowAllRecords(!showAllRecords)}
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              {showAllRecords ? 'Show Today Only' : 'View All Records'}
-            </Button>
+            <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => resetForm()}
+                >
+                  <Edit2 className="w-4 h-4 mr-2" />
+                  Edit
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>Edit Primary Hardening Entry</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Select Date</Label>
+                      <Select value={selectedDate} onValueChange={handleDateSelect}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select date" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableDates.map(date => (
+                            <SelectItem key={date} value={date}>{date}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Select Batch Code</Label>
+                      <Select value={selectedBatch} onValueChange={handleBatchSelect} disabled={!selectedDate}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select batch" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableBatches.map(batch => (
+                            <SelectItem key={batch} value={batch}>{batch}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  {editingId && (
+                    <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+                      <div>
+                        <Label>Date</Label>
+                        <Input type="date" value={formData.date} onChange={(e) => setFormData({...formData, date: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Crop Name</Label>
+                        <Input value={formData.cropName} onChange={(e) => setFormData({...formData, cropName: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Batch Name</Label>
+                        <Input value={formData.batchName} onChange={(e) => setFormData({...formData, batchName: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Tunnel</Label>
+                        <Input value={formData.tunnel} onChange={(e) => setFormData({...formData, tunnel: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Tray</Label>
+                        <Input value={formData.tray} onChange={(e) => setFormData({...formData, tray: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Cavity</Label>
+                        <Input value={formData.cavity} onChange={(e) => setFormData({...formData, cavity: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Plants</Label>
+                        <Input type="number" value={formData.plants} onChange={(e) => setFormData({...formData, plants: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Workers</Label>
+                        <Input type="number" value={formData.workers} onChange={(e) => setFormData({...formData, workers: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Waiting Period (days)</Label>
+                        <Input type="number" value={formData.waitingPeriod} onChange={(e) => setFormData({...formData, waitingPeriod: e.target.value})} />
+                      </div>
+                      <div className="col-span-3">
+                        <Label>Notes</Label>
+                        <Textarea value={formData.notes} onChange={(e) => setFormData({...formData, notes: e.target.value})} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="flex justify-end gap-2 mt-4">
+                  <Button variant="outline" onClick={() => { setIsEditModalOpen(false); resetForm(); }}>
+                    Cancel
+                  </Button>
+                  {editingId && (
+                    <>
+                      <Button 
+                        variant="destructive"
+                        onClick={() => setDeleteConfirmOpen(true)}
+                      >
+                        Delete Entry
+                      </Button>
+                      <Button 
+                        className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                        onClick={handleSaveChanges}
+                      >
+                        Save Changes
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" />
               Export
@@ -194,11 +388,27 @@ export function PrimaryHardening() {
 
         <DataTable 
           columns={columns} 
-          data={filteredData}
-          onEdit={(row) => console.log('Edit', row)}
-          onDelete={(row) => console.log('Delete', row)}
+          data={primaryData}
+          showActions={false}
         />
       </div>
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Entry</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this entry? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteEntry} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Plus, Download, Eye, FileCheck, X, Upload } from 'lucide-react';
+import { Plus, Download, Edit2, FileCheck, X, Upload } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
 import { Badge } from '../ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Card } from '../ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 
 const outdoorSamplingData = [
   {
@@ -110,15 +111,110 @@ function getCertificateBadge(certificate: string) {
 
 export function OutdoorSampling() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showAllRecords, setShowAllRecords] = useState(false);
-
-  const filteredData = showAllRecords ? outdoorSamplingData : outdoorSamplingData.filter(record => {
-    const recordDate = new Date(record.sampleDate);
-    const today = new Date();
-    const diffTime = Math.abs(today.getTime() - recordDate.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays <= 7;
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedBatch, setSelectedBatch] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  
+  const [formData, setFormData] = useState({
+    sampleDate: '',
+    cropName: '',
+    batchName: '',
+    stage: '',
+    tunnelNo: '',
+    trayNo: '',
+    sentDate: '',
+    receivedDate: '',
+    status: '',
+    govtCertificate: '',
+    certificateNo: '',
+    reason: ''
   });
+
+  const availableDates = useMemo(() => {
+    return Array.from(new Set(outdoorSamplingData.map(record => record.sampleDate))).sort();
+  }, []);
+
+  const availableBatches = useMemo(() => {
+    if (!selectedDate) return [];
+    return Array.from(new Set(outdoorSamplingData.filter(record => record.sampleDate === selectedDate).map(record => record.batchName)));
+  }, [selectedDate]);
+
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
+    setSelectedBatch('');
+    setFormData({
+      sampleDate: '',
+      cropName: '',
+      batchName: '',
+      stage: '',
+      tunnelNo: '',
+      trayNo: '',
+      sentDate: '',
+      receivedDate: '',
+      status: '',
+      govtCertificate: '',
+      certificateNo: '',
+      reason: ''
+    });
+    setEditingId(null);
+  };
+
+  const handleBatchSelect = (batch: string) => {
+    setSelectedBatch(batch);
+    const recordData = outdoorSamplingData.find(record => record.sampleDate === selectedDate && record.batchName === batch);
+    if (recordData) {
+      setFormData({
+        sampleDate: recordData.sampleDate,
+        cropName: recordData.cropName,
+        batchName: recordData.batchName,
+        stage: recordData.stage,
+        tunnelNo: recordData.tunnelNo,
+        trayNo: recordData.trayNo,
+        sentDate: recordData.sentDate,
+        receivedDate: recordData.receivedDate,
+        status: recordData.status,
+        govtCertificate: recordData.govtCertificate,
+        certificateNo: recordData.certificateNo,
+        reason: recordData.reason
+      });
+      setEditingId(recordData.id);
+    }
+  };
+
+  const handleSaveChanges = () => {
+    console.log('Saving changes:', formData);
+    setIsEditModalOpen(false);
+    resetForm();
+  };
+
+  const handleDeleteEntry = () => {
+    console.log('Deleting entry:', editingId);
+    setIsEditModalOpen(false);
+    setDeleteConfirmOpen(false);
+    resetForm();
+  };
+
+  const resetForm = () => {
+    setSelectedDate('');
+    setSelectedBatch('');
+    setEditingId(null);
+    setFormData({
+      sampleDate: '',
+      cropName: '',
+      batchName: '',
+      stage: '',
+      tunnelNo: '',
+      trayNo: '',
+      sentDate: '',
+      receivedDate: '',
+      status: '',
+      govtCertificate: '',
+      certificateNo: '',
+      reason: ''
+    });
+  };
   
   return (
     <div className="p-6 space-y-6">
@@ -147,14 +243,154 @@ export function OutdoorSampling() {
         <div className="flex justify-between items-center mb-4">
           <h2>Outdoor Sampling Register</h2>
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setShowAllRecords(!showAllRecords)}
-            >
-              <Eye className="w-4 h-4 mr-2" />
-              {showAllRecords ? 'Show Today Only' : 'View All Records'}
-            </Button>
+            <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => resetForm()}
+                >
+                  <Edit2 className="w-4 h-4 mr-2" />
+                  Edit
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl">
+                <DialogHeader>
+                  <DialogTitle>Edit Outdoor Sampling Entry</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label>Select Date</Label>
+                      <Select value={selectedDate} onValueChange={handleDateSelect}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select date" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableDates.map(date => (
+                            <SelectItem key={date} value={date}>{date}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Select Batch Code</Label>
+                      <Select value={selectedBatch} onValueChange={handleBatchSelect} disabled={!selectedDate}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select batch" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableBatches.map(batch => (
+                            <SelectItem key={batch} value={batch}>{batch}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  {editingId && (
+                    <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+                      <div>
+                        <Label>Sample Date</Label>
+                        <Input type="date" value={formData.sampleDate} onChange={(e) => setFormData({...formData, sampleDate: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Crop Name</Label>
+                        <Input value={formData.cropName} onChange={(e) => setFormData({...formData, cropName: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Batch Name</Label>
+                        <Input value={formData.batchName} onChange={(e) => setFormData({...formData, batchName: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Stage</Label>
+                        <Select value={formData.stage} onValueChange={(value) => setFormData({...formData, stage: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select stage" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Primary Hardening">Primary Hardening</SelectItem>
+                            <SelectItem value="Secondary Hardening">Secondary Hardening</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Tunnel No</Label>
+                        <Input value={formData.tunnelNo} onChange={(e) => setFormData({...formData, tunnelNo: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Tray No</Label>
+                        <Input value={formData.trayNo} onChange={(e) => setFormData({...formData, trayNo: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Sent Date</Label>
+                        <Input type="date" value={formData.sentDate} onChange={(e) => setFormData({...formData, sentDate: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Received Date</Label>
+                        <Input type="date" value={formData.receivedDate} onChange={(e) => setFormData({...formData, receivedDate: e.target.value})} />
+                      </div>
+                      <div>
+                        <Label>Status</Label>
+                        <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select status" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Sent">Sent</SelectItem>
+                            <SelectItem value="Received">Received</SelectItem>
+                            <SelectItem value="Rejected">Rejected</SelectItem>
+                            <SelectItem value="Not Sent">Not Sent</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Govt Certificate</Label>
+                        <Select value={formData.govtCertificate} onValueChange={(value) => setFormData({...formData, govtCertificate: value})}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Yes">Yes</SelectItem>
+                            <SelectItem value="No">No</SelectItem>
+                            <SelectItem value="Pending">Pending</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label>Certificate No</Label>
+                        <Input value={formData.certificateNo} onChange={(e) => setFormData({...formData, certificateNo: e.target.value})} />
+                      </div>
+                      <div className="col-span-3">
+                        <Label>Reason (if rejected)</Label>
+                        <Input value={formData.reason} onChange={(e) => setFormData({...formData, reason: e.target.value})} />
+                      </div>
+                    </div>
+                  )}
+                </div>
+                {editingId && (
+                  <div className="flex justify-between mt-4">
+                    <Button 
+                      variant="destructive" 
+                      onClick={() => setDeleteConfirmOpen(true)}
+                    >
+                      Delete Entry
+                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" onClick={() => { setIsEditModalOpen(false); resetForm(); }}>
+                        Cancel
+                      </Button>
+                      <Button 
+                        className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                        onClick={handleSaveChanges}
+                      >
+                        Save Changes
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </DialogContent>
+            </Dialog>
             <Button variant="outline" size="sm">
               <Download className="w-4 h-4 mr-2" />
               Export
@@ -266,11 +502,10 @@ export function OutdoorSampling() {
                   <TableHead>Govt Certificate</TableHead>
                   <TableHead>Certificate No</TableHead>
                   <TableHead>Reason (if rejected)</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredData.map((sample) => (
+                {outdoorSamplingData.map((sample) => (
                   <TableRow key={sample.id}>
                     <TableCell>{sample.sampleDate}</TableCell>
                     <TableCell>{sample.cropName}</TableCell>
@@ -304,18 +539,6 @@ export function OutdoorSampling() {
                         <span className="text-gray-400">-</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="sm">
-                          View
-                        </Button>
-                        {sample.govtCertificate === 'No' && sample.status !== 'Rejected' && (
-                          <Button variant="ghost" size="sm" className="text-[#4CAF50]">
-                            <Upload className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -323,6 +546,23 @@ export function OutdoorSampling() {
           </div>
         </Card>
       </div>
+
+      <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this outdoor sampling entry.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteEntry} className="bg-red-600 hover:bg-red-700">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

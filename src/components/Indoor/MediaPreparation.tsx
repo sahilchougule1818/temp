@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Button } from '../ui/button';
-import { Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -70,8 +70,6 @@ export function MediaPreparation() {
   const [activeTab, setActiveTab] = useState('autoclave');
   const [editingAutoclaveId, setEditingAutoclaveId] = useState<number | null>(null);
   const [editingBatchId, setEditingBatchId] = useState<number | null>(null);
-  const [showAllAutoclaveRecords, setShowAllAutoclaveRecords] = useState(false);
-  const [showAllBatchRecords, setShowAllBatchRecords] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ type: 'autoclave' | 'batch', id: number } | null>(null);
 
@@ -314,29 +312,6 @@ export function MediaPreparation() {
     });
   };
 
-  // Get today's date in YYYY-MM-DD format (use function to get current date each time)
-  const getToday = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
-  
-  // Filter data based on showAllRecords
-  const filteredAutoclaveData = showAllAutoclaveRecords 
-    ? autoclaveCycles 
-    : (autoclaveCycles || []).filter(item => {
-        const today = getToday();
-        return item?.date === today;
-      });
-
-  const filteredBatchData = showAllBatchRecords 
-    ? mediaBatches 
-    : (mediaBatches || []).filter(item => {
-        const today = getToday();
-        return item?.date === today;
-      });
 
   return (
     <div className="p-6">
@@ -350,7 +325,7 @@ export function MediaPreparation() {
                 onClick={handleEditBatch}
                 className="flex items-center gap-2"
               >
-                <Edit className="w-4 h-4" />
+                <Edit2 className="w-4 h-4" />
                 Edit Batch
               </Button>
             </div>
@@ -366,14 +341,6 @@ export function MediaPreparation() {
             <TabsContent value="autoclave">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowAllAutoclaveRecords(!showAllAutoclaveRecords)}
-                    className="flex items-center gap-2"
-                  >
-                    <Eye className="w-4 h-4" />
-                    {showAllAutoclaveRecords ? 'Show Today Only' : 'View All Records'}
-                  </Button>
                   <Dialog open={isAutoclaveModalOpen} onOpenChange={(open) => {
                     setIsAutoclaveModalOpen(open);
                     if (!open) resetAutoclaveForm();
@@ -650,7 +617,7 @@ export function MediaPreparation() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredAutoclaveData.map((cycle) => (
+                      {autoclaveCycles.map((cycle) => (
                         <tr key={cycle.id} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm">{cycle.date}</td>
                           <td className="px-4 py-3 text-sm">
@@ -678,14 +645,6 @@ export function MediaPreparation() {
             <TabsContent value="batch">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowAllBatchRecords(!showAllBatchRecords)}
-                    className="flex items-center gap-2"
-                  >
-                    <Eye className="w-4 h-4" />
-                    {showAllBatchRecords ? 'Show Today Only' : 'View All Records'}
-                  </Button>
                   <Dialog open={isBatchModalOpen} onOpenChange={(open) => {
                     setIsBatchModalOpen(open);
                     if (!open) resetBatchForm();
@@ -884,7 +843,7 @@ export function MediaPreparation() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredBatchData.map((batch) => (
+                      {mediaBatches.map((batch) => (
                         <tr key={batch.id} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm">{batch.date}</td>
                           <td className="px-4 py-3 text-sm">
