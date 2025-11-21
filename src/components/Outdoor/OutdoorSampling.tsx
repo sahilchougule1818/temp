@@ -186,22 +186,22 @@ export function OutdoorSampling() {
       </Card>
 
       {/* Stats Summary */}
-      <div className="grid grid-cols-4 gap-5 mb-6">
-        <Card className="p-5">
-          <div className="text-sm text-gray-600 mb-1">Total Outdoor Samples</div>
-          <div className="text-2xl font-semibold">35</div>
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="text-xs text-gray-600 mb-0.5">Total Outdoor Samples</div>
+          <div className="text-2xl font-bold">35</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-sm text-gray-600 mb-1">Pending Lab Results</div>
-          <div className="text-2xl font-semibold text-blue-600">8</div>
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="text-xs text-gray-600 mb-0.5">Pending Lab Results</div>
+          <div className="text-2xl font-bold text-blue-600">8</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-sm text-gray-600 mb-1">Certified</div>
-          <div className="text-2xl font-semibold text-green-600">24</div>
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="text-xs text-gray-600 mb-0.5">Certified</div>
+          <div className="text-2xl font-bold text-green-600">24</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-sm text-gray-600 mb-1">Rejected</div>
-          <div className="text-2xl font-semibold text-red-600">3</div>
+        <Card className="p-4 bg-white border border-gray-200 rounded-lg">
+          <div className="text-xs text-gray-600 mb-0.5">Rejected</div>
+          <div className="text-2xl font-bold text-red-600">3</div>
         </Card>
       </div>
 

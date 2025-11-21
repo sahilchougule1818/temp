@@ -86,7 +86,8 @@ export function Sidebar({ currentPage, onNavigate, user }: SidebarProps) {
         { id: 'outdoor-contamination', label: 'Contamination', icon: Bug, page: 'outdoor-contamination', breadcrumbs: ['Outdoor', 'Contamination'] },
         { id: 'fertilization', label: 'Fertilization', icon: Droplets, page: 'fertilization', breadcrumbs: ['Outdoor', 'Fertilization'] },
         { id: 'holding-area', label: 'Holding Area', icon: Package, page: 'holding-area', breadcrumbs: ['Outdoor', 'Holding Area'] },
-        { id: 'batch-timeline', label: 'Batch Timeline', icon: Clock, page: 'batch-timeline', breadcrumbs: ['Outdoor', 'Batch Timeline'] }
+        { id: 'batch-timeline', label: 'Batch Timeline', icon: Clock, page: 'batch-timeline', breadcrumbs: ['Outdoor', 'Batch Timeline'] },
+        { id: 'outdoor-sampling', label: 'Sampling', icon: TestTube, page: 'outdoor-sampling', breadcrumbs: ['Outdoor', 'Sampling'] }
       ]
     },
     {

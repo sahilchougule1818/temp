@@ -18,6 +18,7 @@ import { Fertilization } from './components/Outdoor/Fertilization';
 import { Shifting } from './components/Outdoor/Shifting';
 import { HoldingArea } from './components/Outdoor/HoldingArea';
 import { BatchTimeline } from './components/Outdoor/BatchTimeline';
+import { OutdoorSampling } from './components/Outdoor/OutdoorSampling';
 import { BuyerSection } from './components/Sales/BuyerSection';
 import { SellerSection } from './components/Sales/SellerSection';
 import { LedgerSection } from './components/Sales/LedgerSection';
@@ -60,7 +61,7 @@ function AppContent() {
     if (user.role === 'owner') return true;
 
     const indoorPages = ['indoor-dashboard', 'media-preparation', 'subculturing', 'incubation', 'quality-control', 'sampling'];
-    const outdoorPages = ['outdoor-dashboard', 'primary-hardening', 'secondary-hardening', 'shifting', 'outdoor-contamination', 'fertilization', 'holding-area', 'batch-timeline'];
+    const outdoorPages = ['outdoor-dashboard', 'primary-hardening', 'secondary-hardening', 'shifting', 'outdoor-contamination', 'fertilization', 'holding-area', 'batch-timeline', 'outdoor-sampling'];
     const salesPages = ['sales-buyer', 'sales-seller', 'sales-ledger', 'inventory-dashboard'];
     const inventorySupplierPages = ['inventory-record', 'supplier-detail'];
     const reportPages = ['reports'];
@@ -131,6 +132,7 @@ function AppContent() {
             <Route path="/fertilization" element={<Fertilization />} />
             <Route path="/holding-area" element={<HoldingArea />} />
             <Route path="/batch-timeline" element={<BatchTimeline />} />
+            <Route path="/outdoor-sampling" element={<OutdoorSampling />} />
             <Route path="/sales-buyer" element={<BuyerSection />} />
             <Route path="/sales-seller" element={<SellerSection />} />
             <Route path="/sales-ledger" element={<LedgerSection />} />

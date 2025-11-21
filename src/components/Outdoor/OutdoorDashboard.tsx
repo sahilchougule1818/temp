@@ -145,6 +145,49 @@ export function OutdoorDashboard() {
           </div>
         </div>
       </Card>
+
+      {/* Recent Activity */}
+      <div className="grid grid-cols-2 gap-6">
+        <Card className="p-6 bg-white border border-gray-200 rounded-lg">
+          <h3 className="text-lg font-semibold mb-4">Recent Transfers</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between items-start py-3 border-b border-gray-100 last:border-0">
+              <div>
+                <div className="font-medium text-sm">B-2024-1145</div>
+                <div className="text-xs text-gray-600 mt-0.5">Primary → Secondary</div>
+              </div>
+              <div className="text-xs text-gray-500">2h ago</div>
+            </div>
+            <div className="flex justify-between items-start py-3 border-b border-gray-100 last:border-0">
+              <div>
+                <div className="font-medium text-sm">B-2024-1144</div>
+                <div className="text-xs text-gray-600 mt-0.5">T1 Tray 5 → T2 Tray 3</div>
+              </div>
+              <div className="text-xs text-gray-500">5h ago</div>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="p-6 bg-white border border-gray-200 rounded-lg">
+          <h3 className="text-lg font-semibold mb-4">Mortality Alerts</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between items-start py-3 border-b border-gray-100 last:border-0">
+              <div>
+                <div className="font-medium text-sm text-red-900">T3 - Batch B-2024-1142</div>
+                <div className="text-xs text-red-700 mt-0.5">47 plants - Fungal infection</div>
+              </div>
+              <Badge className="bg-red-600 text-white px-2 py-0.5 text-xs border-0">New</Badge>
+            </div>
+            <div className="flex justify-between items-start py-3 border-b border-gray-100 last:border-0">
+              <div>
+                <div className="font-medium text-sm text-amber-900">T2 - Batch B-2024-1140</div>
+                <div className="text-xs text-amber-700 mt-0.5">12 plants - Under observation</div>
+              </div>
+              <Badge className="bg-amber-600 text-white px-2 py-0.5 text-xs border-0">Monitoring</Badge>
+            </div>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }
