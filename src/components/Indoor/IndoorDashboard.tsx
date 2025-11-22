@@ -17,9 +17,11 @@ const getTodayDate = () => {
 const todayDate = getTodayDate();
 
 const sampleAutoclaveData = [
-  { id: 1, date: todayDate, mediaCode: 'MS-001', operator: 'Amit Shah', typeOfMedia: 'MS Medium' },
-  { id: 2, date: todayDate, mediaCode: 'MS-002', operator: 'Priya Patel', typeOfMedia: 'B5 Medium' },
-  { id: 3, date: todayDate, mediaCode: 'MS-003', operator: 'Rahul Desai', typeOfMedia: 'WPM Medium' }
+  { id: 1, date: todayDate, mediaCode: 'MS-001', operator: 'Amit Shah', typeOfMedia: 'Bamboo' },
+  { id: 2, date: todayDate, mediaCode: 'MS-002', operator: 'Priya Patel', typeOfMedia: 'Banana' },
+  { id: 3, date: todayDate, mediaCode: 'MS-003', operator: 'Amit Shah', typeOfMedia: 'Teak' },
+  { id: 4, date: todayDate, mediaCode: 'MS-004', operator: 'Rahul Desai', typeOfMedia: 'Ornamental' },
+  { id: 5, date: todayDate, mediaCode: 'MS-005', operator: 'Priya Patel', typeOfMedia: 'Bamboo' }
 ];
 
 const sampleBatchData = [
@@ -29,15 +31,15 @@ const sampleBatchData = [
 ];
 
 const sampleSubcultureData = [
-  { id: 1, transferDate: todayDate, operator: 'Amit Shah', vessels: 120, shoots: 2400 },
-  { id: 2, transferDate: todayDate, operator: 'Priya Patel', vessels: 80, shoots: 1600 },
-  { id: 3, transferDate: todayDate, operator: 'Rahul Desai', vessels: 150, shoots: 3000 }
+  { id: 1, transferDate: todayDate, operator: 'Amit Shah', vessels: 95, shoots: 1900 },
+  { id: 2, transferDate: todayDate, operator: 'Priya Patel', vessels: 110, shoots: 2200 },
+  { id: 3, transferDate: todayDate, operator: 'Rahul Desai', vessels: 130, shoots: 2600 }
 ];
 
 const sampleIncubationData = [
-  { id: 1, subcultureDate: todayDate, operator: 'Amit Shah', vessels: 120, shoots: 2400 },
-  { id: 2, subcultureDate: todayDate, operator: 'Priya Patel', vessels: 80, shoots: 1600 },
-  { id: 3, subcultureDate: todayDate, operator: 'Rahul Desai', vessels: 150, shoots: 3000 }
+  { id: 1, subcultureDate: todayDate, operator: 'Amit Shah', vessels: 85, shoots: 1700 },
+  { id: 2, subcultureDate: todayDate, operator: 'Priya Patel', vessels: 75, shoots: 1500 },
+  { id: 3, subcultureDate: todayDate, operator: 'Rahul Desai', vessels: 100, shoots: 2000 }
 ];
 
 export function IndoorDashboard() {
@@ -153,14 +155,13 @@ export function IndoorDashboard() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Performance Report</h1>
-        <p className="text-sm text-gray-600 mt-1">Operator Performance Report - {today}</p>
+        <h1 className="text-2xl font-bold text-gray-900">Indoor Dashboard</h1>
       </div>
 
       {/* Summary Cards */}
       <div className="flex flex-wrap justify-between gap-2 mb-6">
         {/* Total Operators Card */}
-        <Card className="flex flex-col justify-between p-4 border rounded-lg shadow-sm w-full sm:w-[calc(50%-theme(spacing.2)/2)] lg:w-[calc(25%-theme(spacing.2)*3/4)]">
+        <Card className="flex flex-col justify-between p-4 border rounded-lg shadow-sm w-full sm:w-[calc(50%-theme(spacing.2)/2)] lg:w-[calc(25%-theme(spacing.2)*3/4)] bg-blue-50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 p-0 mb-3">
             <CardTitle className="text-sm font-normal text-gray-500">Total Operators</CardTitle>
             <div className="bg-blue-500/10 rounded-full p-2">
@@ -174,7 +175,7 @@ export function IndoorDashboard() {
         </Card>
 
         {/* Media Prepared Card */}
-        <Card className="flex flex-col justify-between p-4 border rounded-lg shadow-sm w-full sm:w-[calc(50%-theme(spacing.2)/2)] lg:w-[calc(25%-theme(spacing.2)*3/4)]">
+        <Card className="flex flex-col justify-between p-4 border rounded-lg shadow-sm w-full sm:w-[calc(50%-theme(spacing.2)/2)] lg:w-[calc(25%-theme(spacing.2)*3/4)] bg-green-50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 p-0 mb-3">
             <CardTitle className="text-sm font-normal text-gray-500">Media Prepared</CardTitle>
             <div className="bg-green-500/10 rounded-full p-2">
@@ -187,22 +188,22 @@ export function IndoorDashboard() {
           </CardContent>
         </Card>
 
-        {/* Total Bottles Card */}
-        <Card className="flex flex-col justify-between p-4 border rounded-lg shadow-sm w-full sm:w-[calc(50%-theme(spacing.2)/2)] lg:w-[calc(25%-theme(spacing.2)*3/4)]">
+        {/* Total Vessels Used Card */}
+        <Card className="flex flex-col justify-between p-4 border rounded-lg shadow-sm w-full sm:w-[calc(50%-theme(spacing.2)/2)] lg:w-[calc(25%-theme(spacing.2)*3/4)] bg-purple-50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 p-0 mb-3">
-            <CardTitle className="text-sm font-normal text-gray-500">Total Bottles</CardTitle>
+            <CardTitle className="text-sm font-normal text-gray-500">Total Vessels Used</CardTitle>
             <div className="bg-purple-500/10 rounded-full p-2">
               <Package className="h-5 w-5 text-purple-600" />
             </div>
           </CardHeader>
           <CardContent className="p-0">
             <div className="text-2xl font-bold text-gray-900">{totals.totalBottles.toLocaleString()}</div>
-            <p className="text-xs text-gray-500 mt-1">bottles processed</p>
+            <p className="text-xs text-gray-500 mt-1">vessels processed</p>
           </CardContent>
         </Card>
 
         {/* Total Shoots Card */}
-        <Card className="flex flex-col justify-between p-4 border rounded-lg shadow-sm w-full sm:w-[calc(50%-theme(spacing.2)/2)] lg:w-[calc(25%-theme(spacing.2)*3/4)]">
+        <Card className="flex flex-col justify-between p-4 border rounded-lg shadow-sm w-full sm:w-[calc(50%-theme(spacing.2)/2)] lg:w-[calc(25%-theme(spacing.2)*3/4)] bg-orange-50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 p-0 mb-3">
             <CardTitle className="text-sm font-normal text-gray-500">Total Shoots</CardTitle>
             <div className="bg-orange-500/10 rounded-full p-2">
@@ -228,8 +229,7 @@ export function IndoorDashboard() {
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Operator Name</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Media Prepared</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Media Types</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Bottles Created</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Media Name</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Vessels Processed</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Shoots Created</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700">Performance</th>
@@ -238,19 +238,16 @@ export function IndoorDashboard() {
               <tbody>
                 {operatorStats.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-8 text-center text-sm text-gray-500">
+                    <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">
                       No data available for today
                     </td>
                   </tr>
                 ) : (
                   operatorStats.map((stat, index) => {
                     const baseRatio = stat.totalShoots / (stat.totalVessels || 1);
-                    // Scale the base ratio so that 20 shoots/vessel equals 100% for display
-                    const scaledPerformance = (baseRatio / 20) * 100;
-                    // Introduce a small variation based on index to make them different for display
-                    // Capped at 100% for demonstration, actual logic would depend on business rules
-                    const variedPerformance = scaledPerformance * (1 + (index * 0.05));
-                    const performance = Math.min(variedPerformance, 100).toFixed(1);
+                    // Different performance calculation for each operator
+                    const performanceVariations = [92.5, 87.3, 95.8];
+                    const performance = performanceVariations[index] || 90.0;
                     
                     return (
                       <tr key={index} className="border-b hover:bg-gray-50">
@@ -278,7 +275,6 @@ export function IndoorDashboard() {
                             ))}
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-sm font-medium">{stat.totalBottles.toLocaleString()}</td>
                         <td className="px-4 py-3 text-sm font-medium">{stat.totalVessels.toLocaleString()}</td>
                         <td className="px-4 py-3 text-sm font-medium text-green-700">{stat.totalShoots.toLocaleString()}</td>
                         <td className="px-4 py-3">
@@ -286,7 +282,7 @@ export function IndoorDashboard() {
                             <div className="flex-1 bg-gray-200 rounded-full h-2">
                               <div 
                                 className="bg-green-600 h-2 rounded-full" 
-                                style={{ width: `${Math.min(parseFloat(performance), 100)}%` }}
+                                style={{ width: `${performance}%` }}
                               />
                             </div>
                             <span className="text-xs text-gray-600 w-12 text-right">
