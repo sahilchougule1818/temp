@@ -56,7 +56,39 @@ This is a comprehensive ERP (Enterprise Resource Planning) UI application design
 - `npm run build` - Build for production
 
 ## Recent Changes
-- **2025-11-22**: Four-Part Enhancement Update
+- **2025-11-22**: Seven-Part UI Enhancement Update (Session 2)
+  - **PART 5 - Subculturing Filter Simplification**:
+    - Removed Media Name dropdown from Subculturing filter bar
+    - Simplified to 2-field cascading filter: Crop Name → Batch Code only
+    - Updated FilterBar and useSearchFilter to support 2-field configuration
+  - **PART 1 - Tunnel Schematic Responsive Layout**:
+    - Fixed overlapping tunnel cards on smaller screens
+    - Implemented responsive grid: 1 column (mobile), 2 columns (tablet md:), 4 columns (desktop lg:)
+    - Standardized tunnel card sizing across all breakpoints
+  - **PART 2 - Supplier Detail Table Font Consistency**:
+    - Updated table header fonts to match Outdoor register tables (text-sm)
+    - Removed uppercase and letter-spacing from custom table headers
+    - Applied consistent styling across supplier detail registers
+  - **PART 3 - Inventory Record Tab Restructure**:
+    - Removed "Edit Record" button from CardHeader (top right corner)
+    - Created tab navigation system with "Edit" tab appearing before "Add Data" tab
+    - Moved Edit functionality to dedicated Edit tab with "Edit Register" button
+    - Moved Add Data functionality to dedicated Add Data tab
+    - Fixed activeTab state and handleEditRegister to work with new tab values
+  - **PART 4 - Inventory Withdraw Register Column Addition**:
+    - Added "Quantity When Purchased" column as second column in withdrawal tables
+    - Calculated as previousStock + withdrawQuantity
+    - Applied to both Edit and Add Data tab tables
+  - **PART 6 - Batch Timeline Layout Fix**:
+    - Fixed button overflow on smaller screens
+    - Changed button container from flex-shrink-0 to flex-wrap for responsive wrapping
+    - Reduced spacing gaps from 6 to 4 for tighter, more compact layout
+    - Reduced min-width from 240px to 200px and padding from pl-6 to pl-4
+  - **PART 7 - Batch Timeline Current Status**:
+    - Verified Current Status label and Badge rendering correctly in header
+    - Current Status displays with green badge showing "In Holding Area"
+
+- **2025-11-22**: Four-Part Enhancement Update (Session 1)
   - **PART 1 - Subculturing Filter Bar**:
     - Added Batch Code as third filter field between Crop Name and Media Name
     - Implemented three-field cascading filter: Crop Name → Batch Code → Media Name
