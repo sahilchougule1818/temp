@@ -4,6 +4,8 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Plus, Download, Edit2, FileCheck, X, Upload } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
+import { BackToMainDataButton } from '../common/BackToMainDataButton';
+import { useSearchFilter } from '../../hooks/useSearchFilter';
 import { Badge } from '../ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Card } from '../ui/card';
@@ -110,6 +112,12 @@ function getCertificateBadge(certificate: string) {
 }
 
 export function OutdoorSampling() {
+  const outdoorSamplingFilter = useSearchFilter({
+    sourceData: outdoorSamplingData,
+    field1Accessor: (record) => record.cropName,
+    field2Accessor: (record) => record.batchName
+  });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
@@ -218,7 +226,23 @@ export function OutdoorSampling() {
   
   return (
     <div className="p-6 space-y-6">
-      <FilterBar />
+      <FilterBar 
+        field1={{
+          label: 'Crop Name',
+          value: outdoorSamplingFilter.selectedField1,
+          onChange: outdoorSamplingFilter.handleField1Change,
+          options: outdoorSamplingFilter.field1Options,
+          placeholder: 'Select crop'
+        }}
+        field2={{
+          label: 'Batch Name',
+          value: outdoorSamplingFilter.selectedField2,
+          onChange: outdoorSamplingFilter.handleField2Change,
+          options: outdoorSamplingFilter.field2Options,
+          placeholder: 'Select batch'
+        }}
+        onSearch={outdoorSamplingFilter.handleSearch}
+      />
 
       <div className="grid grid-cols-4 gap-4 mb-6">
         <Card className="p-4 bg-white border border-gray-200 rounded-lg">
@@ -243,6 +267,10 @@ export function OutdoorSampling() {
         <div className="flex justify-between items-center mb-4">
           <h2>Outdoor Sampling Register</h2>
           <div className="flex gap-2">
+            <BackToMainDataButton 
+              isVisible={outdoorSamplingFilter.isFiltered}
+              onClick={outdoorSamplingFilter.handleReset}
+            />
             <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
               <DialogTrigger asChild>
                 <Button 
@@ -507,7 +535,7 @@ export function OutdoorSampling() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {outdoorSamplingData.map((sample) => (
+                {outdoorSamplingFilter.visibleData.map((sample) => (
                   <TableRow key={sample.id}>
                     <TableCell>{sample.sampleDate}</TableCell>
                     <TableCell>{sample.cropName}</TableCell>

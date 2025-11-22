@@ -83,7 +83,7 @@ export function Sidebar({ currentPage, onNavigate, user }: SidebarProps) {
         { id: 'primary-hardening', label: 'Primary Hardening', icon: TreePine, page: 'primary-hardening', breadcrumbs: ['Outdoor', 'Primary Hardening'] },
         { id: 'secondary-hardening', label: 'Secondary Hardening', icon: Sprout, page: 'secondary-hardening', breadcrumbs: ['Outdoor', 'Secondary Hardening'] },
         { id: 'shifting', label: 'Shifting Register', icon: ArrowRightLeft, page: 'shifting', breadcrumbs: ['Outdoor', 'Shifting'] },
-        { id: 'outdoor-contamination', label: 'Contamination', icon: Bug, page: 'outdoor-contamination', breadcrumbs: ['Outdoor', 'Contamination'] },
+        { id: 'outdoor-contamination', label: 'Mortality', icon: Bug, page: 'outdoor-contamination', breadcrumbs: ['Outdoor', 'Mortality'] },
         { id: 'fertilization', label: 'Fertilization', icon: Droplets, page: 'fertilization', breadcrumbs: ['Outdoor', 'Fertilization'] },
         { id: 'holding-area', label: 'Holding Area', icon: Package, page: 'holding-area', breadcrumbs: ['Outdoor', 'Holding Area'] },
         { id: 'batch-timeline', label: 'Batch Timeline', icon: Clock, page: 'batch-timeline', breadcrumbs: ['Outdoor', 'Batch Timeline'] },

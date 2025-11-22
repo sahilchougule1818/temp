@@ -5,7 +5,7 @@ import { Label } from '../../ui/label';
 import { Plus, Download, FileCheck, X, Upload, Edit2 } from 'lucide-react';
 import { FilterBar } from '../../common/FilterBar';
 import { BackToMainDataButton } from '../../common/BackToMainDataButton';
-import { useSearchFilter } from '../../hooks/useSearchFilter';
+import { useSearchFilter } from '../../../hooks/useSearchFilter';
 import { Badge } from '../../ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 import { Card } from '../../ui/card';
@@ -88,11 +88,11 @@ function getCertificateBadge(certificate: string) {
 }
 
 export function Sampling() {
-  const samplingFilter = useSearchFilter(
-    samplingData,
-    record => record.cropName,
-    record => record.batchName
-  );
+  const samplingFilter = useSearchFilter({
+    sourceData: samplingData,
+    field1Accessor: (record) => record.cropName,
+    field2Accessor: (record) => record.batchName
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);

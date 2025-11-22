@@ -7,7 +7,7 @@ import { Plus, Download, Edit2 } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 import { FilterBar } from '../common/FilterBar';
 import { BackToMainDataButton } from '../common/BackToMainDataButton';
-import { useSearchFilter } from '../hooks/useSearchFilter';
+import { useSearchFilter } from '../../hooks/useSearchFilter';
 import { DataTable } from '../common/DataTable';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
@@ -38,11 +38,11 @@ const shiftingData = [
 ];
 
 export function Shifting() {
-  const shiftingFilter = useSearchFilter(
-    shiftingData,
-    record => record.cropName,
-    record => record.batch
-  );
+  const shiftingFilter = useSearchFilter({
+    sourceData: shiftingData,
+    field1Accessor: (record) => record.cropName,
+    field2Accessor: (record) => record.batch
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -147,12 +147,32 @@ export function Shifting() {
 
   return (
     <div className="p-6 space-y-6">
-      <FilterBar />
+      <FilterBar 
+        field1={{
+          label: 'Crop Name',
+          value: shiftingFilter.selectedField1,
+          onChange: shiftingFilter.handleField1Change,
+          options: shiftingFilter.field1Options,
+          placeholder: 'Select crop'
+        }}
+        field2={{
+          label: 'Batch',
+          value: shiftingFilter.selectedField2,
+          onChange: shiftingFilter.handleField2Change,
+          options: shiftingFilter.field2Options,
+          placeholder: 'Select batch'
+        }}
+        onSearch={shiftingFilter.handleSearch}
+      />
 
       <div className="mt-6">
         <div className="flex justify-between items-center mb-4">
           <h2>Shifting Register</h2>
           <div className="flex gap-2">
+            <BackToMainDataButton 
+              isVisible={shiftingFilter.isFiltered}
+              onClick={shiftingFilter.handleReset}
+            />
             <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
               <DialogTrigger asChild>
                 <Button 
@@ -348,7 +368,7 @@ export function Shifting() {
 
         <DataTable 
           columns={columns} 
-          data={shiftingData}
+          data={shiftingFilter.visibleData}
           showActions={false}
         />
       </div>

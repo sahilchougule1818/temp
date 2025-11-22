@@ -5,6 +5,8 @@ import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Plus, Download, Edit2 } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
+import { BackToMainDataButton } from '../common/BackToMainDataButton';
+import { useSearchFilter } from '../../hooks/useSearchFilter';
 import { Badge } from '../ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
 import { Card } from '../ui/card';
@@ -62,6 +64,12 @@ function getAgeBadge(days: number) {
 }
 
 export function HoldingArea() {
+  const holdingFilter = useSearchFilter({
+    sourceData: holdingData,
+    field1Accessor: (record) => record.cropName,
+    field2Accessor: (record) => record.batchName
+  });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
@@ -146,7 +154,23 @@ export function HoldingArea() {
   
   return (
     <div className="p-6 space-y-6">
-      <FilterBar />
+      <FilterBar 
+        field1={{
+          label: 'Crop Name',
+          value: holdingFilter.selectedField1,
+          onChange: holdingFilter.handleField1Change,
+          options: holdingFilter.field1Options,
+          placeholder: 'Select crop'
+        }}
+        field2={{
+          label: 'Batch Name',
+          value: holdingFilter.selectedField2,
+          onChange: holdingFilter.handleField2Change,
+          options: holdingFilter.field2Options,
+          placeholder: 'Select batch'
+        }}
+        onSearch={holdingFilter.handleSearch}
+      />
 
       <div className="grid grid-cols-4 gap-4">
         <Card className="p-4 bg-white border border-gray-200 rounded-lg">
@@ -171,6 +195,10 @@ export function HoldingArea() {
         <div className="flex justify-between items-center mb-4">
           <h2>Holding Area Register</h2>
           <div className="flex gap-2">
+            <BackToMainDataButton 
+              isVisible={holdingFilter.isFiltered}
+              onClick={holdingFilter.handleReset}
+            />
             <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
               <DialogTrigger asChild>
                 <Button 
@@ -359,7 +387,7 @@ export function HoldingArea() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {holdingData.map((row) => (
+                {holdingFilter.visibleData.map((row) => (
                   <TableRow key={row.id}>
                     <TableCell className="font-medium">{row.batchName}</TableCell>
                     <TableCell>{row.cropName}</TableCell>

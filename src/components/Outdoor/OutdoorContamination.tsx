@@ -5,6 +5,8 @@ import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Plus, Download, Edit2, AlertTriangle } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
+import { BackToMainDataButton } from '../common/BackToMainDataButton';
+import { useSearchFilter } from '../../hooks/useSearchFilter';
 import { DataTable } from '../common/DataTable';
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
@@ -49,6 +51,12 @@ const mortalityData = [
 ];
 
 export function Mortality() {
+  const mortalityFilter = useSearchFilter({
+    sourceData: mortalityData,
+    field1Accessor: (record) => record.cropName,
+    field2Accessor: (record) => record.batch
+  });
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
@@ -152,7 +160,23 @@ export function Mortality() {
 
   return (
     <div className="p-6 space-y-6">
-      <FilterBar />
+      <FilterBar 
+        field1={{
+          label: 'Crop Name',
+          value: mortalityFilter.selectedField1,
+          onChange: mortalityFilter.handleField1Change,
+          options: mortalityFilter.field1Options,
+          placeholder: 'Select crop'
+        }}
+        field2={{
+          label: 'Batch',
+          value: mortalityFilter.selectedField2,
+          onChange: mortalityFilter.handleField2Change,
+          options: mortalityFilter.field2Options,
+          placeholder: 'Select batch'
+        }}
+        onSearch={mortalityFilter.handleSearch}
+      />
 
       <Card className="p-4 mt-6 bg-red-50 border-red-200">
         <div className="flex items-start gap-3">
@@ -188,6 +212,10 @@ export function Mortality() {
         <div className="flex justify-between items-center mb-4">
           <h2>Outdoor Mortality Register</h2>
           <div className="flex gap-2">
+            <BackToMainDataButton 
+              isVisible={mortalityFilter.isFiltered}
+              onClick={mortalityFilter.handleReset}
+            />
             <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
               <DialogTrigger asChild>
                 <Button 
@@ -403,7 +431,7 @@ export function Mortality() {
 
         <DataTable 
           columns={columns} 
-          data={mortalityData}
+          data={mortalityFilter.visibleData}
           showActions={false}
         />
       </div>

@@ -7,7 +7,7 @@ import { Plus, Download, Edit2, ArrowRight } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 import { FilterBar } from '../common/FilterBar';
 import { BackToMainDataButton } from '../common/BackToMainDataButton';
-import { useSearchFilter } from '../hooks/useSearchFilter';
+import { useSearchFilter } from '../../hooks/useSearchFilter';
 import { DataTable } from '../common/DataTable';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
@@ -36,11 +36,11 @@ const secondaryData = [
 ];
 
 export function SecondaryHardening() {
-  const secondaryFilter = useSearchFilter(
-    secondaryData,
-    record => record.cropName,
-    record => record.batchName
-  );
+  const secondaryFilter = useSearchFilter({
+    sourceData: secondaryData,
+    field1Accessor: (record) => record.cropName,
+    field2Accessor: (record) => record.batchName
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -140,12 +140,32 @@ export function SecondaryHardening() {
 
   return (
     <div className="p-6 space-y-6">
-      <FilterBar />
+      <FilterBar 
+        field1={{
+          label: 'Crop Name',
+          value: secondaryFilter.selectedField1,
+          onChange: secondaryFilter.handleField1Change,
+          options: secondaryFilter.field1Options,
+          placeholder: 'Select crop'
+        }}
+        field2={{
+          label: 'Batch Name',
+          value: secondaryFilter.selectedField2,
+          onChange: secondaryFilter.handleField2Change,
+          options: secondaryFilter.field2Options,
+          placeholder: 'Select batch'
+        }}
+        onSearch={secondaryFilter.handleSearch}
+      />
 
       <div className="mt-6">
         <div className="flex justify-between items-center mb-4">
           <h2>Secondary Hardening Register</h2>
           <div className="flex gap-2">
+            <BackToMainDataButton 
+              isVisible={secondaryFilter.isFiltered}
+              onClick={secondaryFilter.handleReset}
+            />
             <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
               <DialogTrigger asChild>
                 <Button 
@@ -386,7 +406,7 @@ export function SecondaryHardening() {
 
         <DataTable 
           columns={columns} 
-          data={secondaryData}
+          data={secondaryFilter.visibleData}
           showActions={false}
         />
       </div>

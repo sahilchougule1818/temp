@@ -6,8 +6,8 @@ import { Textarea } from '../ui/textarea';
 import { Plus, Download, Edit2 } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 import { FilterBar } from '../common/FilterBar';
-import { BackToMainDataButton} from '../common/BackToMainDataButton';
-import { useSearchFilter } from '../hooks/useSearchFilter';
+import { BackToMainDataButton } from '../common/BackToMainDataButton';
+import { useSearchFilter } from '../../hooks/useSearchFilter';
 import { DataTable } from '../common/DataTable';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
@@ -49,11 +49,11 @@ const fertilizationData = [
 ];
 
 export function Fertilization() {
-  const fertilizationFilter = useSearchFilter(
-    fertilizationData,
-    record => record.cropName,
-    record => record.batch
-  );
+  const fertilizationFilter = useSearchFilter({
+    sourceData: fertilizationData,
+    field1Accessor: (record) => record.cropName,
+    field2Accessor: (record) => record.batch
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -158,12 +158,32 @@ export function Fertilization() {
 
   return (
     <div className="p-6 space-y-6">
-      <FilterBar />
+      <FilterBar 
+        field1={{
+          label: 'Crop Name',
+          value: fertilizationFilter.selectedField1,
+          onChange: fertilizationFilter.handleField1Change,
+          options: fertilizationFilter.field1Options,
+          placeholder: 'Select crop'
+        }}
+        field2={{
+          label: 'Batch',
+          value: fertilizationFilter.selectedField2,
+          onChange: fertilizationFilter.handleField2Change,
+          options: fertilizationFilter.field2Options,
+          placeholder: 'Select batch'
+        }}
+        onSearch={fertilizationFilter.handleSearch}
+      />
 
       <div className="mt-6">
         <div className="flex justify-between items-center mb-4">
           <h2>Fertilization & Maintenance Register</h2>
           <div className="flex gap-2">
+            <BackToMainDataButton 
+              isVisible={fertilizationFilter.isFiltered}
+              onClick={fertilizationFilter.handleReset}
+            />
             <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
               <DialogTrigger asChild>
                 <Button 
@@ -378,7 +398,7 @@ export function Fertilization() {
 
         <DataTable 
           columns={columns} 
-          data={fertilizationData}
+          data={fertilizationFilter.visibleData}
           showActions={false}
         />
       </div>
