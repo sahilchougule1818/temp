@@ -307,23 +307,172 @@ export function InventoryRecord() {
     <div className="p-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Inventory Record</CardTitle>
-            <Button
-              variant="outline"
-              onClick={handleEditRegister}
-              className="flex items-center gap-2"
-            >
-              <Edit className="w-4 h-4" />
-              Edit Record
-            </Button>
-          </div>
+          <CardTitle>Inventory Record</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold">Inventory Withdrawal Register</h2>
-          </div>
+          <Tabs defaultValue="edit" className="w-full" onValueChange={setActiveTab}>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="edit">Edit</TabsTrigger>
+              <TabsTrigger value="adddata">Add Data</TabsTrigger>
+            </TabsList>
 
+            <TabsContent value="edit">
+              <div className="space-y-4">
+                <Button
+                  variant="outline"
+                  onClick={handleEditRegister}
+                  className="flex items-center gap-2"
+                >
+                  <Edit className="w-4 h-4" />
+                  Edit Register
+                </Button>
+
+                {/* Edit Withdrawal Dialog */}
+                <Dialog open={isEditWithdrawalModalOpen} onOpenChange={(open: boolean) => {
+                  setIsEditWithdrawalModalOpen(open);
+                  if (!open) {
+                    resetWithdrawalForm();
+                  }
+                }}>
+                  <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle>Edit Inventory Withdrawal Record</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid grid-cols-2 gap-4 py-4">
+                      <div className="space-y-2">
+                        <Label>Date of Withdrawal</Label>
+                        <Input
+                          type="date"
+                          value={withdrawalForm.dateOfWithdrawal}
+                          onChange={(e) => handleWithdrawalDateChange(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Item Name</Label>
+                        {withdrawalForm.dateOfWithdrawal ? (
+                          <Select value={withdrawalForm.itemName} onValueChange={handleWithdrawalItemSelect}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select item name" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableWithdrawalItemNamesForDate.length > 0 ? (
+                                availableWithdrawalItemNamesForDate.map(name => (
+                                  <SelectItem key={name} value={name}>{name}</SelectItem>
+                                ))
+                              ) : (
+                                <SelectItem value="no-records" disabled>No records for this date</SelectItem>
+                              )}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <Input
+                            placeholder="Select date first"
+                            disabled
+                          />
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Previous Stock</Label>
+                        <Input
+                          type="number"
+                          placeholder="e.g., 500"
+                          value={withdrawalForm.previousStock}
+                          onChange={(e) => setWithdrawalForm({ ...withdrawalForm, previousStock: e.target.value })}
+                          disabled={!editingWithdrawalId}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Withdraw Quantity</Label>
+                        <Input
+                          type="number"
+                          placeholder="e.g., 50"
+                          value={withdrawalForm.withdrawQuantity}
+                          onChange={(e) => {
+                            const withdrawQty = e.target.value;
+                            const prevStock = parseInt(withdrawalForm.previousStock) || 0;
+                            const withdrawNum = parseInt(withdrawQty) || 0;
+                            const newCurrentStock = prevStock - withdrawNum;
+                            setWithdrawalForm({ 
+                              ...withdrawalForm, 
+                              withdrawQuantity: withdrawQty,
+                              currentStock: newCurrentStock >= 0 ? String(newCurrentStock) : '0'
+                            });
+                          }}
+                          disabled={!editingWithdrawalId}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Current Stock (After Withdrawal)</Label>
+                        <Input
+                          value={
+                            (parseInt(withdrawalForm.previousStock) || 0) -
+                            (parseInt(withdrawalForm.withdrawQuantity) || 0)
+                          }
+                          disabled
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-between gap-3">
+                      <Button
+                        variant="destructive"
+                        onClick={() => {
+                          if (editingWithdrawalId) {
+                            setItemToDelete({ type: 'withdrawal', id: editingWithdrawalId });
+                            setDeleteConfirmOpen(true);
+                          }
+                        }}
+                        disabled={!editingWithdrawalId}
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete
+                      </Button>
+                      <div className="flex gap-3">
+                        <Button variant="outline" onClick={() => {
+                          setIsEditWithdrawalModalOpen(false);
+                          resetWithdrawalForm();
+                        }}>Cancel</Button>
+                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveWithdrawal} disabled={!editingWithdrawalId}>
+                          Save Changes
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+
+                <div className="border rounded-lg overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Item Name</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Quantity When Purchased</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Current Stock</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Withdrawn Quantity</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Previous Stock</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Date of Withdraw</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredWithdrawalData.map((record) => (
+                        <tr key={record.id} className="border-b hover:bg-gray-50">
+                          <td className="px-4 py-3 text-sm">
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                              {record.itemName}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-3 text-sm">{record.previousStock + record.withdrawQuantity}</td>
+                          <td className="px-4 py-3 text-sm">{record.currentStock}</td>
+                          <td className="px-4 py-3 text-sm">{record.withdrawQuantity}</td>
+                          <td className="px-4 py-3 text-sm">{record.previousStock}</td>
+                          <td className="px-4 py-3 text-sm">{record.dateOfWithdrawal}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="adddata">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
                   <Button
@@ -426,123 +575,12 @@ export function InventoryRecord() {
                   </Dialog>
                 </div>
 
-                {/* Edit Withdrawal Dialog */}
-                <Dialog open={isEditWithdrawalModalOpen} onOpenChange={(open: boolean) => {
-                  setIsEditWithdrawalModalOpen(open);
-                  if (!open) {
-                    resetWithdrawalForm();
-                  }
-                }}>
-                  <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                      <DialogTitle>Edit Inventory Withdrawal Record</DialogTitle>
-                    </DialogHeader>
-                    <div className="grid grid-cols-2 gap-4 py-4">
-                      <div className="space-y-2">
-                        <Label>Date of Withdrawal</Label>
-                        <Input
-                          type="date"
-                          value={withdrawalForm.dateOfWithdrawal}
-                          onChange={(e) => handleWithdrawalDateChange(e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Item Name</Label>
-                        {withdrawalForm.dateOfWithdrawal ? (
-                          <Select value={withdrawalForm.itemName} onValueChange={handleWithdrawalItemSelect}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select item name" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {availableWithdrawalItemNamesForDate.length > 0 ? (
-                                availableWithdrawalItemNamesForDate.map(name => (
-                                  <SelectItem key={name} value={name}>{name}</SelectItem>
-                                ))
-                              ) : (
-                                <SelectItem value="no-records" disabled>No records for this date</SelectItem>
-                              )}
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <Input
-                            placeholder="Select date first"
-                            disabled
-                          />
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Previous Stock</Label>
-                        <Input
-                          type="number"
-                          placeholder="e.g., 500"
-                          value={withdrawalForm.previousStock}
-                          onChange={(e) => setWithdrawalForm({ ...withdrawalForm, previousStock: e.target.value })}
-                          disabled={!editingWithdrawalId} // Disable if no specific record is selected for editing
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Withdraw Quantity</Label>
-                        <Input
-                          type="number"
-                          placeholder="e.g., 50"
-                          value={withdrawalForm.withdrawQuantity}
-                          onChange={(e) => {
-                            const withdrawQty = e.target.value;
-                            const prevStock = parseInt(withdrawalForm.previousStock) || 0;
-                            const withdrawNum = parseInt(withdrawQty) || 0;
-                            const newCurrentStock = prevStock - withdrawNum;
-                            setWithdrawalForm({ 
-                              ...withdrawalForm, 
-                              withdrawQuantity: withdrawQty,
-                              currentStock: newCurrentStock >= 0 ? String(newCurrentStock) : '0'
-                            });
-                          }}
-                          disabled={!editingWithdrawalId} // Disable if no specific record is selected for editing
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Current Stock (After Withdrawal)</Label>
-                        <Input
-                          value={
-                            (parseInt(withdrawalForm.previousStock) || 0) -
-                            (parseInt(withdrawalForm.withdrawQuantity) || 0)
-                          }
-                          disabled
-                        />
-                      </div>
-                    </div>
-                    <div className="flex justify-between gap-3">
-                      <Button
-                        variant="destructive"
-                        onClick={() => {
-                          if (editingWithdrawalId) {
-                            setItemToDelete({ type: 'withdrawal', id: editingWithdrawalId });
-                            setDeleteConfirmOpen(true);
-                          }
-                        }}
-                        disabled={!editingWithdrawalId}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
-                      </Button>
-                      <div className="flex gap-3">
-                        <Button variant="outline" onClick={() => {
-                          setIsEditWithdrawalModalOpen(false);
-                          resetWithdrawalForm();
-                        }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveWithdrawal} disabled={!editingWithdrawalId}>
-                          Save Changes
-                        </Button>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-
                 <div className="border rounded-lg overflow-hidden">
                   <table className="w-full">
                     <thead className="bg-gray-50 border-b">
                       <tr>
                         <th className="px-4 py-3 text-left text-xs text-gray-600">Item Name</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Quantity When Purchased</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600">Current Stock</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600">Withdrawn Quantity</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600">Previous Stock</th>
@@ -557,6 +595,7 @@ export function InventoryRecord() {
                               {record.itemName}
                             </Badge>
                           </td>
+                          <td className="px-4 py-3 text-sm">{record.previousStock + record.withdrawQuantity}</td>
                           <td className="px-4 py-3 text-sm">{record.currentStock}</td>
                           <td className="px-4 py-3 text-sm">{record.withdrawQuantity}</td>
                           <td className="px-4 py-3 text-sm">{record.previousStock}</td>
@@ -567,6 +606,8 @@ export function InventoryRecord() {
                   </table>
                 </div>
               </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 
