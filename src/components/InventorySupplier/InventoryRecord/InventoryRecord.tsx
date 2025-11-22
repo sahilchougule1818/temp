@@ -298,7 +298,7 @@ export function InventoryRecord() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex justify-start gap-2">
+            <div className="flex justify-end gap-2">
               <Button
                 variant="outline"
                 onClick={handleEditRegister}

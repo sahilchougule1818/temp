@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 import { Users, FlaskConical, Package, TrendingUp } from 'lucide-react';
 
 // This would normally come from shared state or API
@@ -17,11 +18,11 @@ const getTodayDate = () => {
 const todayDate = getTodayDate();
 
 const sampleAutoclaveData = [
-  { id: 1, date: todayDate, mediaCode: 'MS-001', operator: 'Amit Shah', typeOfMedia: 'Bamboo' },
-  { id: 2, date: todayDate, mediaCode: 'MS-002', operator: 'Priya Patel', typeOfMedia: 'Banana' },
-  { id: 3, date: todayDate, mediaCode: 'MS-003', operator: 'Amit Shah', typeOfMedia: 'Teak' },
-  { id: 4, date: todayDate, mediaCode: 'MS-004', operator: 'Rahul Desai', typeOfMedia: 'Ornamental' },
-  { id: 5, date: todayDate, mediaCode: 'MS-005', operator: 'Priya Patel', typeOfMedia: 'Bamboo' }
+  { id: 1, date: todayDate, mediaCode: 'MS-001', operator: 'Amit Shah', typeOfMedia: 'Bamboo', litres: 5 },
+  { id: 2, date: todayDate, mediaCode: 'MS-002', operator: 'Priya Patel', typeOfMedia: 'Banana', litres: 8 },
+  { id: 3, date: todayDate, mediaCode: 'MS-003', operator: 'Amit Shah', typeOfMedia: 'Teak', litres: 6 },
+  { id: 4, date: todayDate, mediaCode: 'MS-004', operator: 'Rahul Desai', typeOfMedia: 'Ornamental', litres: 7 },
+  { id: 5, date: todayDate, mediaCode: 'MS-005', operator: 'Priya Patel', typeOfMedia: 'Bamboo', litres: 4 }
 ];
 
 const sampleBatchData = [
@@ -43,6 +44,9 @@ const sampleIncubationData = [
 ];
 
 export function IndoorDashboard() {
+  // State for toggling between monthly and weekly views
+  const [viewMode, setViewMode] = useState<'monthly' | 'weekly'>('monthly');
+
   // Get today's date
   const getToday = () => {
     const now = new Date();
@@ -56,6 +60,9 @@ export function IndoorDashboard() {
 
   // Calculate operator statistics
   const operatorStats = useMemo(() => {
+    // Multiplier based on view mode (monthly = 4x weekly for approximation)
+    const multiplier = viewMode === 'monthly' ? 4 : 1;
+    
     const stats: Record<string, {
       name: string;
       mediaPrepared: number;
@@ -65,7 +72,7 @@ export function IndoorDashboard() {
       mediaTypes: Set<string>;
     }> = {};
 
-    // Process autoclave data (media prepared)
+    // Process autoclave data (media prepared in litres)
     sampleAutoclaveData
       .filter(item => item.date === today)
       .forEach(item => {
@@ -79,7 +86,7 @@ export function IndoorDashboard() {
             mediaTypes: new Set()
           };
         }
-        stats[item.operator].mediaPrepared++;
+        stats[item.operator].mediaPrepared += item.litres * multiplier;
         stats[item.operator].mediaTypes.add(item.typeOfMedia);
       });
 
@@ -97,7 +104,7 @@ export function IndoorDashboard() {
             mediaTypes: new Set()
           };
         }
-        stats[item.operator].totalBottles += item.bottles;
+        stats[item.operator].totalBottles += item.bottles * multiplier;
       });
 
     // Process subculture data (vessels and shoots)
@@ -114,8 +121,8 @@ export function IndoorDashboard() {
             mediaTypes: new Set()
           };
         }
-        stats[item.operator].totalVessels += item.vessels;
-        stats[item.operator].totalShoots += item.shoots;
+        stats[item.operator].totalVessels += item.vessels * multiplier;
+        stats[item.operator].totalShoots += item.shoots * multiplier;
       });
 
     // Process incubation data (vessels and shoots)
@@ -132,15 +139,15 @@ export function IndoorDashboard() {
             mediaTypes: new Set()
           };
         }
-        stats[item.operator].totalVessels += item.vessels;
-        stats[item.operator].totalShoots += item.shoots;
+        stats[item.operator].totalVessels += item.vessels * multiplier;
+        stats[item.operator].totalShoots += item.shoots * multiplier;
       });
 
     return Object.values(stats).map(stat => ({
       ...stat,
       mediaTypes: Array.from(stat.mediaTypes)
     }));
-  }, [today]);
+  }, [today, viewMode]);
 
   // Calculate totals
   const totals = useMemo(() => {
@@ -154,8 +161,24 @@ export function IndoorDashboard() {
 
   return (
     <div className="p-6 space-y-6">
-      <div>
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Indoor Dashboard</h1>
+        <div className="flex gap-2">
+          <Button
+            variant={viewMode === 'monthly' ? 'default' : 'outline'}
+            onClick={() => setViewMode('monthly')}
+            className="h-9"
+          >
+            Show Monthly Report
+          </Button>
+          <Button
+            variant={viewMode === 'weekly' ? 'default' : 'outline'}
+            onClick={() => setViewMode('weekly')}
+            className="h-9"
+          >
+            Show Weekly Report
+          </Button>
+        </div>
       </div>
 
       {/* Summary Cards */}
@@ -183,8 +206,10 @@ export function IndoorDashboard() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="text-2xl font-bold text-gray-900">30ltrs</div>
-            <p className="text-xs text-gray-500 mt-1">media prepared this month</p>
+            <div className="text-2xl font-bold text-gray-900">
+              {totals.mediaPrepared} Litres
+            </div>
+            <p className="text-xs text-gray-500 mt-1">media prepared</p>
           </CardContent>
         </Card>
 
@@ -252,18 +277,11 @@ export function IndoorDashboard() {
                     return (
                       <tr key={index} className="border-b hover:bg-gray-50">
                         <td className="px-4 py-3">
-                          <div className="flex items-center">
-                            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
-                              <span className="text-xs font-semibold text-green-700">
-                                {stat.name.split(' ').map(n => n[0]).join('')}
-                              </span>
-                            </div>
-                            <span className="text-sm font-medium text-gray-900">{stat.name}</span>
-                          </div>
+                          <span className="text-sm font-medium text-gray-900">{stat.name}</span>
                         </td>
                         <td className="px-4 py-3">
                           <Badge className="bg-green-100 text-green-700">
-                            {stat.mediaPrepared}
+                            {stat.mediaPrepared} Litres
                           </Badge>
                         </td>
                         <td className="px-4 py-3">
