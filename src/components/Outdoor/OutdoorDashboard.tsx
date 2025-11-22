@@ -80,7 +80,7 @@ export function OutdoorDashboard() {
                 )}
               </div>
               
-              <div className="mb-5">
+              <div className="mb-7">
                 <div className="flex justify-between text-xs mb-2 text-gray-600">
                   <span>Occupancy</span>
                   <span className="font-semibold text-gray-900">{tunnel.occupied}/{tunnel.capacity}</span>
@@ -137,10 +137,6 @@ export function OutdoorDashboard() {
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-red-400" />
             <span className="text-gray-700">Mortality Alert</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-amber-400" />
-            <span className="text-gray-700">Needs Attention</span>
           </div>
         </div>
       </Card>
