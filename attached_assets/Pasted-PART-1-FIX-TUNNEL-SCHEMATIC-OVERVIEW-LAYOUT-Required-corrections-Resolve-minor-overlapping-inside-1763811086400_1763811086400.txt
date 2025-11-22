@@ -1,0 +1,48 @@
+PART 1 — FIX TUNNEL SCHEMATIC OVERVIEW LAYOUT
+Required corrections:
+Resolve minor overlapping inside the Tunnel Schematic Overview
+Standardize sizing and spacing of tunnel cards
+Ensure:
+✅ equal card widths
+✅ consistent padding
+✅ balanced grid alignment
+✅ no collision at any viewport width
+PART 2 — SUPPLIER DETAIL REGISTER FONT CONSISTENCY
+Requirement:
+Apply the same header font and data font used in other Outdoor module tables to the Supplier Detail Register table
+PART 3 — INVENTORY RECORD MODULE TAB POSITION UPDATE
+Requirement:
+In the Inventory Record section of the Inventory & Supplier module:
+✅ Move the Edit tab to appear before the Add Data tab
+✅ Remove the version where Edit appears in the top right corner
+PART 4 — INVENTORY WITHDRAW REGISTER COLUMN ADDITION
+Requirement:
+Add a new column named:
+“Quantity When Purchased”
+Place it immediately next to Item Name in the Inventory Withdraw Register
+PART 5 — REMOVE MEDIA NAME FROM SUBCULTURING FILTER PANEL
+Requirement:
+Completely remove the Media Name dropdown from the Subculturing filter bar
+PART 6 — FIX BATCH TIMELINE PAGE LAYOUT OVERFLOW
+Issues to correct:
+✅ Buttons on the right side (Print Timeline / Export, etc.) are overflowing outside the container
+✅ Header layout must realign so all controls fit within visible bounds
+✅ Responsive wrapping must behave cleanly on smaller widths
+PART 7 — RESTORE CURRENT STATUS VALUE RENDERING
+Requirement:
+Fix the issue where Current Status is not displaying on the Batch Timeline header
+Ensure:
+✅ correct data binding
+✅ no null / undefined state
+✅ consistent typography
+✅ FINAL VERIFICATION CHECKLIST
+Confirm all of the following after updates:
+✅ Tunnel Schematic Overview has no overlap and spacing is balanced
+✅ Supplier Detail Register fonts match other Outdoor register tables
+✅ Edit tab correctly positioned before Add Data in Inventory Record
+✅ “Quantity When Purchased” column added in Inventory Withdraw Register
+✅ Media Name dropdown removed from Subculturing filter bar
+✅ Batch Timeline screen buttons no longer spill out of container
+✅ Current Status field renders properly
+✅ No functional, data, or layout regressions
+✅ UI theme consistency maintained

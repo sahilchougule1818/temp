@@ -62,12 +62,11 @@ export function Subculturing() {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedBatch, setSelectedBatch] = useState('');
 
-  // Search filter (Species → Batch Code → Media Code)
+  // Search filter (Species → Batch Code)
   const subcultureFilter = useSearchFilter({
     sourceData: subcultureData,
     field1Accessor: (item) => item.species,
     field2Accessor: (item) => item.batchCode,
-    field3Accessor: (item) => item.mediaCode,
   });
   
   const [subcultureForm, setSubcultureForm] = useState({
@@ -210,13 +209,6 @@ export function Subculturing() {
           onChange: subcultureFilter.handleField2Change,
           options: subcultureFilter.field2Options,
           placeholder: 'Select batch code'
-        }}
-        field3={{
-          label: 'Media Name',
-          value: subcultureFilter.selectedField3,
-          onChange: subcultureFilter.handleField3Change,
-          options: subcultureFilter.field3Options,
-          placeholder: 'Select media code'
         }}
         onSearch={subcultureFilter.handleSearch}
       />

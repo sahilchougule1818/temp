@@ -378,28 +378,28 @@ export function SupplierDetail() {
             </Dialog>
 
             <div className="border rounded-lg overflow-hidden">
-              <table className="w-full divide-y divide-gray-200">
+              <table className="w-full divide-y divide-gray-200 text-sm">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th scope="col" className="w-1/12 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                    <th scope="col" className="w-3/12 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier Name</th>
-                    <th scope="col" className="w-2/12 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                    <th scope="col" className="w-2/12 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                    <th scope="col" className="w-4/12 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplies</th>
+                    <th scope="col" className="w-1/12 px-4 py-3 text-left font-medium text-foreground">ID</th>
+                    <th scope="col" className="w-3/12 px-4 py-3 text-left font-medium text-foreground">Supplier Name</th>
+                    <th scope="col" className="w-2/12 px-4 py-3 text-left font-medium text-foreground">Contact</th>
+                    <th scope="col" className="w-2/12 px-4 py-3 text-left font-medium text-foreground">Location</th>
+                    <th scope="col" className="w-4/12 px-4 py-3 text-left font-medium text-foreground">Supplies</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {suppliers.map((supplier) => (
-                    <tr key={supplier.id}>
-                      <td className="w-1/12 px-4 py-4 text-sm font-medium text-gray-900">{supplier.id}</td>
-                      <td className="w-3/12 px-4 py-4 text-sm font-medium text-gray-900">
+                    <tr key={supplier.id} className="hover:bg-muted/50">
+                      <td className="w-1/12 px-4 py-4">{supplier.id}</td>
+                      <td className="w-3/12 px-4 py-4">
                         <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                           {supplier.name}
                         </Badge>
                       </td>
-                      <td className="w-2/12 px-4 py-4 text-sm text-gray-500">{supplier.contact}</td>
-                      <td className="w-2/12 px-4 py-4 text-sm text-gray-500">{supplier.location}</td>
-                      <td className="w-4/12 px-4 py-4 text-sm text-gray-500">{supplier.supplies}</td>
+                      <td className="w-2/12 px-4 py-4">{supplier.contact}</td>
+                      <td className="w-2/12 px-4 py-4">{supplier.location}</td>
+                      <td className="w-4/12 px-4 py-4">{supplier.supplies}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -585,28 +585,28 @@ export function SupplierDetail() {
                 </Dialog>
 
                 <div className="border rounded-lg overflow-hidden">
-                  <table className="w-full divide-y divide-gray-200">
+                  <table className="w-full divide-y divide-gray-200 text-sm">
                     <thead className="bg-gray-50">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Purchase</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item Name</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity Purchased</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier Name</th>
+                        <th className="px-4 py-3 text-left font-medium text-foreground">ID</th>
+                        <th className="px-4 py-3 text-left font-medium text-foreground">Date of Purchase</th>
+                        <th className="px-4 py-3 text-left font-medium text-foreground">Item Name</th>
+                        <th className="px-4 py-3 text-left font-medium text-foreground">Quantity Purchased</th>
+                        <th className="px-4 py-3 text-left font-medium text-foreground">Supplier Name</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {purchaseRecords.map((record) => (
-                        <tr key={record.id}>
-                          <td className="px-4 py-4 text-sm font-medium text-gray-900">{record.id}</td>
-                          <td className="px-4 py-4 text-sm text-gray-500">{record.dateOfPurchase}</td>
-                          <td className="px-4 py-4 text-sm font-medium text-gray-900">
+                        <tr key={record.id} className="hover:bg-muted/50">
+                          <td className="px-4 py-4">{record.id}</td>
+                          <td className="px-4 py-4">{record.dateOfPurchase}</td>
+                          <td className="px-4 py-4">
                             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                               {record.itemName}
                             </Badge>
                           </td>
-                          <td className="px-4 py-4 text-sm text-gray-500">{record.quantityPurchased}</td>
-                          <td className="px-4 py-4 text-sm text-gray-500">{record.supplierName}</td>
+                          <td className="px-4 py-4">{record.quantityPurchased}</td>
+                          <td className="px-4 py-4">{record.supplierName}</td>
                         </tr>
                       ))}
                     </tbody>
