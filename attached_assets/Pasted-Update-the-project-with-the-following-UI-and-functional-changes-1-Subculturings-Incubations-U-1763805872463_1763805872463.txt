@@ -1,0 +1,55 @@
+Update the project with the following UI and functional changes:
+
+1. Subculturings & Incubations
+* Update the filter panel to follow this association sequence: Crop Name → Batch Name → Search Button
+* Search results must display only the filtered register data.
+
+2. Indoor Modules
+* Move Performance Report above Media Preparation.
+* Rename Performance Report to Indoor Dashboard.
+
+3. Outdoor Module
+* In ALL outdoor submodule registers:
+    * Add the same outer border layout used in indoor registers for consistency.
+
+4. Inventory & Supplier Module
+Supplier Detail submodule:
+* When switching between registers:
+    * Purchase Register must appear first, then supplier detail register second.
+Edit button placement:
+* The Edit button must appear BEFORE the Add Data button.
+
+5. Inventory Record Module
+Update the register fields to show in this exact order:
+1. Item name
+2. Quantity when purchased
+3. Current quantity
+4. Withdrawn quantity
+5. Previous quantity
+6. Date of withdraw
+Form behavior when adding data:
+* Selecting Item Name should auto-fill Previous Stock with current inventory.
+* When entering Withdraw Quantity, the Current Stock must auto-update accordingly.
+
+6. Batch Timeline Fixes
+* Current stock status indicator is not rendering because custom background className conflicts with default Button variant.
+* Explicitly remove variant or use a neutral container so custom colors apply correctly.
+* Update layout and sizing of full batch timeline:
+    * Fix overlapping elements
+    * Print timeline and Export buttons must not overlap
+    * Ensure clean alignment and spacing
+
+7. Tunnel Schematic Overview Update
+* I will provide an image of the Outdoor Dashboard.
+* In our project’s Outdoor Dashboard, there is also a section named Tunnel Schematic Overview.
+* Update the Tunnel Schematic Overview so that it looks exactly the same as in the provided image, including:
+    * layout
+    * UI styling
+    * demo data
+* Ensure it renders correctly without layout or data binding issues.
+
+General Expectations
+* Preserve existing data and component structure
+* Do NOT reference ERP1 or ERP2 or rename folders
+* Ensure all UI updates render properly
+* Maintain responsive and consistent styling across modules
