@@ -41,7 +41,9 @@ export function FilterBar() {
         <div>
           <label className="block text-sm mb-1.5 invisible">Action</label>
           <Button 
-            className="bg-[#4CAF50] hover:bg-[#66BB6A] text-white font-medium shadow-sm h-10"
+            variant={null as any}
+            style={{ backgroundColor: '#4CAF50', color: 'white' }}
+            className="hover:bg-[#66BB6A] font-medium shadow-sm h-10 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm transition-all px-4"
             onClick={() => console.log('Search clicked')}
           >
             <Search className="w-4 h-4 mr-2" />
