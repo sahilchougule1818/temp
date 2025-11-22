@@ -80,7 +80,7 @@ export function OutdoorDashboard() {
                 )}
               </div>
               
-              <div className="mb-7">
+              <div className="mb-8">
                 <div className="flex justify-between text-xs mb-2 text-gray-600">
                   <span>Occupancy</span>
                   <span className="font-semibold text-gray-900">{tunnel.occupied}/{tunnel.capacity}</span>
@@ -96,22 +96,21 @@ export function OutdoorDashboard() {
               </div>
 
               {/* Tray Grid Preview */}
-              <div className="grid grid-cols-5 gap-1.5 mb-5">
+              <div className="grid grid-cols-5 gap-1.5 mb-5 mt-4">
                 {Array.from({ length: 20 }).map((_, i) => {
-                  let trayClass = 'bg-gray-300';
+                  const occupiedTrays = Math.floor((tunnel.occupied / tunnel.capacity) * 20);
+                  const isOccupied = i < occupiedTrays;
                   
-                  if (tunnel.status === 'mortality') {
-                    const occupiedTrays = Math.floor((tunnel.occupied / tunnel.capacity) * 20);
-                    trayClass = i < occupiedTrays ? 'bg-red-400' : 'bg-gray-300';
-                  } else {
-                    const occupiedTrays = Math.floor((tunnel.occupied / tunnel.capacity) * 20);
-                    trayClass = i < occupiedTrays ? 'bg-green-500' : 'bg-gray-300';
+                  let bgColor = '#d1d5db'; // gray-300 for empty
+                  if (isOccupied) {
+                    bgColor = tunnel.status === 'mortality' ? '#f87171' : '#22c55e'; // red-400 or green-500
                   }
                   
                   return (
                     <div
                       key={i}
-                      className={`h-6 rounded ${trayClass}`}
+                      className="h-6 rounded"
+                      style={{ backgroundColor: bgColor }}
                     />
                   );
                 })}
@@ -127,15 +126,15 @@ export function OutdoorDashboard() {
         {/* Legend */}
         <div className="flex gap-6 justify-start text-sm">
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-green-500" />
+            <div className="w-4 h-4 rounded" style={{ backgroundColor: '#22c55e' }} />
             <span className="text-gray-700">Occupied</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-gray-300" />
+            <div className="w-4 h-4 rounded" style={{ backgroundColor: '#d1d5db' }} />
             <span className="text-gray-700">Empty</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded bg-red-400" />
+            <div className="w-4 h-4 rounded" style={{ backgroundColor: '#f87171' }} />
             <span className="text-gray-700">Mortality Alert</span>
           </div>
         </div>
