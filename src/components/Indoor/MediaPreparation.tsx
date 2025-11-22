@@ -4,6 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Button } from '../ui/button';
 import { Plus, Edit2, Trash2, Download } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
+import { BackToMainDataButton } from '../common/BackToMainDataButton';
+import { useSearchFilter } from '../../hooks/useSearchFilter';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -73,6 +75,20 @@ export function MediaPreparation() {
   const [editingBatchId, setEditingBatchId] = useState<number | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ type: 'autoclave' | 'batch', id: number } | null>(null);
+
+  // Search filter for Autoclave Cycles (Type of Media → Media Code)
+  const autoclaveFilter = useSearchFilter({
+    sourceData: autoclaveCycles,
+    field1Accessor: (item) => item.typeOfMedia,
+    field2Accessor: (item) => item.mediaCode,
+  });
+
+  // Search filter for Media Batches (Type of Media → Media Code)  
+  const batchFilter = useSearchFilter({
+    sourceData: mediaBatches,
+    field1Accessor: (item) => item.operator, // Using operator as first field for batches
+    field2Accessor: (item) => item.mediaCode,
+  });
 
   // Autoclave form state
   const [autoclaveForm, setAutoclaveForm] = useState({
@@ -325,32 +341,27 @@ export function MediaPreparation() {
     label: code
   }));
 
-  const cropOptions = [
-    { value: 'rose', label: 'Rose' },
-    { value: 'gerbera', label: 'Gerbera' },
-    { value: 'carnation', label: 'Carnation' },
-    { value: 'orchid', label: 'Orchid' },
-    { value: 'anthurium', label: 'Anthurium' }
-  ];
+  // Get the current filter based on active tab
+  const currentFilter = activeTab === 'autoclave' ? autoclaveFilter : batchFilter;
 
   return (
     <div className="p-6 space-y-6">
       <FilterBar 
         field1={{
-          label: 'Media Code',
-          value: '',
-          onChange: () => {},
-          options: mediaCodeOptions,
-          placeholder: 'Select media code'
+          label: activeTab === 'autoclave' ? 'Type of Media' : 'Operator',
+          value: currentFilter.selectedField1,
+          onChange: currentFilter.handleField1Change,
+          options: currentFilter.field1Options,
+          placeholder: activeTab === 'autoclave' ? 'Select media type' : 'Select operator'
         }}
         field2={{
-          label: 'Crop Name',
-          value: '',
-          onChange: () => {},
-          options: cropOptions,
-          placeholder: 'Select crop'
+          label: 'Media Code',
+          value: currentFilter.selectedField2,
+          onChange: currentFilter.handleField2Change,
+          options: currentFilter.field2Options,
+          placeholder: 'Select media code'
         }}
-        onSearch={() => {}}
+        onSearch={currentFilter.handleSearch}
       />
       <Card>
         <CardHeader>
@@ -370,6 +381,10 @@ export function MediaPreparation() {
                     <Download className="w-4 h-4 mr-2" />
                     Export
                   </Button>
+                  <BackToMainDataButton 
+                    isVisible={autoclaveFilter.isFiltered}
+                    onClick={autoclaveFilter.handleReset}
+                  />
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -685,7 +700,7 @@ export function MediaPreparation() {
                       </tr>
                     </thead>
                     <tbody>
-                      {autoclaveCycles.map((cycle) => (
+                      {autoclaveFilter.visibleData.map((cycle) => (
                         <tr key={cycle.id} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm">{cycle.date}</td>
                           <td className="px-4 py-3 text-sm">
@@ -717,6 +732,10 @@ export function MediaPreparation() {
                     <Download className="w-4 h-4 mr-2" />
                     Export
                   </Button>
+                  <BackToMainDataButton 
+                    isVisible={batchFilter.isFiltered}
+                    onClick={batchFilter.handleReset}
+                  />
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -949,7 +968,7 @@ export function MediaPreparation() {
                       </tr>
                     </thead>
                     <tbody>
-                      {mediaBatches.map((batch) => (
+                      {batchFilter.visibleData.map((batch) => (
                         <tr key={batch.id} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm">{batch.date}</td>
                           <td className="px-4 py-3 text-sm">

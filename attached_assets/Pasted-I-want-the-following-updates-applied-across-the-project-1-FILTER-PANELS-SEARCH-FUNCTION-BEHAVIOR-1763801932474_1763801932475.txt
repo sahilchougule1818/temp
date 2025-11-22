@@ -1,0 +1,67 @@
+I want the following updates applied across the project:
+1. FILTER PANELS – SEARCH FUNCTION BEHAVIOR (ALL MODULES BELOW)
+Functionality requirements
+Each filter panel has 2 dropdowns according to the association rules below
+(or 1 dropdown in the specified inventory/supplier modules).
+After selecting valid dropdown values and clicking Search:
+The register must display only the filtered records
+A new button must appear next to the Edit tab named:
+“Back to Main Data”
+When tapping it → the register restores full data view
+Use existing demo data in registers to demonstrate filtering results.
+Association rules per module
+Indoor:
+Media Prep → Crop Name → Media Name → Search
+Subculturing → Crop Name → Media Name → Search
+Incubation → Crop Name → Media Name → Search
+Cleaning Record → Date → Area Cleaned → Search
+Sampling → Crop Name → Media Name → Search
+Outdoor:
+Primary Hardening → Crop Name → Media Name → Search
+Secondary Hardening → Crop Name → Media Name → Search
+Shifting Register → Crop Name → Media Name → Search
+Contamination Register should be renamed to “Mortality”
+Mortality → Crop Name → Media Name → Search
+Fertilization → Crop Name → Media Name → Search
+Holding Area → Crop Name → Media Name → Search
+Batch Timeline → Crop Name → Media Name → Search
+Sampling → Crop Name → Media Name → Search
+2. INVENTORY & SUPPLIER MODULE CHANGES
+✅ Inventory Withdrawal Register
+Register columns must be:
+Item Name
+Quantity When Purchased
+Previous Quantity
+Withdrawn Quantity
+Current Quantity
+Date of Withdrawal
+Add Record Form Must:
+After selecting Item Name, auto-display Previous Quantity
+When entering Withdrawn Quantity, auto-update Current Quantity
+Saving adds the entry into the register
+Search Panel Requirements:
+Only Item Name dropdown
+Clicking Search filters register to that item
+✅ Supplier Detail Module
+Toggle order:
+Purchase Register (first)
+Supplier Detail Register (second)
+Purchase Register Search Panel:
+Only Item Name dropdown
+Search filters register to that item
+3. RENAMING REQUIREMENT
+Rename Outdoor → Contamination Module to:
+✅ Mortality
+4. GENERAL RULES FOR IMPLEMENTATION
+Do not change folder names
+Do not remove existing working UI logic except where specified
+Ensure all registers refresh properly after returning to full data
+Ensure new buttons don’t overlap UI components
+Ensure styling remains consistent with current UI
+Ensure no console errors after updates
+Let me know once all updates are complete and confirm that:
+✅ Search filtering works in all modules
+✅ Back to Main Data restores full records
+✅ Inventory withdrawal auto-calculations work
+✅ Supplier toggle order updated
+✅ Contamination renamed to Mortality
