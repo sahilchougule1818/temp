@@ -6,6 +6,8 @@ import { Textarea } from '../ui/textarea';
 import { Plus, Download, Edit2 } from 'lucide-react';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
 import { FilterBar } from '../common/FilterBar';
+import { BackToMainDataButton} from '../common/BackToMainDataButton';
+import { useSearchFilter } from '../hooks/useSearchFilter';
 import { DataTable } from '../common/DataTable';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
@@ -47,6 +49,12 @@ const fertilizationData = [
 ];
 
 export function Fertilization() {
+  const fertilizationFilter = useSearchFilter(
+    fertilizationData,
+    record => record.cropName,
+    record => record.batch
+  );
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);

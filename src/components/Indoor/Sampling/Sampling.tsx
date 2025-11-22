@@ -4,6 +4,8 @@ import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { Plus, Download, FileCheck, X, Upload, Edit2 } from 'lucide-react';
 import { FilterBar } from '../../common/FilterBar';
+import { BackToMainDataButton } from '../../common/BackToMainDataButton';
+import { useSearchFilter } from '../../hooks/useSearchFilter';
 import { Badge } from '../../ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../../ui/table';
 import { Card } from '../../ui/card';
@@ -86,6 +88,12 @@ function getCertificateBadge(certificate: string) {
 }
 
 export function Sampling() {
+  const samplingFilter = useSearchFilter(
+    samplingData,
+    record => record.cropName,
+    record => record.batchName
+  );
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
@@ -167,11 +175,27 @@ export function Sampling() {
     });
   };
 
-  const filteredData = samplingData;
+  const filteredData = samplingFilter.visibleData;
   
   return (
     <div className="p-6 space-y-6">
-      <FilterBar />
+      <FilterBar 
+        field1={{
+          label: 'Crop Name',
+          value: samplingFilter.selectedField1,
+          onChange: samplingFilter.handleField1Change,
+          options: samplingFilter.field1Options,
+          placeholder: 'Select crop'
+        }}
+        field2={{
+          label: 'Batch Name',
+          value: samplingFilter.selectedField2,
+          onChange: samplingFilter.handleField2Change,
+          options: samplingFilter.field2Options,
+          placeholder: 'Select batch'
+        }}
+        onSearch={samplingFilter.handleSearch}
+      />
 
       {/* Stats Summary */}
       <div className="grid grid-cols-4 gap-4 mb-6">
@@ -201,6 +225,10 @@ export function Sampling() {
               <Download className="w-4 h-4 mr-2" />
               Export
             </Button>
+            <BackToMainDataButton 
+              isVisible={samplingFilter.isFiltered}
+              onClick={samplingFilter.handleReset}
+            />
             <Button 
               variant="outline" 
               size="sm"
