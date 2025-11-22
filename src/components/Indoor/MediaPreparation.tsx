@@ -577,78 +577,82 @@ export function MediaPreparation() {
                           />
                         )}
                       </div>
-                      <div className="space-y-2">
-                        <Label>Operator Name</Label>
-                        <Input 
-                          placeholder="Enter name" 
-                          value={autoclaveForm.operator}
-                          onChange={(e) => setAutoclaveForm({...autoclaveForm, operator: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Type of Media</Label>
-                        <Input 
-                          placeholder="MS Medium" 
-                          value={autoclaveForm.typeOfMedia}
-                          onChange={(e) => setAutoclaveForm({...autoclaveForm, typeOfMedia: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Autoclave ON Time</Label>
-                        <Input 
-                          type="time" 
-                          value={autoclaveForm.autoclaveOn}
-                          onChange={(e) => setAutoclaveForm({...autoclaveForm, autoclaveOn: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Media Loading Time</Label>
-                        <Input 
-                          type="time" 
-                          value={autoclaveForm.mediaLoading}
-                          onChange={(e) => setAutoclaveForm({...autoclaveForm, mediaLoading: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Pressure Time</Label>
-                        <Input 
-                          type="time" 
-                          value={autoclaveForm.pressure}
-                          onChange={(e) => setAutoclaveForm({...autoclaveForm, pressure: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Off Time</Label>
-                        <Input 
-                          type="time" 
-                          value={autoclaveForm.off}
-                          onChange={(e) => setAutoclaveForm({...autoclaveForm, off: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Open Time</Label>
-                        <Input 
-                          type="time" 
-                          value={autoclaveForm.open}
-                          onChange={(e) => setAutoclaveForm({...autoclaveForm, open: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Media Total</Label>
-                        <Input 
-                          placeholder="3:00" 
-                          value={autoclaveForm.mediaTotal}
-                          onChange={(e) => setAutoclaveForm({...autoclaveForm, mediaTotal: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2 col-span-2">
-                        <Label>Remark</Label>
-                        <Textarea 
-                          placeholder="Add any remarks..." 
-                          value={autoclaveForm.remark}
-                          onChange={(e) => setAutoclaveForm({...autoclaveForm, remark: e.target.value})}
-                        />
-                      </div>
+                      {editingAutoclaveId && (
+                        <>
+                          <div className="space-y-2">
+                            <Label>Operator Name</Label>
+                            <Input 
+                              placeholder="Enter name" 
+                              value={autoclaveForm.operator}
+                              onChange={(e) => setAutoclaveForm({...autoclaveForm, operator: e.target.value})}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Type of Media</Label>
+                            <Input 
+                              placeholder="MS Medium" 
+                              value={autoclaveForm.typeOfMedia}
+                              onChange={(e) => setAutoclaveForm({...autoclaveForm, typeOfMedia: e.target.value})}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Autoclave ON Time</Label>
+                            <Input 
+                              type="time" 
+                              value={autoclaveForm.autoclaveOn}
+                              onChange={(e) => setAutoclaveForm({...autoclaveForm, autoclaveOn: e.target.value})}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Media Loading Time</Label>
+                            <Input 
+                              type="time" 
+                              value={autoclaveForm.mediaLoading}
+                              onChange={(e) => setAutoclaveForm({...autoclaveForm, mediaLoading: e.target.value})}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Pressure Time</Label>
+                            <Input 
+                              type="time" 
+                              value={autoclaveForm.pressure}
+                              onChange={(e) => setAutoclaveForm({...autoclaveForm, pressure: e.target.value})}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Off Time</Label>
+                            <Input 
+                              type="time" 
+                              value={autoclaveForm.off}
+                              onChange={(e) => setAutoclaveForm({...autoclaveForm, off: e.target.value})}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Open Time</Label>
+                            <Input 
+                              type="time" 
+                              value={autoclaveForm.open}
+                              onChange={(e) => setAutoclaveForm({...autoclaveForm, open: e.target.value})}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Media Total</Label>
+                            <Input 
+                              placeholder="3:00" 
+                              value={autoclaveForm.mediaTotal}
+                              onChange={(e) => setAutoclaveForm({...autoclaveForm, mediaTotal: e.target.value})}
+                            />
+                          </div>
+                          <div className="space-y-2 col-span-2">
+                            <Label>Remark</Label>
+                            <Textarea 
+                              placeholder="Add any remarks..." 
+                              value={autoclaveForm.remark}
+                              onChange={(e) => setAutoclaveForm({...autoclaveForm, remark: e.target.value})}
+                            />
+                          </div>
+                        </>
+                      )}
                     </div>
                     <div className="flex justify-between gap-3">
                       <Button 
@@ -889,39 +893,43 @@ export function MediaPreparation() {
                           />
                         )}
                       </div>
-                      <div className="space-y-2">
-                        <Label>Operator Name</Label>
-                        <Input 
-                          placeholder="Enter name" 
-                          value={batchForm.operator}
-                          onChange={(e) => setBatchForm({...batchForm, operator: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Quantity of Media</Label>
-                        <Input 
-                          placeholder="5L" 
-                          value={batchForm.quantity}
-                          onChange={(e) => setBatchForm({...batchForm, quantity: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Number of Bottles Prepared</Label>
-                        <Input 
-                          type="number" 
-                          placeholder="120" 
-                          value={batchForm.bottles}
-                          onChange={(e) => setBatchForm({...batchForm, bottles: e.target.value})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Particulars of Contaminations if Any</Label>
-                        <Textarea 
-                          placeholder="None or specify" 
-                          value={batchForm.contamination}
-                          onChange={(e) => setBatchForm({...batchForm, contamination: e.target.value})}
-                        />
-                      </div>
+                      {editingBatchId && (
+                        <>
+                          <div className="space-y-2">
+                            <Label>Operator Name</Label>
+                            <Input 
+                              placeholder="Enter name" 
+                              value={batchForm.operator}
+                              onChange={(e) => setBatchForm({...batchForm, operator: e.target.value})}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Quantity of Media</Label>
+                            <Input 
+                              placeholder="5L" 
+                              value={batchForm.quantity}
+                              onChange={(e) => setBatchForm({...batchForm, quantity: e.target.value})}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Number of Bottles Prepared</Label>
+                            <Input 
+                              type="number" 
+                              placeholder="120" 
+                              value={batchForm.bottles}
+                              onChange={(e) => setBatchForm({...batchForm, bottles: e.target.value})}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Particulars of Contaminations if Any</Label>
+                            <Textarea 
+                              placeholder="None or specify" 
+                              value={batchForm.contamination}
+                              onChange={(e) => setBatchForm({...batchForm, contamination: e.target.value})}
+                            />
+                          </div>
+                        </>
+                      )}
                     </div>
                     <div className="flex justify-between gap-3">
                       <Button 
