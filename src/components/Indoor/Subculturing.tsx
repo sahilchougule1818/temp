@@ -7,6 +7,8 @@ import { Textarea } from '../ui/textarea';
 import { Badge } from '../ui/badge';
 import { Plus, Edit2, Trash2, Download } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
+import { BackToMainDataButton } from '../common/BackToMainDataButton';
+import { useSearchFilter } from '../../hooks/useSearchFilter';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
@@ -59,6 +61,13 @@ export function Subculturing() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedBatch, setSelectedBatch] = useState('');
+
+  // Search filter (Species → Media Code)
+  const subcultureFilter = useSearchFilter({
+    sourceData: subcultureData,
+    field1Accessor: (item) => item.species,
+    field2Accessor: (item) => item.mediaCode,
+  });
   
   const [subcultureForm, setSubcultureForm] = useState({
     transferDate: '',
@@ -186,7 +195,23 @@ export function Subculturing() {
 
   return (
     <div className="p-6 space-y-6">
-      <FilterBar />
+      <FilterBar 
+        field1={{
+          label: 'Crop Name',
+          value: subcultureFilter.selectedField1,
+          onChange: subcultureFilter.handleField1Change,
+          options: subcultureFilter.field1Options,
+          placeholder: 'Select crop'
+        }}
+        field2={{
+          label: 'Media Name',
+          value: subcultureFilter.selectedField2,
+          onChange: subcultureFilter.handleField2Change,
+          options: subcultureFilter.field2Options,
+          placeholder: 'Select media code'
+        }}
+        onSearch={subcultureFilter.handleSearch}
+      />
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -196,6 +221,10 @@ export function Subculturing() {
                 <Download className="w-4 h-4 mr-2" />
                 Export
               </Button>
+              <BackToMainDataButton 
+                isVisible={subcultureFilter.isFiltered}
+                onClick={subcultureFilter.handleReset}
+              />
               <Button 
                 variant="outline" 
                 onClick={() => {
@@ -470,7 +499,7 @@ export function Subculturing() {
                 </tr>
               </thead>
               <tbody>
-                {subcultureData.map((item) => (
+                {subcultureFilter.visibleData.map((item) => (
                   <tr key={item.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm">{item.transferDate}</td>
                     <td className="px-4 py-3 text-sm">

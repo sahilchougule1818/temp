@@ -7,6 +7,8 @@ import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
 import { Plus, Edit2, Trash2, Download } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
+import { BackToMainDataButton } from '../common/BackToMainDataButton';
+import { useSearchFilter } from '../../hooks/useSearchFilter';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
@@ -67,6 +69,19 @@ export function CleaningRecord() {
   const [selectedCleaningArea, setSelectedCleaningArea] = useState('');
   const [selectedDeepCleaningDate, setSelectedDeepCleaningDate] = useState('');
   const [selectedDeepCleaningMachine, setSelectedDeepCleaningMachine] = useState('');
+
+  // Search filters (Date → Area Cleaned)
+  const cleaningFilter = useSearchFilter({
+    sourceData: cleaningData,
+    field1Accessor: (item) => item.date,
+    field2Accessor: (item) => item.area,
+  });
+
+  const deepCleaningFilter = useSearchFilter({
+    sourceData: deepCleaningData,
+    field1Accessor: (item) => item.date,
+    field2Accessor: (item) => item.machineName,
+  });
   
   const [cleaningForm, setCleaningForm] = useState({
     date: '',
@@ -302,41 +317,26 @@ export function CleaningRecord() {
   };
 
 
-  const areaOptions = [
-    { value: 'laminar-flow-1', label: 'Laminar Flow 1' },
-    { value: 'laminar-flow-2', label: 'Laminar Flow 2' },
-    { value: 'culture-room-a', label: 'Culture Room A' },
-    { value: 'culture-room-b', label: 'Culture Room B' },
-    { value: 'transfer-room', label: 'Transfer Room' },
-    { value: 'incubation-room-a', label: 'Incubation Room A' },
-    { value: 'incubation-room-b', label: 'Incubation Room B' }
-  ];
-
-  const machineOptions = [
-    { value: 'autoclave-unit-1', label: 'Autoclave Unit 1' },
-    { value: 'laminar-flow-cabinet-2', label: 'Laminar Flow Cabinet 2' },
-    { value: 'incubator-a', label: 'Incubator A' },
-    { value: 'media-preparation-station', label: 'Media Preparation Station' }
-  ];
+  const currentFilter = activeTab === 'cleaning' ? cleaningFilter : deepCleaningFilter;
 
   return (
     <div className="p-6 space-y-6">
       <FilterBar 
-        field1={activeTab === 'cleaning' ? {
-          label: 'Area Cleaned',
-          value: '',
-          onChange: () => {},
-          options: areaOptions,
-          placeholder: 'Select area'
-        } : {
-          label: 'Machine Cleaned',
-          value: '',
-          onChange: () => {},
-          options: machineOptions,
-          placeholder: 'Select machine'
+        field1={{
+          label: 'Date',
+          value: currentFilter.selectedField1,
+          onChange: currentFilter.handleField1Change,
+          options: currentFilter.field1Options,
+          placeholder: 'Select date'
         }}
-        field2={undefined}
-        onSearch={() => {}}
+        field2={{
+          label: activeTab === 'cleaning' ? 'Area Cleaned' : 'Machine Name',
+          value: currentFilter.selectedField2,
+          onChange: currentFilter.handleField2Change,
+          options: currentFilter.field2Options,
+          placeholder: activeTab === 'cleaning' ? 'Select area' : 'Select machine'
+        }}
+        onSearch={currentFilter.handleSearch}
       />
       <Card>
         <CardHeader>
@@ -356,6 +356,10 @@ export function CleaningRecord() {
                     <Download className="w-4 h-4 mr-2" />
                     Export
                   </Button>
+                  <BackToMainDataButton 
+                    isVisible={cleaningFilter.isFiltered}
+                    onClick={cleaningFilter.handleReset}
+                  />
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -577,7 +581,7 @@ export function CleaningRecord() {
                 </tr>
               </thead>
               <tbody>
-                      {cleaningData.map((item) => (
+                      {cleaningFilter.visibleData.map((item) => (
                   <tr key={item.id} className="border-b hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm">{item.date}</td>
                     <td className="px-4 py-3 text-sm">{item.operator}</td>
@@ -601,6 +605,10 @@ export function CleaningRecord() {
                     <Download className="w-4 h-4 mr-2" />
                     Export
                   </Button>
+                  <BackToMainDataButton 
+                    isVisible={deepCleaningFilter.isFiltered}
+                    onClick={deepCleaningFilter.handleReset}
+                  />
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -802,7 +810,7 @@ export function CleaningRecord() {
                       </tr>
                     </thead>
                     <tbody>
-                      {deepCleaningData.map((item) => (
+                      {deepCleaningFilter.visibleData.map((item) => (
                         <tr key={item.id} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm">{item.machineName}</td>
                           <td className="px-4 py-3 text-sm">{item.cleanedBy}</td>

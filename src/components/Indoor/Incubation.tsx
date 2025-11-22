@@ -7,6 +7,8 @@ import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
 import { Plus, Edit2, Trash2, Download } from 'lucide-react';
 import { FilterBar } from '../common/FilterBar';
+import { BackToMainDataButton } from '../common/BackToMainDataButton';
+import { useSearchFilter } from '../../hooks/useSearchFilter';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
@@ -81,6 +83,19 @@ export function Incubation() {
   const [selectedIncubationBatch, setSelectedIncubationBatch] = useState('');
   const [selectedContaminationDate, setSelectedContaminationDate] = useState('');
   const [selectedContaminationBatch, setSelectedContaminationBatch] = useState('');
+
+  // Search filters (Species → Media Code)
+  const incubationFilter = useSearchFilter({
+    sourceData: incubationData,
+    field1Accessor: (item) => item.species,
+    field2Accessor: (item) => item.mediaCode,
+  });
+
+  const contaminationFilter = useSearchFilter({
+    sourceData: contaminationData,
+    field1Accessor: (item) => item.type,
+    field2Accessor: (item) => item.batchNumber,
+  });
   
   // Incubation form state
   const [incubationForm, setIncubationForm] = useState({
@@ -330,9 +345,27 @@ export function Incubation() {
   };
 
 
+  const currentFilter = activeTab === 'incubation' ? incubationFilter : contaminationFilter;
+
   return (
     <div className="p-6 space-y-6">
-      <FilterBar />
+      <FilterBar 
+        field1={{
+          label: activeTab === 'incubation' ? 'Crop Name' : 'Type',
+          value: currentFilter.selectedField1,
+          onChange: currentFilter.handleField1Change,
+          options: currentFilter.field1Options,
+          placeholder: activeTab === 'incubation' ? 'Select crop' : 'Select type'
+        }}
+        field2={{
+          label: activeTab === 'incubation' ? 'Media Name' : 'Batch Number',
+          value: currentFilter.selectedField2,
+          onChange: currentFilter.handleField2Change,
+          options: currentFilter.field2Options,
+          placeholder: activeTab === 'incubation' ? 'Select media code' : 'Select batch'
+        }}
+        onSearch={currentFilter.handleSearch}
+      />
       <Card>
         <CardHeader>
           <CardTitle>Incubation Module</CardTitle>
@@ -351,6 +384,10 @@ export function Incubation() {
                     <Download className="w-4 h-4 mr-2" />
                     Export
                   </Button>
+                  <BackToMainDataButton 
+                    isVisible={incubationFilter.isFiltered}
+                    onClick={incubationFilter.handleReset}
+                  />
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -649,7 +686,7 @@ export function Incubation() {
                       </tr>
                     </thead>
                     <tbody>
-                      {incubationData.map((item) => (
+                      {incubationFilter.visibleData.map((item) => (
                         <tr key={item.id} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm whitespace-nowrap">{item.subcultureDate}</td>
                           <td className="px-4 py-3 text-sm whitespace-nowrap">
@@ -688,6 +725,10 @@ export function Incubation() {
                     <Download className="w-4 h-4 mr-2" />
                     Export
                   </Button>
+                  <BackToMainDataButton 
+                    isVisible={contaminationFilter.isFiltered}
+                    onClick={contaminationFilter.handleReset}
+                  />
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -891,7 +932,7 @@ export function Incubation() {
                       </tr>
                     </thead>
                     <tbody>
-                      {contaminationData.map((item) => (
+                      {contaminationFilter.visibleData.map((item) => (
                         <tr key={item.id} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-3 text-sm">{item.date}</td>
                           <td className="px-4 py-3 text-sm">
