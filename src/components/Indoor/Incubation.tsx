@@ -84,11 +84,11 @@ export function Incubation() {
   const [selectedContaminationDate, setSelectedContaminationDate] = useState('');
   const [selectedContaminationBatch, setSelectedContaminationBatch] = useState('');
 
-  // Search filters (Species → Media Code)
+  // Search filters (Species → Batch Number)
   const incubationFilter = useSearchFilter({
     sourceData: incubationData,
     field1Accessor: (item) => item.species,
-    field2Accessor: (item) => item.mediaCode,
+    field2Accessor: (item) => item.batchNumber,
   });
 
   const contaminationFilter = useSearchFilter({
@@ -358,11 +358,11 @@ export function Incubation() {
           placeholder: activeTab === 'incubation' ? 'Select crop' : 'Select type'
         }}
         field2={{
-          label: activeTab === 'incubation' ? 'Media Name' : 'Batch Number',
+          label: activeTab === 'incubation' ? 'Batch Name' : 'Batch Number',
           value: currentFilter.selectedField2,
           onChange: currentFilter.handleField2Change,
           options: currentFilter.field2Options,
-          placeholder: activeTab === 'incubation' ? 'Select media code' : 'Select batch'
+          placeholder: activeTab === 'incubation' ? 'Select batch' : 'Select batch'
         }}
         onSearch={currentFilter.handleSearch}
       />

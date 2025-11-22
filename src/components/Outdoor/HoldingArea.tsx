@@ -9,7 +9,7 @@ import { BackToMainDataButton } from '../common/BackToMainDataButton';
 import { useSearchFilter } from '../../hooks/useSearchFilter';
 import { Badge } from '../ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table';
-import { Card } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
@@ -191,10 +191,11 @@ export function HoldingArea() {
         </Card>
       </div>
 
-      <div className="mt-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2>Holding Area Register</h2>
-          <div className="flex gap-2">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Holding Area Register</CardTitle>
+            <div className="flex gap-2">
             <BackToMainDataButton 
               isVisible={holdingFilter.isFiltered}
               onClick={holdingFilter.handleReset}
@@ -370,9 +371,9 @@ export function HoldingArea() {
               </DialogContent>
             </Dialog>
           </div>
-        </div>
-
-        <Card className="overflow-hidden">
+          </div>
+        </CardHeader>
+        <CardContent>
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
@@ -401,8 +402,8 @@ export function HoldingArea() {
               </TableBody>
             </Table>
           </div>
-        </Card>
-      </div>
+        </CardContent>
+      </Card>
 
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <AlertDialogContent>

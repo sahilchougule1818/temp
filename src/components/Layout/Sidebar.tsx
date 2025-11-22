@@ -66,12 +66,12 @@ export function Sidebar({ currentPage, onNavigate, user }: SidebarProps) {
       label: 'Indoor Module',
       icon: FlaskConical,
       children: [
+        { id: 'indoor-dashboard', label: 'Indoor Dashboard', icon: Home, page: 'indoor-dashboard', breadcrumbs: ['Indoor', 'Indoor Dashboard'] },
         { id: 'media-preparation', label: 'Media Preparation', icon: TestTube, page: 'media-preparation', breadcrumbs: ['Indoor', 'Media Preparation'] },
         { id: 'subculturing', label: 'Subculturing', icon: Microscope, page: 'subculturing', breadcrumbs: ['Indoor', 'Subculturing'] },
         { id: 'incubation', label: 'Incubation', icon: Thermometer, page: 'incubation', breadcrumbs: ['Indoor', 'Incubation'] },
         { id: 'quality-control', label: 'Cleaning Record', icon: ShieldCheck, page: 'quality-control', breadcrumbs: ['Indoor', 'Cleaning Record'] },
-        { id: 'sampling', label: 'Sampling', icon: TestTube, page: 'sampling', breadcrumbs: ['Indoor', 'Sampling'] },
-        { id: 'indoor-dashboard', label: 'Performance Report', icon: Home, page: 'indoor-dashboard', breadcrumbs: ['Indoor', 'Performance Report'] }
+        { id: 'sampling', label: 'Sampling', icon: TestTube, page: 'sampling', breadcrumbs: ['Indoor', 'Sampling'] }
       ]
     },
     {

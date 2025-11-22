@@ -129,11 +129,20 @@ export function InventoryRecord() {
       }
     } else {
       // Auto-populate Previous Stock from the most recent withdrawal record for this item
-      const latestRecord = withdrawalRecords
+      const latestWithdrawalRecord = withdrawalRecords
         .filter(rec => rec.itemName === itemName)
         .sort((a, b) => new Date(b.dateOfWithdrawal).getTime() - new Date(a.dateOfWithdrawal).getTime())[0];
       
-      const previousStock = latestRecord ? String(latestRecord.currentStock) : '';
+      let previousStock = '';
+      
+      if (latestWithdrawalRecord) {
+        // Use current stock from last withdrawal
+        previousStock = String(latestWithdrawalRecord.currentStock);
+      } else {
+        // If no withdrawal records, use current stock from purchase records
+        const purchaseRecord = purchaseRecords.find(rec => rec.itemName === itemName);
+        previousStock = purchaseRecord ? String(purchaseRecord.currentStock) : '';
+      }
       
       setWithdrawalForm({ 
         ...withdrawalForm, 
@@ -369,7 +378,17 @@ export function InventoryRecord() {
                             type="number"
                             placeholder="e.g., 50"
                             value={withdrawalForm.withdrawQuantity}
-                            onChange={(e) => setWithdrawalForm({ ...withdrawalForm, withdrawQuantity: e.target.value })}
+                            onChange={(e) => {
+                              const withdrawQty = e.target.value;
+                              const prevStock = parseInt(withdrawalForm.previousStock) || 0;
+                              const withdrawNum = parseInt(withdrawQty) || 0;
+                              const newCurrentStock = prevStock - withdrawNum;
+                              setWithdrawalForm({ 
+                                ...withdrawalForm, 
+                                withdrawQuantity: withdrawQty,
+                                currentStock: newCurrentStock >= 0 ? String(newCurrentStock) : '0'
+                              });
+                            }}
                           />
                         </div>
                         <div className="space-y-2">
@@ -456,7 +475,17 @@ export function InventoryRecord() {
                           type="number"
                           placeholder="e.g., 50"
                           value={withdrawalForm.withdrawQuantity}
-                          onChange={(e) => setWithdrawalForm({ ...withdrawalForm, withdrawQuantity: e.target.value })}
+                          onChange={(e) => {
+                            const withdrawQty = e.target.value;
+                            const prevStock = parseInt(withdrawalForm.previousStock) || 0;
+                            const withdrawNum = parseInt(withdrawQty) || 0;
+                            const newCurrentStock = prevStock - withdrawNum;
+                            setWithdrawalForm({ 
+                              ...withdrawalForm, 
+                              withdrawQuantity: withdrawQty,
+                              currentStock: newCurrentStock >= 0 ? String(newCurrentStock) : '0'
+                            });
+                          }}
                           disabled={!editingWithdrawalId} // Disable if no specific record is selected for editing
                         />
                       </div>
@@ -502,26 +531,24 @@ export function InventoryRecord() {
                   <table className="w-full">
                     <thead className="bg-gray-50 border-b">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">ID</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600">Item Name</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Current Stock</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Withdrawn Quantity</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600">Previous Stock</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Withdraw Quantity</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Current Stock (After Withdrawal)</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Date of Withdrawal</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Date of Withdraw</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredWithdrawalData.map((record) => (
                         <tr key={record.id} className="border-b hover:bg-gray-50">
-                          <td className="px-4 py-3 text-sm">{record.id}</td>
                           <td className="px-4 py-3 text-sm">
                             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                               {record.itemName}
                             </Badge>
                           </td>
-                          <td className="px-4 py-3 text-sm">{record.previousStock}</td>
-                          <td className="px-4 py-3 text-sm">{record.withdrawQuantity}</td>
                           <td className="px-4 py-3 text-sm">{record.currentStock}</td>
+                          <td className="px-4 py-3 text-sm">{record.withdrawQuantity}</td>
+                          <td className="px-4 py-3 text-sm">{record.previousStock}</td>
                           <td className="px-4 py-3 text-sm">{record.dateOfWithdrawal}</td>
                         </tr>
                       ))}

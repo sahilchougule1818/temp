@@ -9,7 +9,7 @@ import { BackToMainDataButton } from '../common/BackToMainDataButton';
 import { useSearchFilter } from '../../hooks/useSearchFilter';
 import { DataTable } from '../common/DataTable';
 import { Badge } from '../ui/badge';
-import { Card } from '../ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
@@ -208,10 +208,11 @@ export function Mortality() {
         </div>
       </Card>
 
-      <div className="mt-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2>Outdoor Mortality Register</h2>
-          <div className="flex gap-2">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Outdoor Mortality Register</CardTitle>
+            <div className="flex gap-2">
             <BackToMainDataButton 
               isVisible={mortalityFilter.isFiltered}
               onClick={mortalityFilter.handleReset}
@@ -427,14 +428,16 @@ export function Mortality() {
               </DialogContent>
             </Dialog>
           </div>
-        </div>
-
-        <DataTable 
-          columns={columns} 
-          data={mortalityFilter.visibleData}
-          showActions={false}
-        />
-      </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <DataTable 
+            columns={columns} 
+            data={mortalityFilter.visibleData}
+            showActions={false}
+          />
+        </CardContent>
+      </Card>
 
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <AlertDialogContent>

@@ -47,7 +47,7 @@ export function SupplierDetail() {
     { id: 2, dateOfPurchase: '2024-11-15', itemName: 'Item B', quantityPurchased: 200, supplierName: 'Supplier B' },
   ]);
 
-  const [activeTab, setActiveTab] = useState('suppliers');
+  const [activeTab, setActiveTab] = useState('purchase');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
@@ -216,28 +216,26 @@ export function SupplierDetail() {
     <div className="p-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle>Supplier Management</CardTitle>
-            <Button
-              variant="outline"
-              onClick={activeTab === 'suppliers' ? handleEditSupplierRegister : handleEditPurchaseRegister}
-              className="flex items-center gap-2"
-            >
-              <Edit className="w-4 h-4" />
-              Edit Record
-            </Button>
-          </div>
+          <CardTitle>Supplier Management</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-6">
-              <TabsTrigger value="suppliers">Supplier Details</TabsTrigger>
               <TabsTrigger value="purchase">Purchase Register</TabsTrigger>
+              <TabsTrigger value="suppliers">Supplier Details</TabsTrigger>
             </TabsList>
 
             <TabsContent value="suppliers">
           <div className="space-y-4">
             <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={handleEditSupplierRegister}
+                className="flex items-center gap-2"
+              >
+                <Edit className="w-4 h-4" />
+                Edit
+              </Button>
               <Dialog open={isModalOpen} onOpenChange={(open: boolean) => {
                 setIsModalOpen(open);
                 if (!open) resetSupplierForm();
@@ -415,8 +413,13 @@ export function SupplierDetail() {
                 <div className="flex justify-end gap-2">
                   <Button
                     variant="outline"
+                    onClick={handleEditPurchaseRegister}
                     className="flex items-center gap-2"
                   >
+                    <Edit className="w-4 h-4" />
+                    Edit
+                  </Button>
+                  <Button variant="outline" className="flex items-center gap-2">
                     <Edit className="w-4 h-4 mr-2" />
                     Export
                   </Button>

@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -158,10 +159,11 @@ export function SecondaryHardening() {
         onSearch={secondaryFilter.handleSearch}
       />
 
-      <div className="mt-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2>Secondary Hardening Register</h2>
-          <div className="flex gap-2">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Secondary Hardening Register</CardTitle>
+            <div className="flex gap-2">
             <BackToMainDataButton 
               isVisible={secondaryFilter.isFiltered}
               onClick={secondaryFilter.handleReset}
@@ -402,14 +404,16 @@ export function SecondaryHardening() {
               </DialogContent>
             </Dialog>
           </div>
-        </div>
-
-        <DataTable 
-          columns={columns} 
-          data={secondaryFilter.visibleData}
-          showActions={false}
-        />
-      </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <DataTable 
+            columns={columns} 
+            data={secondaryFilter.visibleData}
+            showActions={false}
+          />
+        </CardContent>
+      </Card>
 
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <AlertDialogContent>

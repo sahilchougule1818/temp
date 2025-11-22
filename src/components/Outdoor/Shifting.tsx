@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -165,10 +166,11 @@ export function Shifting() {
         onSearch={shiftingFilter.handleSearch}
       />
 
-      <div className="mt-6">
-        <div className="flex justify-between items-center mb-4">
-          <h2>Shifting Register</h2>
-          <div className="flex gap-2">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle>Shifting Register</CardTitle>
+            <div className="flex gap-2">
             <BackToMainDataButton 
               isVisible={shiftingFilter.isFiltered}
               onClick={shiftingFilter.handleReset}
@@ -364,14 +366,16 @@ export function Shifting() {
               </DialogContent>
             </Dialog>
           </div>
-        </div>
-
-        <DataTable 
-          columns={columns} 
-          data={shiftingFilter.visibleData}
-          showActions={false}
-        />
-      </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <DataTable 
+            columns={columns} 
+            data={shiftingFilter.visibleData}
+            showActions={false}
+          />
+        </CardContent>
+      </Card>
 
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <AlertDialogContent>

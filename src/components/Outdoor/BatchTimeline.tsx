@@ -92,9 +92,9 @@ export function BatchTimeline() {
   return (
     <div className="p-6 space-y-6">
       <Card className="p-6">
-        <div className="flex items-center justify-between gap-6">
-          <div className="flex items-center gap-6">
-            <div className="min-w-[280px]">
+        <div className="flex flex-wrap items-center justify-between gap-6">
+          <div className="flex flex-wrap items-center gap-6">
+            <div className="min-w-[240px]">
               <label className="block text-sm text-gray-600 mb-2">Select Batch</label>
               <Select value={selectedBatch} onValueChange={setSelectedBatch}>
                 <SelectTrigger className="w-full">
@@ -124,7 +124,7 @@ export function BatchTimeline() {
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-shrink-0">
             <Button variant="outline" size="sm">
               <FileText className="w-4 h-4 mr-2" />
               Print Timeline
@@ -147,7 +147,7 @@ export function BatchTimeline() {
 
           {/* Timeline Events */}
           <div className="space-y-6">
-            {timelineData.map((event, index) => {
+            {timelineData.map((event) => {
               const Icon = iconMap[event.type];
               return (
                 <div key={event.id} className="relative flex gap-4">
