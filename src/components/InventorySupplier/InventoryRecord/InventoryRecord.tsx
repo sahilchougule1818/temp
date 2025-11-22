@@ -52,9 +52,13 @@ export function InventoryRecord() {
   const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
   const [isEditPurchaseModalOpen, setIsEditPurchaseModalOpen] = useState(false);
   const [isEditWithdrawalModalOpen, setIsEditWithdrawalModalOpen] = useState(false);
+  const [editingPurchaseId, setEditingPurchaseId] = useState<number | null>(null);
   const [editingWithdrawalId, setEditingWithdrawalId] = useState<number | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ type: 'purchase' | 'withdrawal', id: number } | null>(null);
+  const [showAllPurchaseRecords, setShowAllPurchaseRecords] = useState(false);
+  const [showAllWithdrawalRecords, setShowAllWithdrawalRecords] = useState(false);
+  const [activeTab, setActiveTab] = useState('purchase');
 
   const [purchaseForm, setPurchaseForm] = useState({
     dateOfPurchase: todayDate,
