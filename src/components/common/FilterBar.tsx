@@ -1,10 +1,11 @@
 import { Search } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Card } from '../ui/card';
 
 export function FilterBar() {
   return (
-    <div className="card">
+    <Card className="p-4">
       <div className="flex gap-4 items-end">
         <div className="flex-1 min-w-[200px]">
           <label className="block text-sm mb-1.5">Batch Name</label>
@@ -48,6 +49,6 @@ export function FilterBar() {
           </Button>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }
