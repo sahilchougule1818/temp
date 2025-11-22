@@ -15,10 +15,10 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 // Sample Media Preparation autoclave cycles data (in real app, this would come from shared state/context)
 const mediaPrepAutoclaveCycles = [
-  { id: 1, date: '2024-11-15', mediaCode: 'MS-001', operator: 'Amit Shah', typeOfMedia: 'MS Medium', autoclaveOn: '09:00', mediaLoading: '09:15', pressure: '10:00', off: '11:30', open: '12:00', mediaTotal: '3:00', remark: 'Normal cycle' },
-  { id: 2, date: '2024-11-15', mediaCode: 'MS-002', operator: 'Priya Patel', typeOfMedia: 'B5 Medium', autoclaveOn: '13:00', mediaLoading: '13:10', pressure: '13:45', off: '15:15', open: '15:45', mediaTotal: '2:45', remark: 'Good' },
-  { id: 3, date: '2024-11-14', mediaCode: 'MS-003', operator: 'Rahul Desai', typeOfMedia: 'WPM Medium', autoclaveOn: '08:30', mediaLoading: '08:45', pressure: '09:30', off: '11:00', open: '11:30', mediaTotal: '3:00', remark: '-' },
-  { id: 4, date: '2024-11-14', mediaCode: 'MS-004', operator: 'Neha Singh', typeOfMedia: 'MS Medium', autoclaveOn: '14:00', mediaLoading: '14:15', pressure: '15:00', off: '16:30', open: '17:00', mediaTotal: '3:00', remark: 'Extended cycle' }
+  { id: 1, date: '2024-11-15', mediaCode: 'MS-001', operator: 'Amit Shah', typeOfMedia: 'Bamboo', autoclaveOn: '09:00', mediaLoading: '09:15', pressure: '10:00', off: '11:30', open: '12:00', mediaTotal: '3:00', remark: 'Normal cycle' },
+  { id: 2, date: '2024-11-15', mediaCode: 'MS-002', operator: 'Priya Patel', typeOfMedia: 'Banana', autoclaveOn: '13:00', mediaLoading: '13:10', pressure: '13:45', off: '15:15', open: '15:45', mediaTotal: '2:45', remark: 'Good' },
+  { id: 3, date: '2024-11-14', mediaCode: 'MS-003', operator: 'Rahul Desai', typeOfMedia: 'Teak', autoclaveOn: '08:30', mediaLoading: '08:45', pressure: '09:30', off: '11:00', open: '11:30', mediaTotal: '3:00', remark: '-' },
+  { id: 4, date: '2024-11-14', mediaCode: 'MS-004', operator: 'Neha Singh', typeOfMedia: 'Ornamental', autoclaveOn: '14:00', mediaLoading: '14:15', pressure: '15:00', off: '16:30', open: '17:00', mediaTotal: '3:00', remark: 'Extended cycle' }
 ];
 
 type IncubationData = {
@@ -28,7 +28,7 @@ type IncubationData = {
   batchNumber: string;
   mediaCode: string;
   operator: string;
-  species: string;
+  cropName: string;
   vessels: number;
   shoots: number;
   temp: string;
@@ -60,9 +60,9 @@ export function Incubation() {
   const todayDate = getTodayDate();
 
   const [incubationData, setIncubationData] = useState<IncubationData[]>([
-    { id: 1, subcultureDate: todayDate, stage: 'Stage 3', batchNumber: 'BTH-2024-001', mediaCode: 'MS-001', operator: 'Amit Shah', species: 'Banana', vessels: 120, shoots: 2400, temp: '25°C', humidity: '65%', photoperiod: '16/8', lightIntensity: '3000 lux' },
-    { id: 2, subcultureDate: '2024-11-15', stage: 'Stage 2', batchNumber: 'BTH-2024-002', mediaCode: 'MS-002', operator: 'Priya Patel', species: 'Strawberry', vessels: 80, shoots: 1600, temp: '22°C', humidity: '70%', photoperiod: '16/8', lightIntensity: '2500 lux' },
-    { id: 3, subcultureDate: '2024-11-14', stage: 'Stage 4', batchNumber: 'BTH-2024-003', mediaCode: 'MS-001', operator: 'Rahul Desai', species: 'Rose', vessels: 150, shoots: 3000, temp: '24°C', humidity: '60%', photoperiod: '14/10', lightIntensity: '3500 lux' }
+    { id: 1, subcultureDate: todayDate, stage: 'Stage 3', batchNumber: 'BTH-2024-001', mediaCode: 'MS-001', operator: 'Amit Shah', cropName: 'Banana', vessels: 120, shoots: 2400, temp: '25°C', humidity: '65%', photoperiod: '16/8', lightIntensity: '3000 lux' },
+    { id: 2, subcultureDate: '2024-11-15', stage: 'Stage 2', batchNumber: 'BTH-2024-002', mediaCode: 'MS-002', operator: 'Priya Patel', cropName: 'Bamboo', vessels: 80, shoots: 1600, temp: '22°C', humidity: '70%', photoperiod: '16/8', lightIntensity: '2500 lux' },
+    { id: 3, subcultureDate: '2024-11-14', stage: 'Stage 4', batchNumber: 'BTH-2024-003', mediaCode: 'MS-001', operator: 'Rahul Desai', cropName: 'Teak', vessels: 150, shoots: 3000, temp: '24°C', humidity: '60%', photoperiod: '14/10', lightIntensity: '3500 lux' }
   ]);
 
   const [contaminationData, setContaminationData] = useState<ContaminationData[]>([
@@ -84,10 +84,10 @@ export function Incubation() {
   const [selectedContaminationDate, setSelectedContaminationDate] = useState('');
   const [selectedContaminationBatch, setSelectedContaminationBatch] = useState('');
 
-  // Search filters (Species → Batch Number)
+  // Search filters (Crop Name → Batch Number)
   const incubationFilter = useSearchFilter({
     sourceData: incubationData,
-    field1Accessor: (item) => item.species,
+    field1Accessor: (item) => item.cropName,
     field2Accessor: (item) => item.batchNumber,
   });
 
@@ -104,7 +104,7 @@ export function Incubation() {
     batchNumber: '',
     mediaCode: '',
     operator: '',
-    species: '',
+    cropName: '',
     vessels: '',
     shoots: '',
     temp: '',
@@ -196,7 +196,7 @@ export function Incubation() {
       batchNumber: '',
       mediaCode: '',
       operator: '',
-      species: '',
+      cropName: '',
       vessels: '',
       shoots: '',
       temp: '',
@@ -217,7 +217,7 @@ export function Incubation() {
         batchNumber: recordData.batchNumber,
         mediaCode: recordData.mediaCode,
         operator: recordData.operator,
-        species: recordData.species,
+        cropName: recordData.cropName,
         vessels: String(recordData.vessels),
         shoots: String(recordData.shoots),
         temp: recordData.temp,
@@ -320,7 +320,7 @@ export function Incubation() {
       batchNumber: '',
       mediaCode: '',
       operator: '',
-      species: '',
+      cropName: '',
       vessels: '',
       shoots: '',
       temp: '',
@@ -466,11 +466,11 @@ export function Incubation() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Species</Label>
+                          <Label>Crop Name</Label>
                           <Input 
                             placeholder="Banana" 
-                            value={incubationForm.species}
-                            onChange={(e) => setIncubationForm({...incubationForm, species: e.target.value})}
+                            value={incubationForm.cropName}
+                            onChange={(e) => setIncubationForm({...incubationForm, cropName: e.target.value})}
                           />
                         </div>
                         <div className="space-y-2">
@@ -611,8 +611,8 @@ export function Incubation() {
                             <Input value={incubationForm.operator} onChange={(e) => setIncubationForm({...incubationForm, operator: e.target.value})} />
                           </div>
                           <div>
-                            <Label>Species</Label>
-                            <Input value={incubationForm.species} onChange={(e) => setIncubationForm({...incubationForm, species: e.target.value})} />
+                            <Label>Crop Name</Label>
+                            <Input value={incubationForm.cropName} onChange={(e) => setIncubationForm({...incubationForm, cropName: e.target.value})} />
                           </div>
                           <div>
                             <Label>No. of Vessels</Label>
@@ -676,7 +676,7 @@ export function Incubation() {
                         <th className="px-4 py-3 text-left text-xs text-gray-600 whitespace-nowrap">Batch Number</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600 whitespace-nowrap">Media Code</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600 whitespace-nowrap">Operator Name</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600 whitespace-nowrap">Species</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600 whitespace-nowrap">Crop Name</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600 whitespace-nowrap">No. of Vessels</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600 whitespace-nowrap">No. of Shoots</th>
                         <th className="px-4 py-3 text-left text-xs text-gray-600 whitespace-nowrap">Temp</th>
@@ -703,7 +703,7 @@ export function Incubation() {
                             </Badge>
                           </td>
                           <td className="px-4 py-3 text-sm whitespace-nowrap">{item.operator}</td>
-                          <td className="px-4 py-3 text-sm whitespace-nowrap">{item.species}</td>
+                          <td className="px-4 py-3 text-sm whitespace-nowrap">{item.cropName}</td>
                           <td className="px-4 py-3 text-sm whitespace-nowrap">{item.vessels}</td>
                           <td className="px-4 py-3 text-sm whitespace-nowrap">{item.shoots}</td>
                           <td className="px-4 py-3 text-sm whitespace-nowrap">{item.temp}</td>

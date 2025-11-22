@@ -15,10 +15,10 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 
 // Sample Media Preparation autoclave cycles data (in real app, this would come from shared state/context)
 const mediaPrepAutoclaveCycles = [
-  { id: 1, date: '2024-11-15', mediaCode: 'MS-001', operator: 'Amit Shah', typeOfMedia: 'MS Medium', autoclaveOn: '09:00', mediaLoading: '09:15', pressure: '10:00', off: '11:30', open: '12:00', mediaTotal: '3:00', remark: 'Normal cycle' },
-  { id: 2, date: '2024-11-15', mediaCode: 'MS-002', operator: 'Priya Patel', typeOfMedia: 'B5 Medium', autoclaveOn: '13:00', mediaLoading: '13:10', pressure: '13:45', off: '15:15', open: '15:45', mediaTotal: '2:45', remark: 'Good' },
-  { id: 3, date: '2024-11-14', mediaCode: 'MS-003', operator: 'Rahul Desai', typeOfMedia: 'WPM Medium', autoclaveOn: '08:30', mediaLoading: '08:45', pressure: '09:30', off: '11:00', open: '11:30', mediaTotal: '3:00', remark: '-' },
-  { id: 4, date: '2024-11-14', mediaCode: 'MS-004', operator: 'Neha Singh', typeOfMedia: 'MS Medium', autoclaveOn: '14:00', mediaLoading: '14:15', pressure: '15:00', off: '16:30', open: '17:00', mediaTotal: '3:00', remark: 'Extended cycle' }
+  { id: 1, date: '2024-11-15', mediaCode: 'MS-001', operator: 'Amit Shah', typeOfMedia: 'Bamboo', autoclaveOn: '09:00', mediaLoading: '09:15', pressure: '10:00', off: '11:30', open: '12:00', mediaTotal: '3:00', remark: 'Normal cycle' },
+  { id: 2, date: '2024-11-15', mediaCode: 'MS-002', operator: 'Priya Patel', typeOfMedia: 'Banana', autoclaveOn: '13:00', mediaLoading: '13:10', pressure: '13:45', off: '15:15', open: '15:45', mediaTotal: '2:45', remark: 'Good' },
+  { id: 3, date: '2024-11-14', mediaCode: 'MS-003', operator: 'Rahul Desai', typeOfMedia: 'Teak', autoclaveOn: '08:30', mediaLoading: '08:45', pressure: '09:30', off: '11:00', open: '11:30', mediaTotal: '3:00', remark: '-' },
+  { id: 4, date: '2024-11-14', mediaCode: 'MS-004', operator: 'Neha Singh', typeOfMedia: 'Ornamental', autoclaveOn: '14:00', mediaLoading: '14:15', pressure: '15:00', off: '16:30', open: '17:00', mediaTotal: '3:00', remark: 'Extended cycle' }
 ];
 
 type SubcultureData = {
@@ -27,7 +27,7 @@ type SubcultureData = {
   stageNumber: string;
   batchCode: string;
   mediaCode: string;
-  species: string;
+  cropName: string;
   vessels: number;
   shoots: number;
   operator: string;
@@ -48,11 +48,11 @@ export function Subculturing() {
   const todayDate = getTodayDate();
 
   const [subcultureData, setSubcultureData] = useState<SubcultureData[]>([
-    { id: 1, transferDate: todayDate, stageNumber: 'Stage 3', batchCode: 'BTH-2024-001', mediaCode: 'MS-001', species: 'Banana', vessels: 120, shoots: 2400, operator: 'Amit Shah', contamination: 'None', remark: 'Good growth' },
-    { id: 2, transferDate: '2024-11-15', stageNumber: 'Stage 2', batchCode: 'BTH-2024-002', mediaCode: 'MS-002', species: 'Strawberry', vessels: 80, shoots: 1600, operator: 'Priya Patel', contamination: '2 vessels', remark: 'Minor contamination' },
-    { id: 3, transferDate: '2024-11-14', stageNumber: 'Stage 4', batchCode: 'BTH-2024-003', mediaCode: 'MS-001', species: 'Rose', vessels: 150, shoots: 3000, operator: 'Rahul Desai', contamination: 'None', remark: 'Excellent' },
-    { id: 4, transferDate: '2024-11-14', stageNumber: 'Stage 1', batchCode: 'BTH-2024-004', mediaCode: 'MS-003', species: 'Gerbera', vessels: 100, shoots: 2000, operator: 'Neha Singh', contamination: 'None', remark: 'New batch' },
-    { id: 5, transferDate: '2024-11-13', stageNumber: 'Stage 2', batchCode: 'BTH-2024-005', mediaCode: 'MS-002', species: 'Banana', vessels: 90, shoots: 1800, operator: 'Amit Shah', contamination: '1 vessel', remark: 'Monitoring' }
+    { id: 1, transferDate: todayDate, stageNumber: 'Stage 3', batchCode: 'BTH-2024-001', mediaCode: 'MS-001', cropName: 'Banana', vessels: 120, shoots: 2400, operator: 'Amit Shah', contamination: 'None', remark: 'Good growth' },
+    { id: 2, transferDate: '2024-11-15', stageNumber: 'Stage 2', batchCode: 'BTH-2024-002', mediaCode: 'MS-002', cropName: 'Bamboo', vessels: 80, shoots: 1600, operator: 'Priya Patel', contamination: '2 vessels', remark: 'Minor contamination' },
+    { id: 3, transferDate: '2024-11-14', stageNumber: 'Stage 4', batchCode: 'BTH-2024-003', mediaCode: 'MS-001', cropName: 'Teak', vessels: 150, shoots: 3000, operator: 'Rahul Desai', contamination: 'None', remark: 'Excellent' },
+    { id: 4, transferDate: '2024-11-14', stageNumber: 'Stage 1', batchCode: 'BTH-2024-004', mediaCode: 'MS-003', cropName: 'Ornamental', vessels: 100, shoots: 2000, operator: 'Neha Singh', contamination: 'None', remark: 'New batch' },
+    { id: 5, transferDate: '2024-11-13', stageNumber: 'Stage 2', batchCode: 'BTH-2024-005', mediaCode: 'MS-002', cropName: 'Banana', vessels: 90, shoots: 1800, operator: 'Amit Shah', contamination: '1 vessel', remark: 'Monitoring' }
   ]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -62,10 +62,10 @@ export function Subculturing() {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedBatch, setSelectedBatch] = useState('');
 
-  // Search filter (Species → Batch Code)
+  // Search filter (Crop Name → Batch Code)
   const subcultureFilter = useSearchFilter({
     sourceData: subcultureData,
-    field1Accessor: (item) => item.species,
+    field1Accessor: (item) => item.cropName,
     field2Accessor: (item) => item.batchCode,
   });
   
@@ -74,7 +74,7 @@ export function Subculturing() {
     stageNumber: '',
     batchCode: '',
     mediaCode: '',
-    species: '',
+    cropName: '',
     vessels: '',
     shoots: '',
     operator: '',
@@ -123,7 +123,7 @@ export function Subculturing() {
       stageNumber: '',
       batchCode: '',
       mediaCode: '',
-      species: '',
+      cropName: '',
       vessels: '',
       shoots: '',
       operator: '',
@@ -142,7 +142,7 @@ export function Subculturing() {
         stageNumber: recordData.stageNumber,
         batchCode: recordData.batchCode,
         mediaCode: recordData.mediaCode,
-        species: recordData.species,
+        cropName: recordData.cropName,
         vessels: String(recordData.vessels),
         shoots: String(recordData.shoots),
         operator: recordData.operator,
@@ -183,7 +183,7 @@ export function Subculturing() {
       stageNumber: '',
       batchCode: '',
       mediaCode: '',
-      species: '',
+      cropName: '',
       vessels: '',
       shoots: '',
       operator: '',
@@ -295,11 +295,11 @@ export function Subculturing() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Species</Label>
+                      <Label>Crop Name</Label>
                       <Input 
                         placeholder="Banana" 
-                        value={subcultureForm.species}
-                        onChange={(e) => setSubcultureForm({...subcultureForm, species: e.target.value})}
+                        value={subcultureForm.cropName}
+                        onChange={(e) => setSubcultureForm({...subcultureForm, cropName: e.target.value})}
                       />
                     </div>
                     <div className="space-y-2">
@@ -430,8 +430,8 @@ export function Subculturing() {
                       <Input value={subcultureForm.mediaCode} onChange={(e) => setSubcultureForm({...subcultureForm, mediaCode: e.target.value})} />
                     </div>
                     <div>
-                      <Label>Species</Label>
-                      <Input value={subcultureForm.species} onChange={(e) => setSubcultureForm({...subcultureForm, species: e.target.value})} />
+                      <Label>Crop Name</Label>
+                      <Input value={subcultureForm.cropName} onChange={(e) => setSubcultureForm({...subcultureForm, cropName: e.target.value})} />
                     </div>
                     <div>
                       <Label>Number of Vessels</Label>
@@ -490,7 +490,7 @@ export function Subculturing() {
                   <th className="px-4 py-3 text-left text-xs text-gray-600">Stage Number</th>
                   <th className="px-4 py-3 text-left text-xs text-gray-600">Batch Code</th>
                   <th className="px-4 py-3 text-left text-xs text-gray-600">Media Code</th>
-                  <th className="px-4 py-3 text-left text-xs text-gray-600">Species</th>
+                  <th className="px-4 py-3 text-left text-xs text-gray-600">Crop Name</th>
                   <th className="px-4 py-3 text-left text-xs text-gray-600">No. of Vessels</th>
                   <th className="px-4 py-3 text-left text-xs text-gray-600">No. of Shoots</th>
                   <th className="px-4 py-3 text-left text-xs text-gray-600">Operator Name</th>
@@ -515,7 +515,7 @@ export function Subculturing() {
                         {item.mediaCode}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 text-sm">{item.species}</td>
+                    <td className="px-4 py-3 text-sm">{item.cropName}</td>
                     <td className="px-4 py-3 text-sm">{item.vessels}</td>
                     <td className="px-4 py-3 text-sm">{item.shoots}</td>
                     <td className="px-4 py-3 text-sm">{item.operator}</td>
