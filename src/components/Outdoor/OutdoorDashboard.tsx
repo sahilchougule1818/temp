@@ -60,37 +60,35 @@ export function OutdoorDashboard() {
       </div>
 
       {/* Tunnel Schematic */}
-      <Card className="p-8 bg-white border border-gray-200 rounded-2xl shadow-sm">
-        <h2 className="text-2xl font-semibold mb-6">Tunnel Schematic Overview</h2>
+      <Card className="p-8 bg-white border-0 shadow-none">
+        <h2 className="text-2xl font-bold mb-8">Tunnel Schematic Overview</h2>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           {tunnelData.map((tunnel) => (
             <div 
               key={tunnel.id}
-              className={`p-5 rounded-2xl border-[3px] transition-all min-w-0 ${
+              className={`p-6 rounded-xl border transition-all min-w-0 ${
                 tunnel.status === 'mortality' 
-                  ? 'border-red-400 bg-red-50/60 shadow-red-100 shadow-md' 
-                  : 'border-green-400 bg-green-50/60 shadow-green-100 shadow-md'
+                  ? 'border-red-300 bg-red-50' 
+                  : 'border-green-300 bg-green-50'
               }`}
             >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-lg">{tunnel.name}</h3>
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="font-semibold text-base">{tunnel.name}</h3>
                 {tunnel.status === 'mortality' && (
-                  <div className="bg-red-500 rounded-full p-1.5">
-                    <AlertTriangle className="w-5 h-5 text-white" />
-                  </div>
+                  <AlertTriangle className="w-5 h-5 text-red-500" />
                 )}
               </div>
               
-              <div className="mb-4">
-                <div className="flex justify-between text-sm mb-2 text-gray-700 font-medium">
+              <div className="mb-5">
+                <div className="flex justify-between text-xs mb-2 text-gray-600">
                   <span>Occupancy</span>
-                  <span className="font-bold">{tunnel.occupied}/{tunnel.capacity}</span>
+                  <span className="font-semibold text-gray-900">{tunnel.occupied}/{tunnel.capacity}</span>
                 </div>
-                <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden shadow-inner">
+                <div className="w-full h-2 bg-white rounded-full overflow-hidden">
                   <div 
-                    className={`h-full transition-all ${
-                      tunnel.status === 'mortality' ? 'bg-red-500' : 'bg-green-500'
+                    className={`h-full ${
+                      tunnel.status === 'mortality' ? 'bg-red-400' : 'bg-green-500'
                     }`}
                     style={{ width: `${(tunnel.occupied / tunnel.capacity) * 100}%` }}
                   />
@@ -98,27 +96,28 @@ export function OutdoorDashboard() {
               </div>
 
               {/* Tray Grid Preview */}
-              <div className="grid grid-cols-5 gap-1.5 mb-4">
+              <div className="grid grid-cols-5 gap-1.5 mb-5">
                 {Array.from({ length: 20 }).map((_, i) => {
                   let trayClass = 'bg-gray-300';
                   
                   if (tunnel.status === 'mortality') {
-                    trayClass = 'bg-red-400 shadow-sm';
+                    const occupiedTrays = Math.floor((tunnel.occupied / tunnel.capacity) * 20);
+                    trayClass = i < occupiedTrays ? 'bg-red-400' : 'bg-gray-300';
                   } else {
                     const occupiedTrays = Math.floor((tunnel.occupied / tunnel.capacity) * 20);
-                    trayClass = i < occupiedTrays ? 'bg-green-500 shadow-sm' : 'bg-gray-300';
+                    trayClass = i < occupiedTrays ? 'bg-green-500' : 'bg-gray-300';
                   }
                   
                   return (
                     <div
                       key={i}
-                      className={`h-5 rounded-md ${trayClass} transition-all hover:scale-110`}
+                      className={`h-6 rounded ${trayClass}`}
                     />
                   );
                 })}
               </div>
 
-              <div className="text-xs text-gray-600 text-center font-medium">
+              <div className="text-xs text-gray-500 text-center">
                 Click to expand tray details
               </div>
             </div>
@@ -126,22 +125,22 @@ export function OutdoorDashboard() {
         </div>
 
         {/* Legend */}
-        <div className="flex gap-8 justify-center text-sm pt-4 border-t border-gray-200">
-          <div className="flex items-center gap-2.5">
-            <div className="w-5 h-5 rounded-md bg-green-500 shadow-sm" />
-            <span className="text-gray-700 font-medium">Occupied</span>
+        <div className="flex gap-6 justify-start text-sm">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded bg-green-500" />
+            <span className="text-gray-700">Occupied</span>
           </div>
-          <div className="flex items-center gap-2.5">
-            <div className="w-5 h-5 rounded-md bg-gray-300" />
-            <span className="text-gray-700 font-medium">Empty</span>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded bg-gray-300" />
+            <span className="text-gray-700">Empty</span>
           </div>
-          <div className="flex items-center gap-2.5">
-            <div className="w-5 h-5 rounded-md bg-red-400 shadow-sm" />
-            <span className="text-gray-700 font-medium">Mortality Alert</span>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded bg-red-400" />
+            <span className="text-gray-700">Mortality Alert</span>
           </div>
-          <div className="flex items-center gap-2.5">
-            <div className="w-5 h-5 rounded-md bg-amber-400 shadow-sm" />
-            <span className="text-gray-700 font-medium">Needs Attention</span>
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded bg-amber-400" />
+            <span className="text-gray-700">Needs Attention</span>
           </div>
         </div>
       </Card>
