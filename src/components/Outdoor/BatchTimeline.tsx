@@ -92,9 +92,9 @@ export function BatchTimeline() {
   return (
     <div className="p-6 space-y-6">
       <Card className="p-6">
-        <div className="flex flex-wrap items-center justify-between gap-6">
-          <div className="flex flex-wrap items-center gap-6">
-            <div className="min-w-[240px]">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="min-w-[200px]">
               <label className="block text-sm text-gray-600 mb-2">Select Batch</label>
               <Select value={selectedBatch} onValueChange={setSelectedBatch}>
                 <SelectTrigger className="w-full">
@@ -108,23 +108,23 @@ export function BatchTimeline() {
               </Select>
             </div>
 
-            <div className="border-l border-gray-200 pl-6">
+            <div className="border-l border-gray-200 pl-4">
               <div className="text-sm text-gray-600 mb-1">Current Status</div>
               <Badge className="bg-[#4CAF50] hover:bg-[#4CAF50] text-white">In Holding Area</Badge>
             </div>
 
-            <div className="border-l border-gray-200 pl-6">
+            <div className="border-l border-gray-200 pl-4">
               <div className="text-sm text-gray-600 mb-1">Total Plants</div>
               <div className="text-2xl font-semibold">1,188</div>
             </div>
 
-            <div className="border-l border-gray-200 pl-6">
+            <div className="border-l border-gray-200 pl-4">
               <div className="text-sm text-gray-600 mb-1">Days Active</div>
               <div className="text-2xl font-semibold">17</div>
             </div>
           </div>
 
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex gap-2 flex-wrap">
             <Button variant="outline" size="sm">
               <FileText className="w-4 h-4 mr-2" />
               Print Timeline

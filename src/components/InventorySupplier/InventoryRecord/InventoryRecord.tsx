@@ -58,7 +58,7 @@ export function InventoryRecord() {
   const [itemToDelete, setItemToDelete] = useState<{ type: 'purchase' | 'withdrawal', id: number } | null>(null);
   const [showAllPurchaseRecords, setShowAllPurchaseRecords] = useState(false);
   const [showAllWithdrawalRecords, setShowAllWithdrawalRecords] = useState(false);
-  const [activeTab, setActiveTab] = useState('purchase');
+  const [activeTab, setActiveTab] = useState('edit');
 
   const [purchaseForm, setPurchaseForm] = useState({
     dateOfPurchase: todayDate,
@@ -217,26 +217,15 @@ export function InventoryRecord() {
   };
 
   const handleEditRegister = () => {
-    if (activeTab === 'purchase') {
-      setEditingPurchaseId(null); // Clear editing ID when opening main edit modal
-      setPurchaseForm({
-        dateOfPurchase: todayDate,
-        itemName: '',
-        quantityPurchased: '',
-        currentStock: ''
-      });
-      setIsEditPurchaseModalOpen(true);
-    } else {
-      setEditingWithdrawalId(null); // Clear editing ID when opening main edit modal
-      setWithdrawalForm({
-        itemName: '',
-        previousStock: '',
-        withdrawQuantity: '',
-        currentStock: '',
-        dateOfWithdrawal: todayDate
-      });
-      setIsEditWithdrawalModalOpen(true);
-    }
+    setEditingWithdrawalId(null);
+    setWithdrawalForm({
+      itemName: '',
+      previousStock: '',
+      withdrawQuantity: '',
+      currentStock: '',
+      dateOfWithdrawal: todayDate
+    });
+    setIsEditWithdrawalModalOpen(true);
   };
 
   const handleDelete = () => {
