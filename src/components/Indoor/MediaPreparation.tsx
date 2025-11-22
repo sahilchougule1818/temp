@@ -223,10 +223,16 @@ export function MediaPreparation() {
   };
 
   const handleEditBatch = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${year}-${month}-${day}`;
+    
     if (activeTab === 'autoclave') {
       setEditingAutoclaveId(null);
       setAutoclaveForm({
-        date: '',
+        date: todayStr,
         mediaCode: '',
         operator: '',
         typeOfMedia: '',
@@ -242,7 +248,7 @@ export function MediaPreparation() {
     } else {
       setEditingBatchId(null);
       setBatchForm({
-        date: '',
+        date: todayStr,
         mediaCode: '',
         operator: '',
         quantity: '',
@@ -314,9 +320,38 @@ export function MediaPreparation() {
   };
 
 
+  const mediaCodeOptions = Array.from(new Set(autoclaveCycles.map(cycle => cycle.mediaCode))).map(code => ({
+    value: code.toLowerCase().replace(/\s+/g, '-'),
+    label: code
+  }));
+
+  const cropOptions = [
+    { value: 'rose', label: 'Rose' },
+    { value: 'gerbera', label: 'Gerbera' },
+    { value: 'carnation', label: 'Carnation' },
+    { value: 'orchid', label: 'Orchid' },
+    { value: 'anthurium', label: 'Anthurium' }
+  ];
+
   return (
     <div className="p-6 space-y-6">
-      <FilterBar />
+      <FilterBar 
+        field1={{
+          label: 'Media Code',
+          value: '',
+          onChange: () => {},
+          options: mediaCodeOptions,
+          placeholder: 'Select media code'
+        }}
+        field2={{
+          label: 'Crop Name',
+          value: '',
+          onChange: () => {},
+          options: cropOptions,
+          placeholder: 'Select crop'
+        }}
+        onSearch={() => {}}
+      />
       <Card>
         <CardHeader>
           <CardTitle>Media Preparation</CardTitle>

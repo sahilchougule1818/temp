@@ -88,6 +88,84 @@ function getCertificateBadge(certificate: string) {
 export function Sampling() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedBatch, setSelectedBatch] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
+  
+  const [formData, setFormData] = useState({
+    sampleDate: '',
+    cropName: '',
+    batchName: '',
+    stage: '',
+    sentDate: '',
+    receivedDate: '',
+    status: '',
+    govtCertificate: '',
+    certificateNo: '',
+    reason: ''
+  });
+
+  const availableDates = Array.from(new Set(samplingData.map(record => record.sampleDate))).sort();
+
+  const availableBatches = selectedDate 
+    ? Array.from(new Set(samplingData.filter(record => record.sampleDate === selectedDate).map(record => record.batchName)))
+    : [];
+
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
+    setSelectedBatch('');
+    setFormData({
+      sampleDate: '',
+      cropName: '',
+      batchName: '',
+      stage: '',
+      sentDate: '',
+      receivedDate: '',
+      status: '',
+      govtCertificate: '',
+      certificateNo: '',
+      reason: ''
+    });
+    setEditingId(null);
+  };
+
+  const handleBatchSelect = (batch: string) => {
+    setSelectedBatch(batch);
+    const recordData = samplingData.find(record => record.sampleDate === selectedDate && record.batchName === batch);
+    if (recordData) {
+      setFormData({
+        sampleDate: recordData.sampleDate,
+        cropName: recordData.cropName,
+        batchName: recordData.batchName,
+        stage: recordData.stage,
+        sentDate: recordData.sentDate,
+        receivedDate: recordData.receivedDate,
+        status: recordData.status,
+        govtCertificate: recordData.govtCertificate,
+        certificateNo: recordData.certificateNo,
+        reason: recordData.reason
+      });
+      setEditingId(recordData.id);
+    }
+  };
+
+  const resetForm = () => {
+    setSelectedDate('');
+    setSelectedBatch('');
+    setEditingId(null);
+    setFormData({
+      sampleDate: '',
+      cropName: '',
+      batchName: '',
+      stage: '',
+      sentDate: '',
+      receivedDate: '',
+      status: '',
+      govtCertificate: '',
+      certificateNo: '',
+      reason: ''
+    });
+  };
 
   const filteredData = samplingData;
   
@@ -254,46 +332,147 @@ export function Sampling() {
         </div>
 
         {/* Edit Dialog */}
-        <Dialog open={isEditModalOpen} onOpenChange={(open: boolean) => setIsEditModalOpen(open)}>
-          <DialogContent className="max-w-xl">
+        <Dialog open={isEditModalOpen} onOpenChange={(open: boolean) => {
+          setIsEditModalOpen(open);
+          if (!open) resetForm();
+        }}>
+          <DialogContent className="max-w-3xl">
             <DialogHeader>
-              <DialogTitle>Edit Sample Entry</DialogTitle>
+              <DialogTitle>Edit Sampling Entry</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
-              <div>
-                <Label>Sample Date</Label>
-                <Input type="date" />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Select Date</Label>
+                  <Select value={selectedDate} onValueChange={handleDateSelect}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select date" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableDates.map(date => (
+                        <SelectItem key={date} value={date}>{date}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label>Select Batch Code</Label>
+                  <Select value={selectedBatch} onValueChange={handleBatchSelect} disabled={!selectedDate}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select batch" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableBatches.map(batch => (
+                        <SelectItem key={batch} value={batch}>{batch}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div>
-                <Label>Batch Name</Label>
-                <Select>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select batch" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="b2024-1145">B-2024-1145</SelectItem>
-                    <SelectItem value="b2024-1144">B-2024-1144</SelectItem>
-                    <SelectItem value="b2024-1140">B-2024-1140</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              
+              {editingId && (
+                <div className="grid grid-cols-3 gap-4 pt-4 border-t">
+                  <div>
+                    <Label>Sample Date</Label>
+                    <Input type="date" value={formData.sampleDate} onChange={(e) => setFormData({...formData, sampleDate: e.target.value})} />
+                  </div>
+                  <div>
+                    <Label>Crop Name</Label>
+                    <Input value={formData.cropName} onChange={(e) => setFormData({...formData, cropName: e.target.value})} />
+                  </div>
+                  <div>
+                    <Label>Batch Name</Label>
+                    <Input value={formData.batchName} onChange={(e) => setFormData({...formData, batchName: e.target.value})} />
+                  </div>
+                  <div>
+                    <Label>Stage</Label>
+                    <Select value={formData.stage} onValueChange={(value) => setFormData({...formData, stage: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select stage" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Stage 6">Stage 6</SelectItem>
+                        <SelectItem value="Primary">Primary</SelectItem>
+                        <SelectItem value="Stage 8">Stage 8</SelectItem>
+                        <SelectItem value="Secondary">Secondary</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Sent Date</Label>
+                    <Input type="date" value={formData.sentDate} onChange={(e) => setFormData({...formData, sentDate: e.target.value})} />
+                  </div>
+                  <div>
+                    <Label>Received Date</Label>
+                    <Input type="date" value={formData.receivedDate} onChange={(e) => setFormData({...formData, receivedDate: e.target.value})} />
+                  </div>
+                  <div>
+                    <Label>Status</Label>
+                    <Select value={formData.status} onValueChange={(value) => setFormData({...formData, status: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Not Sent">Not Sent</SelectItem>
+                        <SelectItem value="Sent">Sent</SelectItem>
+                        <SelectItem value="Received">Received</SelectItem>
+                        <SelectItem value="Rejected">Rejected</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Govt Certificate</Label>
+                    <Select value={formData.govtCertificate} onValueChange={(value) => setFormData({...formData, govtCertificate: value})}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Yes">Yes</SelectItem>
+                        <SelectItem value="No">No</SelectItem>
+                        <SelectItem value="Pending">Pending</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Certificate No</Label>
+                    <Input value={formData.certificateNo} onChange={(e) => setFormData({...formData, certificateNo: e.target.value})} />
+                  </div>
+                  <div className="col-span-3">
+                    <Label>Reason (if rejected)</Label>
+                    <Input value={formData.reason} onChange={(e) => setFormData({...formData, reason: e.target.value})} />
+                  </div>
+                </div>
+              )}
             </div>
             <div className="flex justify-between gap-3">
               <Button 
                 variant="destructive"
-                onClick={() => setIsEditModalOpen(false)}
+                onClick={() => {
+                  console.log('Deleting entry:', editingId);
+                  setIsEditModalOpen(false);
+                  resetForm();
+                }}
+                disabled={!editingId}
               >
                 Delete Entry
               </Button>
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
+                <Button variant="outline" onClick={() => {
+                  setIsEditModalOpen(false);
+                  resetForm();
+                }}>
                   Cancel
                 </Button>
                 <Button 
                   variant={null as any}
                   style={{ backgroundColor: '#4CAF50', color: 'white' }}
                   className="hover:bg-[#66BB6A] font-medium shadow-sm"
-                  onClick={() => setIsEditModalOpen(false)}
+                  onClick={() => {
+                    console.log('Saving changes:', formData);
+                    setIsEditModalOpen(false);
+                    resetForm();
+                  }}
+                  disabled={!editingId}
                 >
                   Save Changes
                 </Button>
@@ -317,7 +496,6 @@ export function Sampling() {
                   <TableHead>Govt Certificate</TableHead>
                   <TableHead>Certificate No</TableHead>
                   <TableHead>Reason (if rejected)</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -344,18 +522,6 @@ export function Sampling() {
                       ) : (
                         <span className="text-gray-400">-</span>
                       )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="sm">
-                          View
-                        </Button>
-                        {sample.govtCertificate === 'No' && sample.status !== 'Rejected' && (
-                          <Button variant="ghost" size="sm" className="text-[#4CAF50]">
-                            <Upload className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

@@ -310,14 +310,213 @@ export function InventoryRecord() {
             <h2 className="text-xl font-semibold">Inventory Withdrawal Register</h2>
           </div>
 
+            <TabsContent value="purchase">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
                   <Button
                     variant="outline"
+                    onClick={() => setShowAllPurchaseRecords(!showAllPurchaseRecords)}
                     className="flex items-center gap-2"
                   >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Export
+                    <Eye className="w-4 h-4" />
+                    {showAllPurchaseRecords ? 'Show Today Only' : 'View All Records'}
+                  </Button>
+                  <Dialog open={isPurchaseModalOpen} onOpenChange={(open: boolean) => {
+                    setIsPurchaseModalOpen(open);
+                    if (!open) resetPurchaseForm();
+                  }}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-green-600 hover:bg-green-700" onClick={() => resetPurchaseForm()}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add Data
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-2xl">
+                      <DialogHeader>
+                        <DialogTitle>Add Inventory Purchase Record</DialogTitle>
+                      </DialogHeader>
+                      <div className="grid grid-cols-2 gap-4 py-4">
+                        <div className="space-y-2">
+                          <Label>Date of Purchase</Label>
+                          <Input
+                            type="date"
+                            value={purchaseForm.dateOfPurchase}
+                            onChange={(e) => setPurchaseForm({ ...purchaseForm, dateOfPurchase: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Item Name</Label>
+                          <Input
+                            placeholder="Enter item name"
+                            value={purchaseForm.itemName}
+                            onChange={(e) => setPurchaseForm({ ...purchaseForm, itemName: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Quantity Purchased</Label>
+                          <Input
+                            type="number"
+                            placeholder="e.g., 100"
+                            value={purchaseForm.quantityPurchased}
+                            onChange={(e) => setPurchaseForm({ ...purchaseForm, quantityPurchased: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Current Stock</Label>
+                          <Input
+                            type="number"
+                            placeholder="e.g., 500"
+                            value={purchaseForm.currentStock}
+                            onChange={(e) => setPurchaseForm({ ...purchaseForm, currentStock: e.target.value })}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end gap-3">
+                        <Button variant="outline" onClick={() => {
+                          setIsPurchaseModalOpen(false);
+                          resetPurchaseForm();
+                        }}>Cancel</Button>
+                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSavePurchase}>
+                          Save Record
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </div>
+
+                {/* Edit Purchase Dialog */}
+                <Dialog open={isEditPurchaseModalOpen} onOpenChange={(open: boolean) => {
+                  setIsEditPurchaseModalOpen(open);
+                  if (!open) {
+                    resetPurchaseForm();
+                  }
+                }}>
+                  <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle>Edit Inventory Purchase Record</DialogTitle>
+                    </DialogHeader>
+                    <div className="grid grid-cols-2 gap-4 py-4">
+                      <div className="space-y-2">
+                        <Label>Date of Purchase</Label>
+                        <Input
+                          type="date"
+                          value={purchaseForm.dateOfPurchase}
+                          onChange={(e) => handlePurchaseDateChange(e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Item Name</Label>
+                        {purchaseForm.dateOfPurchase ? (
+                          <Select value={purchaseForm.itemName} onValueChange={handlePurchaseItemSelect}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select item name" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availablePurchaseItemNamesForDate.length > 0 ? (
+                                availablePurchaseItemNamesForDate.map(name => (
+                                  <SelectItem key={name} value={name}>{name}</SelectItem>
+                                ))
+                              ) : (
+                                <SelectItem value="no-records" disabled>No records for this date</SelectItem>
+                              )}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <Input
+                            placeholder="Select date first"
+                            disabled
+                          />
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Quantity Purchased</Label>
+                        <Input
+                          type="number"
+                          placeholder="e.g., 100"
+                          value={purchaseForm.quantityPurchased}
+                          onChange={(e) => setPurchaseForm({ ...purchaseForm, quantityPurchased: e.target.value })}
+                          disabled={!editingPurchaseId} // Disable if no specific record is selected for editing
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Current Stock</Label>
+                        <Input
+                          type="number"
+                          placeholder="e.g., 500"
+                          value={purchaseForm.currentStock}
+                          onChange={(e) => setPurchaseForm({ ...purchaseForm, currentStock: e.target.value })}
+                          disabled={!editingPurchaseId} // Disable if no specific record is selected for editing
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-between gap-3">
+                      <Button
+                        variant="destructive"
+                        onClick={() => {
+                          if (editingPurchaseId) {
+                            setItemToDelete({ type: 'purchase', id: editingPurchaseId });
+                            setDeleteConfirmOpen(true);
+                          }
+                        }}
+                        disabled={!editingPurchaseId}
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete
+                      </Button>
+                      <div className="flex gap-3">
+                        <Button variant="outline" onClick={() => {
+                          setIsEditPurchaseModalOpen(false);
+                          resetPurchaseForm();
+                        }}>Cancel</Button>
+                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSavePurchase} disabled={!editingPurchaseId}>
+                          Save Changes
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+
+                <div className="border rounded-lg overflow-hidden">
+                  <table className="w-full">
+                    <thead className="bg-gray-50 border-b">
+                      <tr>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">ID</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Date of Purchase</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Item Name</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Quantity Purchased</th>
+                        <th className="px-4 py-3 text-left text-xs text-gray-600">Current Stock</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredPurchaseData.map((record) => (
+                        <tr key={record.id} className="border-b hover:bg-gray-50">
+                          <td className="px-4 py-3 text-sm">{record.id}</td>
+                          <td className="px-4 py-3 text-sm">{record.dateOfPurchase}</td>
+                          <td className="px-4 py-3 text-sm">
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                              {record.itemName}
+                            </Badge>
+                          </td>
+                          <td className="px-4 py-3 text-sm">{record.quantityPurchased}</td>
+                          <td className="px-4 py-3 text-sm">{record.currentStock}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="withdrawal">
+              <div className="space-y-4">
+                <div className="flex justify-end gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowAllWithdrawalRecords(!showAllWithdrawalRecords)}
+                    className="flex items-center gap-2"
+                  >
+                    <Eye className="w-4 h-4" />
+                    {showAllWithdrawalRecords ? 'Show Today Only' : 'View All Records'}
                   </Button>
                   <Dialog open={isWithdrawalModalOpen} onOpenChange={(open: boolean) => {
                     setIsWithdrawalModalOpen(open);
@@ -525,6 +724,8 @@ export function InventoryRecord() {
                   </table>
                 </div>
               </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 

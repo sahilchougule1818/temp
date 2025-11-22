@@ -302,9 +302,42 @@ export function CleaningRecord() {
   };
 
 
+  const areaOptions = [
+    { value: 'laminar-flow-1', label: 'Laminar Flow 1' },
+    { value: 'laminar-flow-2', label: 'Laminar Flow 2' },
+    { value: 'culture-room-a', label: 'Culture Room A' },
+    { value: 'culture-room-b', label: 'Culture Room B' },
+    { value: 'transfer-room', label: 'Transfer Room' },
+    { value: 'incubation-room-a', label: 'Incubation Room A' },
+    { value: 'incubation-room-b', label: 'Incubation Room B' }
+  ];
+
+  const machineOptions = [
+    { value: 'autoclave-unit-1', label: 'Autoclave Unit 1' },
+    { value: 'laminar-flow-cabinet-2', label: 'Laminar Flow Cabinet 2' },
+    { value: 'incubator-a', label: 'Incubator A' },
+    { value: 'media-preparation-station', label: 'Media Preparation Station' }
+  ];
+
   return (
     <div className="p-6 space-y-6">
-      <FilterBar />
+      <FilterBar 
+        field1={activeTab === 'cleaning' ? {
+          label: 'Area Cleaned',
+          value: '',
+          onChange: () => {},
+          options: areaOptions,
+          placeholder: 'Select area'
+        } : {
+          label: 'Machine Cleaned',
+          value: '',
+          onChange: () => {},
+          options: machineOptions,
+          placeholder: 'Select machine'
+        }}
+        field2={undefined}
+        onSearch={() => {}}
+      />
       <Card>
         <CardHeader>
           <CardTitle>Cleaning Register</CardTitle>

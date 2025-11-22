@@ -3,22 +3,39 @@ import { Button } from '../ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Card } from '../ui/card';
 
+interface FilterOption {
+  value: string;
+  label: string;
+}
+
+interface FilterField {
+  label: string;
+  value?: string;
+  onChange?: (value: string) => void;
+  options: FilterOption[];
+  placeholder?: string;
+}
+
 interface FilterBarProps {
+  field1?: FilterField;
+  field2?: FilterField;
+  onSearch?: () => void;
   batchValue?: string;
   cropValue?: string;
   onBatchChange?: (value: string) => void;
   onCropChange?: (value: string) => void;
-  onSearch?: () => void;
-  batches?: { value: string; label: string }[];
-  crops?: { value: string; label: string }[];
+  batches?: FilterOption[];
+  crops?: FilterOption[];
 }
 
 export function FilterBar({ 
+  field1,
+  field2,
+  onSearch,
   batchValue, 
   cropValue, 
   onBatchChange, 
-  onCropChange, 
-  onSearch,
+  onCropChange,
   batches = [
     { value: 'b2024-1145', label: 'B-2024-1145' },
     { value: 'b2024-1144', label: 'B-2024-1144' },
@@ -33,40 +50,60 @@ export function FilterBar({
     { value: 'anthurium', label: 'Anthurium' }
   ]
 }: FilterBarProps) {
+  const firstField = field1 || {
+    label: 'Batch Name',
+    value: batchValue,
+    onChange: onBatchChange,
+    options: batches,
+    placeholder: 'Select batch'
+  };
+
+  const secondField = field2 || {
+    label: 'Crop Name',
+    value: cropValue,
+    onChange: onCropChange,
+    options: crops,
+    placeholder: 'Select crop'
+  };
+
   return (
     <Card className="p-4">
       <div className="flex gap-4 items-end">
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm mb-1.5">Batch Name</label>
-          <Select value={batchValue} onValueChange={onBatchChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select batch" />
-            </SelectTrigger>
-            <SelectContent>
-              {batches.map((batch) => (
-                <SelectItem key={batch.value} value={batch.value}>
-                  {batch.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {firstField && (
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-sm mb-1.5">{firstField.label}</label>
+            <Select value={firstField.value} onValueChange={firstField.onChange}>
+              <SelectTrigger>
+                <SelectValue placeholder={firstField.placeholder || `Select ${firstField.label.toLowerCase()}`} />
+              </SelectTrigger>
+              <SelectContent>
+                {firstField.options.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
-        <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm mb-1.5">Crop Name</label>
-          <Select value={cropValue} onValueChange={onCropChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select crop" />
-            </SelectTrigger>
-            <SelectContent>
-              {crops.map((crop) => (
-                <SelectItem key={crop.value} value={crop.value}>
-                  {crop.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        {secondField && (
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-sm mb-1.5">{secondField.label}</label>
+            <Select value={secondField.value} onValueChange={secondField.onChange}>
+              <SelectTrigger>
+                <SelectValue placeholder={secondField.placeholder || `Select ${secondField.label.toLowerCase()}`} />
+              </SelectTrigger>
+              <SelectContent>
+                {secondField.options.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
 
         <div>
           <Button 
