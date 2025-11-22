@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
 import { Button } from '../../ui/button';
 import { Plus, Edit, Trash2, Eye } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../ui/dialog';
@@ -58,7 +57,6 @@ export function InventoryRecord() {
   const [itemToDelete, setItemToDelete] = useState<{ type: 'purchase' | 'withdrawal', id: number } | null>(null);
   const [showAllPurchaseRecords, setShowAllPurchaseRecords] = useState(false);
   const [showAllWithdrawalRecords, setShowAllWithdrawalRecords] = useState(false);
-  const [activeTab, setActiveTab] = useState('edit');
 
   const [purchaseForm, setPurchaseForm] = useState({
     dateOfPurchase: todayDate,
@@ -299,22 +297,108 @@ export function InventoryRecord() {
           <CardTitle>Inventory Record</CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="edit" className="w-full" onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="edit">Edit</TabsTrigger>
-              <TabsTrigger value="adddata">Add Data</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="edit">
-              <div className="space-y-4">
-                <Button
-                  variant="outline"
-                  onClick={handleEditRegister}
-                  className="flex items-center gap-2"
-                >
-                  <Edit className="w-4 h-4" />
-                  Edit Register
-                </Button>
+          <div className="space-y-4">
+            <div className="flex justify-start gap-2">
+              <Button
+                variant="outline"
+                onClick={handleEditRegister}
+                className="flex items-center gap-2"
+              >
+                <Edit className="w-4 h-4" />
+                Edit
+              </Button>
+              <Button
+                variant="outline"
+                className="flex items-center gap-2"
+              >
+                Export
+              </Button>
+              <Dialog open={isWithdrawalModalOpen} onOpenChange={(open: boolean) => {
+                setIsWithdrawalModalOpen(open);
+                if (!open) resetWithdrawalForm();
+              }}>
+                <DialogTrigger asChild>
+                  <Button className="bg-green-600 hover:bg-green-700" onClick={() => resetWithdrawalForm()}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Data
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Add Inventory Withdrawal Record</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid grid-cols-2 gap-4 py-4">
+                    <div className="space-y-2">
+                      <Label>Date of Withdrawal</Label>
+                      <Input
+                        type="date"
+                        value={withdrawalForm.dateOfWithdrawal}
+                        onChange={(e) => setWithdrawalForm({ ...withdrawalForm, dateOfWithdrawal: e.target.value })}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Item Name</Label>
+                      <Select value={withdrawalForm.itemName} onValueChange={handleWithdrawalItemSelect}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select item name" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableItemNames.length > 0 ? (
+                            availableItemNames.map(name => (
+                              <SelectItem key={name} value={name}>{name}</SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem value="no-items" disabled>No items available</SelectItem>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Previous Quantity</Label>
+                      <Input
+                        type="number"
+                        placeholder="Auto-filled"
+                        value={withdrawalForm.previousStock}
+                        disabled
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Withdraw Quantity</Label>
+                      <Input
+                        type="number"
+                        placeholder="e.g., 50"
+                        value={withdrawalForm.withdrawQuantity}
+                        onChange={(e) => {
+                          const withdrawQty = e.target.value;
+                          const prevStock = parseInt(withdrawalForm.previousStock) || 0;
+                          const withdrawNum = parseInt(withdrawQty) || 0;
+                          const newCurrentStock = prevStock - withdrawNum;
+                          setWithdrawalForm({ 
+                            ...withdrawalForm, 
+                            withdrawQuantity: withdrawQty,
+                            currentStock: newCurrentStock >= 0 ? String(newCurrentStock) : '0'
+                          });
+                        }}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Current Stock (After Withdrawal)</Label>
+                      <Input
+                        value={
+                          (parseInt(withdrawalForm.previousStock) || 0) -
+                          (parseInt(withdrawalForm.withdrawQuantity) || 0)
+                        }
+                        disabled
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-3">
+                    <Button variant="outline" onClick={() => setIsWithdrawalModalOpen(false)}>Cancel</Button>
+                    <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveWithdrawal}>Save</Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
 
                 {/* Edit Withdrawal Dialog */}
                 <Dialog open={isEditWithdrawalModalOpen} onOpenChange={(open: boolean) => {
@@ -458,145 +542,7 @@ export function InventoryRecord() {
                     </tbody>
                   </table>
                 </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="adddata">
-              <div className="space-y-4">
-                <div className="flex justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    className="flex items-center gap-2"
-                  >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Export
-                  </Button>
-                  <Dialog open={isWithdrawalModalOpen} onOpenChange={(open: boolean) => {
-                    setIsWithdrawalModalOpen(open);
-                    if (!open) resetWithdrawalForm();
-                  }}>
-                    <DialogTrigger asChild>
-                      <Button className="bg-green-600 hover:bg-green-700" onClick={() => resetWithdrawalForm()}>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Data
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl">
-                      <DialogHeader>
-                        <DialogTitle>Add Inventory Withdrawal Record</DialogTitle>
-                      </DialogHeader>
-                      <div className="grid grid-cols-2 gap-4 py-4">
-                        <div className="space-y-2">
-                          <Label>Date of Withdrawal</Label>
-                          <Input
-                            type="date"
-                            value={withdrawalForm.dateOfWithdrawal}
-                            onChange={(e) => setWithdrawalForm({ ...withdrawalForm, dateOfWithdrawal: e.target.value })}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Item Name</Label>
-                          <Select value={withdrawalForm.itemName} onValueChange={handleWithdrawalItemSelect}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select item name" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {availableItemNames.length > 0 ? (
-                                availableItemNames.map(name => (
-                                  <SelectItem key={name} value={name}>{name}</SelectItem>
-                                ))
-                              ) : (
-                                <SelectItem value="no-items" disabled>No items available</SelectItem>
-                              )}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Previous Quantity</Label>
-                          <Input
-                            type="number"
-                            placeholder="Auto-filled"
-                            value={withdrawalForm.previousStock}
-                            disabled
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Withdraw Quantity</Label>
-                          <Input
-                            type="number"
-                            placeholder="e.g., 50"
-                            value={withdrawalForm.withdrawQuantity}
-                            onChange={(e) => {
-                              const withdrawQty = e.target.value;
-                              const prevStock = parseInt(withdrawalForm.previousStock) || 0;
-                              const withdrawNum = parseInt(withdrawQty) || 0;
-                              const newCurrentStock = prevStock - withdrawNum;
-                              setWithdrawalForm({ 
-                                ...withdrawalForm, 
-                                withdrawQuantity: withdrawQty,
-                                currentStock: newCurrentStock >= 0 ? String(newCurrentStock) : '0'
-                              });
-                            }}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Current Updated Quantity</Label>
-                          <Input
-                            type="number"
-                            value={
-                              (parseInt(withdrawalForm.previousStock) || 0) -
-                              (parseInt(withdrawalForm.withdrawQuantity) || 0)
-                            }
-                            disabled
-                          />
-                        </div>
-                      </div>
-                      <div className="flex justify-end gap-3">
-                        <Button variant="outline" onClick={() => {
-                          setIsWithdrawalModalOpen(false);
-                          resetWithdrawalForm();
-                        }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveWithdrawal}>
-                          Save Record
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-
-                <div className="border rounded-lg overflow-hidden">
-                  <table className="w-full">
-                    <thead className="bg-gray-50 border-b">
-                      <tr>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Item Name</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Quantity When Purchased</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Current Stock</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Withdrawn Quantity</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Previous Stock</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Date of Withdraw</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredWithdrawalData.map((record) => (
-                        <tr key={record.id} className="border-b hover:bg-gray-50">
-                          <td className="px-4 py-3 text-sm">
-                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-                              {record.itemName}
-                            </Badge>
-                          </td>
-                          <td className="px-4 py-3 text-sm">{record.previousStock + record.withdrawQuantity}</td>
-                          <td className="px-4 py-3 text-sm">{record.currentStock}</td>
-                          <td className="px-4 py-3 text-sm">{record.withdrawQuantity}</td>
-                          <td className="px-4 py-3 text-sm">{record.previousStock}</td>
-                          <td className="px-4 py-3 text-sm">{record.dateOfWithdrawal}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
+          </div>
         </CardContent>
       </Card>
 
