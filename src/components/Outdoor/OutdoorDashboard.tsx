@@ -63,11 +63,11 @@ export function OutdoorDashboard() {
       <Card className="p-8 bg-white border border-gray-200 rounded-2xl shadow-sm">
         <h2 className="text-2xl font-semibold mb-6">Tunnel Schematic Overview</h2>
         
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {tunnelData.map((tunnel) => (
             <div 
               key={tunnel.id}
-              className={`p-5 rounded-2xl border-[3px] transition-all w-full ${
+              className={`p-5 rounded-2xl border-[3px] transition-all min-w-0 ${
                 tunnel.status === 'mortality' 
                   ? 'border-red-400 bg-red-50/60 shadow-red-100 shadow-md' 
                   : 'border-green-400 bg-green-50/60 shadow-green-100 shadow-md'
