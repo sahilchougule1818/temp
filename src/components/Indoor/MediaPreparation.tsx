@@ -603,7 +603,12 @@ export function MediaPreparation() {
                           setIsEditAutoclaveModalOpen(false);
                           resetAutoclaveForm();
                         }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveAutoclave}>
+                        <Button 
+                          variant={null as any}
+                          style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                          className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                          onClick={handleSaveAutoclave}
+                        >
                           Save Changes
                         </Button>
                       </div>
@@ -853,7 +858,12 @@ export function MediaPreparation() {
                           setIsEditBatchModalOpen(false);
                           resetBatchForm();
                         }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveBatch}>
+                        <Button 
+                          variant={null as any}
+                          style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                          className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                          onClick={handleSaveBatch}
+                        >
                           Save Changes
                         </Button>
                       </div>

@@ -601,7 +601,9 @@ export function Incubation() {
                             Delete Entry
                           </Button>
                           <Button 
-                            className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                            variant={null as any}
+                            style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                            className="hover:bg-[#66BB6A] font-medium shadow-sm"
                             onClick={handleSaveIncubationChanges}
                           >
                             Save Changes
@@ -833,7 +835,9 @@ export function Incubation() {
                             Delete Entry
                           </Button>
                           <Button 
-                            className="bg-red-600 hover:bg-red-700"
+                            variant={null as any}
+                            style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                            className="hover:bg-[#66BB6A] font-medium shadow-sm"
                             onClick={handleSaveContaminationChanges}
                           >
                             Save Changes

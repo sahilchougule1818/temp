@@ -290,7 +290,9 @@ export function Sampling() {
                   Cancel
                 </Button>
                 <Button 
-                  className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                  variant={null as any}
+                  style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                  className="hover:bg-[#66BB6A] font-medium shadow-sm"
                   onClick={() => setIsEditModalOpen(false)}
                 >
                   Save Changes

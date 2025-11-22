@@ -505,7 +505,12 @@ export function CleaningRecord() {
                           setIsEditCleaningModalOpen(false);
                           resetCleaningForm();
                         }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveCleaning}>
+                        <Button 
+                          variant={null as any}
+                          style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                          className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                          onClick={handleSaveCleaning}
+                        >
                           Save Changes
                         </Button>
           </div>
@@ -710,7 +715,12 @@ export function CleaningRecord() {
                           setIsEditDeepCleaningModalOpen(false);
                           resetDeepCleaningForm();
                         }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveDeepCleaning}>
+                        <Button 
+                          variant={null as any}
+                          style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                          className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                          onClick={handleSaveDeepCleaning}
+                        >
                           Save Changes
                         </Button>
                       </div>
