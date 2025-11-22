@@ -197,7 +197,7 @@ export function IndoorDashboard() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="text-2xl font-bold text-gray-900">{totals.totalBottles.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-gray-900">{totals.totalVessels.toLocaleString()}</div>
             <p className="text-xs text-gray-500 mt-1">vessels processed</p>
           </CardContent>
         </Card>
