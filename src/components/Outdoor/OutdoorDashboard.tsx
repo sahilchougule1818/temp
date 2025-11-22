@@ -63,7 +63,7 @@ export function OutdoorDashboard() {
       <Card className="p-8 bg-white border border-gray-200 rounded-2xl shadow-sm">
         <h2 className="text-2xl font-semibold mb-6">Tunnel Schematic Overview</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
           {tunnelData.map((tunnel) => (
             <div 
               key={tunnel.id}
