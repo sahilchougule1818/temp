@@ -5,7 +5,8 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Download } from 'lucide-react';
+import { FilterBar } from '../common/FilterBar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
@@ -330,7 +331,8 @@ export function Incubation() {
 
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
+      <FilterBar />
       <Card>
         <CardHeader>
           <CardTitle>Incubation Module</CardTitle>
@@ -345,6 +347,10 @@ export function Incubation() {
             <TabsContent value="incubation">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -361,7 +367,12 @@ export function Incubation() {
                     if (!open) resetIncubationForm();
                   }}>
                     <DialogTrigger asChild>
-                      <Button className="bg-green-600 hover:bg-green-700" onClick={() => resetIncubationForm()}>
+                      <Button 
+                        variant={null as any}
+                        style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                        className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                        onClick={() => resetIncubationForm()}
+                      >
                         <Plus className="w-4 h-4 mr-2" />
                         Add Incubation Record
                       </Button>
@@ -481,7 +492,12 @@ export function Incubation() {
                           setIsIncubationModalOpen(false);
                           resetIncubationForm();
                         }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveIncubation}>
+                        <Button 
+                          variant={null as any}
+                          style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                          className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                          onClick={handleSaveIncubation}
+                        >
                           Save Record
                         </Button>
                       </div>
@@ -668,6 +684,10 @@ export function Incubation() {
             <TabsContent value="contamination">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -684,7 +704,12 @@ export function Incubation() {
                     if (!open) resetContaminationForm();
                   }}>
                     <DialogTrigger asChild>
-                      <Button className="bg-red-600 hover:bg-red-700" onClick={() => resetContaminationForm()}>
+                      <Button 
+                        variant={null as any}
+                        style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                        className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                        onClick={() => resetContaminationForm()}
+                      >
                         <Plus className="w-4 h-4 mr-2" />
                         Record Mortality
                       </Button>
@@ -749,7 +774,12 @@ export function Incubation() {
                           setIsContaminationModalOpen(false);
                           resetContaminationForm();
                         }}>Cancel</Button>
-                        <Button className="bg-red-600 hover:bg-red-700" onClick={handleSaveContamination}>
+                        <Button 
+                          variant={null as any}
+                          style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                          className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                          onClick={handleSaveContamination}
+                        >
                           Save Record
                         </Button>
                       </div>

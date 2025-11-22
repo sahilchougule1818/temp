@@ -5,7 +5,8 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { Badge } from '../ui/badge';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Download } from 'lucide-react';
+import { FilterBar } from '../common/FilterBar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
@@ -184,12 +185,17 @@ export function Subculturing() {
 
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
+      <FilterBar />
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Subculturing Register</CardTitle>
             <div className="flex gap-2">
+              <Button variant="outline" size="sm">
+                <Download className="w-4 h-4 mr-2" />
+                Export
+              </Button>
               <Button 
                 variant="outline" 
                 onClick={() => {
@@ -206,7 +212,12 @@ export function Subculturing() {
                 if (!open) resetForm();
               }}>
                 <DialogTrigger asChild>
-                  <Button className="bg-green-600 hover:bg-green-700" onClick={() => resetForm()}>
+                  <Button 
+                    variant={null as any}
+                    style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                    className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                    onClick={() => resetForm()}
+                  >
                     <Plus className="w-4 h-4 mr-2" />
                     Add Transfer
                   </Button>
@@ -310,7 +321,12 @@ export function Subculturing() {
                       setIsModalOpen(false);
                       resetForm();
                     }}>Cancel</Button>
-                    <Button className="bg-green-600 hover:bg-green-700" onClick={handleSave}>
+                    <Button 
+                      variant={null as any}
+                      style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                      className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                      onClick={handleSave}
+                    >
                       Save Transfer
                     </Button>
                   </div>

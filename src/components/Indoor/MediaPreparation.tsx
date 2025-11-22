@@ -2,7 +2,8 @@ import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { Button } from '../ui/button';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Download } from 'lucide-react';
+import { FilterBar } from '../common/FilterBar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -314,7 +315,8 @@ export function MediaPreparation() {
 
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
+      <FilterBar />
       <Card>
         <CardHeader>
           <CardTitle>Media Preparation</CardTitle>
@@ -329,6 +331,10 @@ export function MediaPreparation() {
             <TabsContent value="autoclave">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -358,7 +364,12 @@ export function MediaPreparation() {
                     if (!open) resetAutoclaveForm();
                   }}>
                     <DialogTrigger asChild>
-                      <Button className="bg-green-600 hover:bg-green-700" onClick={() => resetAutoclaveForm()}>
+                      <Button 
+                        variant={null as any}
+                        style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                        className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                        onClick={() => resetAutoclaveForm()}
+                      >
                         <Plus className="w-4 h-4 mr-2" />
                         Add New Cycle
                       </Button>
@@ -462,7 +473,12 @@ export function MediaPreparation() {
                           setIsAutoclaveModalOpen(false);
                           resetAutoclaveForm();
                         }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveAutoclave}>
+                        <Button 
+                          variant={null as any}
+                          style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                          className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                          onClick={handleSaveAutoclave}
+                        >
                           Save Cycle
                         </Button>
                       </div>
@@ -662,6 +678,10 @@ export function MediaPreparation() {
             <TabsContent value="batch">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -686,7 +706,12 @@ export function MediaPreparation() {
                     if (!open) resetBatchForm();
                   }}>
                     <DialogTrigger asChild>
-                      <Button className="bg-green-600 hover:bg-green-700" onClick={() => resetBatchForm()}>
+                      <Button 
+                        variant={null as any}
+                        style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                        className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                        onClick={() => resetBatchForm()}
+                      >
                         <Plus className="w-4 h-4 mr-2" />
                         Add New Batch
                       </Button>
@@ -751,7 +776,12 @@ export function MediaPreparation() {
                           setIsBatchModalOpen(false);
                           resetBatchForm();
                         }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveBatch}>
+                        <Button 
+                          variant={null as any}
+                          style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                          className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                          onClick={handleSaveBatch}
+                        >
                           Save Batch
                         </Button>
                       </div>

@@ -5,7 +5,8 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
-import { Plus, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Download } from 'lucide-react';
+import { FilterBar } from '../common/FilterBar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../ui/alert-dialog';
@@ -302,7 +303,8 @@ export function CleaningRecord() {
 
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
+      <FilterBar />
       <Card>
         <CardHeader>
           <CardTitle>Cleaning Register</CardTitle>
@@ -317,6 +319,10 @@ export function CleaningRecord() {
             <TabsContent value="cleaning">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -333,7 +339,12 @@ export function CleaningRecord() {
                     if (!open) resetCleaningForm();
                   }}>
               <DialogTrigger asChild>
-                      <Button className="bg-green-600 hover:bg-green-700" onClick={() => resetCleaningForm()}>
+                      <Button 
+                        variant={null as any}
+                        style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                        className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                        onClick={() => resetCleaningForm()}
+                      >
                   <Plus className="w-4 h-4 mr-2" />
                         Add Cleaning Record
                 </Button>
@@ -382,7 +393,12 @@ export function CleaningRecord() {
                           setIsCleaningModalOpen(false);
                           resetCleaningForm();
                         }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveCleaning}>
+                        <Button 
+                          variant={null as any}
+                          style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                          className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                          onClick={handleSaveCleaning}
+                        >
                           Save Record
                         </Button>
                 </div>
@@ -548,6 +564,10 @@ export function CleaningRecord() {
             <TabsContent value="deepCleaning">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-2" />
+                    Export
+                  </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => {
@@ -564,7 +584,12 @@ export function CleaningRecord() {
                     if (!open) resetDeepCleaningForm();
                   }}>
                     <DialogTrigger asChild>
-                      <Button className="bg-green-600 hover:bg-green-700" onClick={() => resetDeepCleaningForm()}>
+                      <Button 
+                        variant={null as any}
+                        style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                        className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                        onClick={() => resetDeepCleaningForm()}
+                      >
                         <Plus className="w-4 h-4 mr-2" />
                         Add Deep Cleaning Record
                       </Button>
@@ -612,7 +637,12 @@ export function CleaningRecord() {
                           setIsDeepCleaningModalOpen(false);
                           resetDeepCleaningForm();
                         }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveDeepCleaning}>
+                        <Button 
+                          variant={null as any}
+                          style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                          className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                          onClick={handleSaveDeepCleaning}
+                        >
                           Save Record
                         </Button>
                       </div>
