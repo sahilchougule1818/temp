@@ -192,13 +192,14 @@ export function InventoryRecord() {
   const handleSaveWithdrawal = () => {
     const prevStock = parseInt(withdrawalForm.previousStock) || 0;
     const withdrawQty = parseInt(withdrawalForm.withdrawQuantity) || 0;
-    const newCurrentStock = prevStock - withdrawQty;
+    const calculatedCurrentStock = prevStock - withdrawQty;
 
     const newRecord = {
-      ...withdrawalForm,
+      itemName: withdrawalForm.itemName,
       previousStock: prevStock,
       withdrawQuantity: withdrawQty,
-      currentStock: newCurrentStock
+      currentStock: calculatedCurrentStock,
+      dateOfWithdrawal: withdrawalForm.dateOfWithdrawal
     };
 
     if (editingWithdrawalId) {
@@ -357,19 +358,28 @@ export function InventoryRecord() {
                         </div>
                         <div className="space-y-2">
                           <Label>Item Name</Label>
-                          <Input
-                            placeholder="Enter item name"
-                            value={withdrawalForm.itemName}
-                            onChange={(e) => setWithdrawalForm({ ...withdrawalForm, itemName: e.target.value })}
-                          />
+                          <Select value={withdrawalForm.itemName} onValueChange={handleWithdrawalItemSelect}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select item name" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableItemNames.length > 0 ? (
+                                availableItemNames.map(name => (
+                                  <SelectItem key={name} value={name}>{name}</SelectItem>
+                                ))
+                              ) : (
+                                <SelectItem value="no-items" disabled>No items available</SelectItem>
+                              )}
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label>Previous Stock</Label>
+                          <Label>Previous Quantity</Label>
                           <Input
                             type="number"
-                            placeholder="e.g., 500"
+                            placeholder="Auto-filled"
                             value={withdrawalForm.previousStock}
-                            onChange={(e) => setWithdrawalForm({ ...withdrawalForm, previousStock: e.target.value })}
+                            disabled
                           />
                         </div>
                         <div className="space-y-2">
@@ -392,8 +402,9 @@ export function InventoryRecord() {
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label>Current Stock (After Withdrawal)</Label>
+                          <Label>Current Updated Quantity</Label>
                           <Input
+                            type="number"
                             value={
                               (parseInt(withdrawalForm.previousStock) || 0) -
                               (parseInt(withdrawalForm.withdrawQuantity) || 0)

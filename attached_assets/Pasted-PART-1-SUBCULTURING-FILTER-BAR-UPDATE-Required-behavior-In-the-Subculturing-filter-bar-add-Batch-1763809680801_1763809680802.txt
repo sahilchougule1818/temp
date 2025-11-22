@@ -1,0 +1,79 @@
+PART 1 — SUBCULTURING FILTER BAR UPDATE
+Required behavior:
+In the Subculturing filter bar, add Batch Code as a search attribute immediately after Crop Name.
+Search flow must function as:
+Select Crop Name
+Select Batch Code (dropdown filters based on selected crop)
+Click Search button
+Search results must display only matching records.
+PART 2 — INVENTORY WITHDRAW REGISTER — ADD DATA FORM UPDATE
+Form fields required:
+Item Name (dropdown)
+Previous Quantity (auto-filled)
+Withdraw Quantity (input)
+Current Updated Quantity (auto-calculated live)
+Date of Withdraw
+Behavior requirements:
+✅ Selecting an Item Name must automatically populate Previous Quantity based on existing stock
+✅ Entering Withdraw Quantity must instantly update Current Updated Quantity
+✅ Values must update without breaking existing inventory logic
+PART 3 — OUTDOOR REGISTER TABLE STYLING ALIGNMENT
+Goal:
+Make all Outdoor module register tables use the same bordered, rounded container style as the Subculturing Register in the Indoor module.
+Apply styling to these Outdoor registers:
+Primary Hardening
+Secondary Hardening
+Shifting
+Mortality
+Fertilization
+Holding Area
+Batch Timeline
+Outdoor Sampling
+Styling requirements:
+✅ rounded corners
+✅ light grey border (#E5E7EB or existing theme token)
+✅ subtle shadow (if present indoors)
+✅ consistent padding & spacing
+Do NOT change:
+❌ headers
+❌ data rendering
+❌ filtering
+❌ search inputs
+❌ functionality
+After applying:
+✅ list of updated components
+✅ wrapper code snippet
+✅ confirmation visuals match Indoor Subculturing styling
+PART 4 — TUNNEL SCHEMATIC OVERVIEW REDESIGN
+Goal:
+Update the Tunnel Schematic Overview so it exactly matches the cropped reference design.
+Expected styling upgrades:
+✅ larger rounded outer container
+✅ redesigned tunnel cards with:
+smoother edges
+thicker color status border
+soft green/red tinted backgrounds
+✅ mortality alert tunnel includes:
+alert icon
+red highlight style
+✅ tray grid spacing and proportions match reference
+✅ legend formatting matches reference
+Do NOT modify:
+❌ tunnel counts
+❌ occupancy data
+❌ component logic
+Must ensure:
+✅ occupied / empty / mortality / attention states visually match reference
+✅ responsive layout remains consistent
+After applying:
+✅ list of modified files
+✅ updated component code snippets
+✅ confirmation notes on visual match
+✅ FINAL ACCEPTANCE CHECK
+Confirm all of the following:
+✅ Subculturing filter bar now includes Batch Code and search works in correct sequence
+✅ Inventory Withdraw Add Data form auto-fills and auto-calculates quantities
+✅ Outdoor registers now match the Subculturing bordered rounded styling
+✅ Tunnel Schematic matches the cropped design visually and structurally
+✅ No functional, data, or layout regressions
+✅ Theme consistency preserved across UI

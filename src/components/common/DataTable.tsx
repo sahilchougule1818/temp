@@ -23,7 +23,7 @@ export function DataTable({
   showActions = true 
 }: DataTableProps) {
   return (
-    <div className="card overflow-hidden">
+    <div className="bg-white border rounded-lg overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>

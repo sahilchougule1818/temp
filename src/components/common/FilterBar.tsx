@@ -19,6 +19,7 @@ interface FilterField {
 interface FilterBarProps {
   field1?: FilterField;
   field2?: FilterField;
+  field3?: FilterField;
   onSearch?: () => void;
   batchValue?: string;
   cropValue?: string;
@@ -31,6 +32,7 @@ interface FilterBarProps {
 export function FilterBar({ 
   field1,
   field2,
+  field3,
   onSearch,
   batchValue, 
   cropValue, 
@@ -96,6 +98,24 @@ export function FilterBar({
               </SelectTrigger>
               <SelectContent>
                 {secondField.options.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+
+        {field3 && (
+          <div className="flex-1 min-w-[200px]">
+            <label className="block text-sm mb-1.5">{field3.label}</label>
+            <Select value={field3.value} onValueChange={field3.onChange}>
+              <SelectTrigger>
+                <SelectValue placeholder={field3.placeholder || `Select ${field3.label.toLowerCase()}`} />
+              </SelectTrigger>
+              <SelectContent>
+                {field3.options.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
                   </SelectItem>
