@@ -56,6 +56,30 @@ This is a comprehensive ERP (Enterprise Resource Planning) UI application design
 - `npm run build` - Build for production
 
 ## Recent Changes
+- **2025-11-22**: Four-Part Enhancement Update
+  - **PART 1 - Subculturing Filter Bar**:
+    - Added Batch Code as third filter field between Crop Name and Media Name
+    - Implemented three-field cascading filter: Crop Name → Batch Code → Media Name
+    - Updated FilterBar component to support optional third field
+    - Enhanced useSearchFilter hook with field3 support and proper cascading reset logic
+  - **PART 2 - Inventory Withdraw Form**:
+    - Converted Item Name to dropdown (Select) populated from available items
+    - Implemented auto-fill for Previous Quantity when item is selected
+    - Previous Quantity field now disabled (auto-populated)
+    - Current Updated Quantity auto-calculates live based on Previous - Withdraw
+    - Fixed handleSaveWithdrawal to correctly persist calculated currentStock
+  - **PART 3 - Outdoor Register Table Styling**:
+    - Updated DataTable component styling to match Indoor Subculturing Register
+    - Applied "border rounded-lg overflow-hidden" with white background and shadow
+    - Consistent styling across all Outdoor modules: Primary Hardening, Secondary Hardening, Shifting, Mortality, Fertilization, Holding Area, Batch Timeline, Outdoor Sampling
+  - **PART 4 - Tunnel Schematic Redesign**:
+    - Enhanced outer container with larger rounded corners (rounded-2xl) and increased padding
+    - Redesigned tunnel cards with thicker borders (border-[3px]) and smoother edges (rounded-2xl)
+    - Added soft green/red tinted backgrounds (bg-green-50/60, bg-red-50/60)
+    - Mortality alert tunnel now displays red background icon with white AlertTriangle
+    - Improved tray grid with better spacing (gap-1.5) and hover effects
+    - Enhanced legend formatting with top border and improved spacing
+
 - **2025-11-21**: UI Improvements and Terminology Updates
   - **Media Preparation Module**:
     - Verified "Save Changes" buttons are present in both Autoclave and Media Batch edit dialogs
