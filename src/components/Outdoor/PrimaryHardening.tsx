@@ -263,7 +263,9 @@ export function PrimaryHardening() {
                         Delete Entry
                       </Button>
                       <Button 
-                        className="bg-[#4CAF50] hover:bg-[#66BB6A]"
+                        variant={null as any}
+                        style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                        className="hover:bg-[#66BB6A] font-medium shadow-sm"
                         onClick={handleSaveChanges}
                       >
                         Save Changes
