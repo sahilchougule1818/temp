@@ -513,30 +513,30 @@ export function InventoryRecord() {
                 </Dialog>
 
                 <div className="border rounded-lg overflow-hidden">
-                  <table className="w-full">
+                  <table className="w-full table-fixed">
                     <thead className="bg-gray-50 border-b">
                       <tr>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Item Name</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Quantity When Purchased</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Current Stock</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Withdrawn Quantity</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Previous Stock</th>
-                        <th className="px-4 py-3 text-left text-xs text-gray-600">Date of Withdraw</th>
+                        <th className="px-6 py-3 text-left text-xs text-gray-600 w-1/6">Item Name</th>
+                        <th className="px-6 py-3 text-center text-xs text-gray-600 w-1/6">Quantity When Purchased</th>
+                        <th className="px-6 py-3 text-center text-xs text-gray-600 w-1/6">Current Stock</th>
+                        <th className="px-6 py-3 text-center text-xs text-gray-600 w-1/6">Withdrawn Quantity</th>
+                        <th className="px-6 py-3 text-center text-xs text-gray-600 w-1/6">Previous Stock</th>
+                        <th className="px-6 py-3 text-center text-xs text-gray-600 w-1/6">Date of Withdraw</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredWithdrawalData.map((record) => (
                         <tr key={record.id} className="border-b hover:bg-gray-50">
-                          <td className="px-4 py-3 text-sm">
+                          <td className="px-6 py-3 text-sm">
                             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                               {record.itemName}
                             </Badge>
                           </td>
-                          <td className="px-4 py-3 text-sm">{record.previousStock + record.withdrawQuantity}</td>
-                          <td className="px-4 py-3 text-sm">{record.currentStock}</td>
-                          <td className="px-4 py-3 text-sm">{record.withdrawQuantity}</td>
-                          <td className="px-4 py-3 text-sm">{record.previousStock}</td>
-                          <td className="px-4 py-3 text-sm">{record.dateOfWithdrawal}</td>
+                          <td className="px-6 py-3 text-sm text-center">{record.previousStock + record.withdrawQuantity}</td>
+                          <td className="px-6 py-3 text-sm text-center">{record.currentStock}</td>
+                          <td className="px-6 py-3 text-sm text-center">{record.withdrawQuantity}</td>
+                          <td className="px-6 py-3 text-sm text-center">{record.previousStock}</td>
+                          <td className="px-6 py-3 text-sm text-center">{record.dateOfWithdrawal}</td>
                         </tr>
                       ))}
                     </tbody>

@@ -112,7 +112,10 @@ export function Fertilization() {
 
   const handleBatchSelect = (batch: string) => {
     setSelectedBatch(batch);
-    const recordData = fertilizationData.find(record => record.date === selectedDate && record.batch === batch);
+  };
+
+  const handleSearch = () => {
+    const recordData = fertilizationData.find(record => record.date === selectedDate && record.batch === selectedBatch);
     if (recordData) {
       setFormData({
         date: recordData.date,
@@ -205,16 +208,11 @@ export function Fertilization() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label>Select Date</Label>
-                      <Select value={selectedDate} onValueChange={handleDateSelect}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select date" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableDates.map(date => (
-                            <SelectItem key={date} value={date}>{date}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Input 
+                        type="date" 
+                        value={selectedDate}
+                        onChange={(e) => handleDateSelect(e.target.value)}
+                      />
                     </div>
                     <div>
                       <Label>Select Batch Name</Label>
@@ -272,7 +270,17 @@ export function Fertilization() {
                   <Button variant="outline" onClick={() => { setIsEditModalOpen(false); resetForm(); }}>
                     Cancel
                   </Button>
-                  {editingId && (
+                  {!editingId ? (
+                    <Button 
+                      variant={null as any}
+                      style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                      className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                      onClick={handleSearch}
+                      disabled={!selectedDate || !selectedBatch}
+                    >
+                      Search
+                    </Button>
+                  ) : (
                     <>
                       <Button 
                         variant="destructive"

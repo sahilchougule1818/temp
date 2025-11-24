@@ -96,7 +96,10 @@ export function SecondaryHardening() {
 
   const handleBatchSelect = (batch: string) => {
     setSelectedBatch(batch);
-    const recordData = secondaryData.find(record => record.transferDate === selectedDate && record.batchName === batch);
+  };
+
+  const handleSearch = () => {
+    const recordData = secondaryData.find(record => record.transferDate === selectedDate && record.batchName === selectedBatch);
     if (recordData) {
       setFormData({
         transferDate: recordData.transferDate,
@@ -187,16 +190,11 @@ export function SecondaryHardening() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label>Select Date</Label>
-                      <Select value={selectedDate} onValueChange={handleDateSelect}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select date" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableDates.map(date => (
-                            <SelectItem key={date} value={date}>{date}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Input 
+                        type="date" 
+                        value={selectedDate}
+                        onChange={(e) => handleDateSelect(e.target.value)}
+                      />
                     </div>
                     <div>
                       <Label>Select Batch Name</Label>
@@ -250,7 +248,17 @@ export function SecondaryHardening() {
                   <Button variant="outline" onClick={() => { setIsEditModalOpen(false); resetForm(); }}>
                     Cancel
                   </Button>
-                  {editingId && (
+                  {!editingId ? (
+                    <Button 
+                      variant={null as any}
+                      style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                      className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                      onClick={handleSearch}
+                      disabled={!selectedDate || !selectedBatch}
+                    >
+                      Search
+                    </Button>
+                  ) : (
                     <>
                       <Button 
                         variant="destructive"

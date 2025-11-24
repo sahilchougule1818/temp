@@ -171,7 +171,10 @@ export function OutdoorSampling() {
 
   const handleBatchSelect = (batch: string) => {
     setSelectedBatch(batch);
-    const recordData = outdoorSamplingData.find(record => record.sampleDate === selectedDate && record.batchName === batch);
+  };
+
+  const handleSearch = () => {
+    const recordData = outdoorSamplingData.find(record => record.sampleDate === selectedDate && record.batchName === selectedBatch);
     if (recordData) {
       setFormData({
         sampleDate: recordData.sampleDate,
@@ -290,16 +293,11 @@ export function OutdoorSampling() {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label>Select Date</Label>
-                      <Select value={selectedDate} onValueChange={handleDateSelect}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select date" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableDates.map(date => (
-                            <SelectItem key={date} value={date}>{date}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <Input 
+                        type="date" 
+                        value={selectedDate}
+                        onChange={(e) => handleDateSelect(e.target.value)}
+                      />
                     </div>
                     <div>
                       <Label>Select Batch Name</Label>
@@ -396,17 +394,27 @@ export function OutdoorSampling() {
                     </div>
                   )}
                 </div>
-                {editingId && (
-                  <div className="flex justify-between mt-4">
+                <div className="flex justify-end gap-2 mt-4">
+                  <Button variant="outline" onClick={() => { setIsEditModalOpen(false); resetForm(); }}>
+                    Cancel
+                  </Button>
+                  {!editingId ? (
                     <Button 
-                      variant="destructive" 
-                      onClick={() => setDeleteConfirmOpen(true)}
+                      variant={null as any}
+                      style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                      className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                      onClick={handleSearch}
+                      disabled={!selectedDate || !selectedBatch}
                     >
-                      Delete Entry
+                      Search
                     </Button>
-                    <div className="flex gap-2">
-                      <Button variant="outline" onClick={() => { setIsEditModalOpen(false); resetForm(); }}>
-                        Cancel
+                  ) : (
+                    <>
+                      <Button 
+                        variant="destructive" 
+                        onClick={() => setDeleteConfirmOpen(true)}
+                      >
+                        Delete Entry
                       </Button>
                       <Button 
                         variant={null as any}
@@ -416,9 +424,9 @@ export function OutdoorSampling() {
                       >
                         Save Changes
                       </Button>
-                    </div>
-                  </div>
-                )}
+                    </>
+                  )}
+                </div>
               </DialogContent>
             </Dialog>
             <Button variant="outline" size="sm">

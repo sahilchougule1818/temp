@@ -137,11 +137,16 @@ export function MediaPreparation() {
     );
   }, [autoclaveForm.date, autoclaveForm.mediaCode, autoclaveCycles]);
 
-  // Auto-fill form when media code is selected in edit mode
+  // Handle media code selection (no auto-fill in edit mode)
   const handleMediaCodeSelect = (mediaCode: string) => {
-    if (isEditAutoclaveModalOpen && autoclaveForm.date) {
+    setAutoclaveForm({...autoclaveForm, mediaCode});
+  };
+
+  // Search function for edit mode
+  const handleSearchAutoclave = () => {
+    if (isEditAutoclaveModalOpen && autoclaveForm.date && autoclaveForm.mediaCode) {
       const mediaData = autoclaveCycles.find(cycle => 
-        cycle.date === autoclaveForm.date && cycle.mediaCode === mediaCode
+        cycle.date === autoclaveForm.date && cycle.mediaCode === autoclaveForm.mediaCode
       );
       if (mediaData) {
         setAutoclaveForm({
@@ -159,16 +164,19 @@ export function MediaPreparation() {
         });
         setEditingAutoclaveId(mediaData.id);
       }
-    } else {
-      setAutoclaveForm({...autoclaveForm, mediaCode});
     }
   };
 
-  // Auto-fill batch form when media code is selected in edit mode
+  // Handle batch media code selection (no auto-fill in edit mode)
   const handleBatchMediaCodeSelect = (mediaCode: string) => {
-    if (isEditBatchModalOpen && batchForm.date) {
+    setBatchForm({...batchForm, mediaCode});
+  };
+
+  // Search function for batch edit mode
+  const handleSearchBatch = () => {
+    if (isEditBatchModalOpen && batchForm.date && batchForm.mediaCode) {
       const batchData = mediaBatches.find(batch => 
-        batch.date === batchForm.date && batch.mediaCode === mediaCode
+        batch.date === batchForm.date && batch.mediaCode === batchForm.mediaCode
       );
       if (batchData) {
         setBatchForm({
@@ -181,8 +189,6 @@ export function MediaPreparation() {
         });
         setEditingBatchId(batchData.id);
       }
-    } else {
-      setBatchForm({...batchForm, mediaCode});
     }
   };
 
@@ -654,34 +660,45 @@ export function MediaPreparation() {
                         </>
                       )}
                     </div>
-                    <div className="flex justify-between gap-3">
-                      <Button 
-                        variant="destructive" 
-                        onClick={() => {
-                          if (editingAutoclaveId) {
-                            setItemToDelete({ type: 'autoclave', id: editingAutoclaveId });
-                            setDeleteConfirmOpen(true);
-                          }
-                        }}
-                        disabled={!editingAutoclaveId}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
-                      </Button>
-                      <div className="flex gap-3">
-                        <Button variant="outline" onClick={() => {
-                          setIsEditAutoclaveModalOpen(false);
-                          resetAutoclaveForm();
-                        }}>Cancel</Button>
+                    <div className="flex justify-end gap-3">
+                      <Button variant="outline" onClick={() => {
+                        setIsEditAutoclaveModalOpen(false);
+                        resetAutoclaveForm();
+                      }}>Cancel</Button>
+                      {!editingAutoclaveId ? (
                         <Button 
                           variant={null as any}
                           style={{ backgroundColor: '#4CAF50', color: 'white' }}
                           className="hover:bg-[#66BB6A] font-medium shadow-sm"
-                          onClick={handleSaveAutoclave}
+                          onClick={handleSearchAutoclave}
+                          disabled={!autoclaveForm.date || !autoclaveForm.mediaCode}
                         >
-                          Save Changes
+                          Search
                         </Button>
-                      </div>
+                      ) : (
+                        <>
+                          <Button 
+                            variant="destructive" 
+                            onClick={() => {
+                              if (editingAutoclaveId) {
+                                setItemToDelete({ type: 'autoclave', id: editingAutoclaveId });
+                                setDeleteConfirmOpen(true);
+                              }
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete
+                          </Button>
+                          <Button 
+                            variant={null as any}
+                            style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                            className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                            onClick={handleSaveAutoclave}
+                          >
+                            Save Changes
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </DialogContent>
                 </Dialog>
@@ -931,34 +948,45 @@ export function MediaPreparation() {
                         </>
                       )}
                     </div>
-                    <div className="flex justify-between gap-3">
-                      <Button 
-                        variant="destructive" 
-                        onClick={() => {
-                          if (editingBatchId) {
-                            setItemToDelete({ type: 'batch', id: editingBatchId });
-                            setDeleteConfirmOpen(true);
-                          }
-                        }}
-                        disabled={!editingBatchId}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
-                      </Button>
-                      <div className="flex gap-3">
-                        <Button variant="outline" onClick={() => {
-                          setIsEditBatchModalOpen(false);
-                          resetBatchForm();
-                        }}>Cancel</Button>
+                    <div className="flex justify-end gap-3">
+                      <Button variant="outline" onClick={() => {
+                        setIsEditBatchModalOpen(false);
+                        resetBatchForm();
+                      }}>Cancel</Button>
+                      {!editingBatchId ? (
                         <Button 
                           variant={null as any}
                           style={{ backgroundColor: '#4CAF50', color: 'white' }}
                           className="hover:bg-[#66BB6A] font-medium shadow-sm"
-                          onClick={handleSaveBatch}
+                          onClick={handleSearchBatch}
+                          disabled={!batchForm.date || !batchForm.mediaCode}
                         >
-                          Save Changes
+                          Search
                         </Button>
-                      </div>
+                      ) : (
+                        <>
+                          <Button 
+                            variant="destructive" 
+                            onClick={() => {
+                              if (editingBatchId) {
+                                setItemToDelete({ type: 'batch', id: editingBatchId });
+                                setDeleteConfirmOpen(true);
+                              }
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete
+                          </Button>
+                          <Button 
+                            variant={null as any}
+                            style={{ backgroundColor: '#4CAF50', color: 'white' }}
+                            className="hover:bg-[#66BB6A] font-medium shadow-sm"
+                            onClick={handleSaveBatch}
+                          >
+                            Save Changes
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </DialogContent>
                 </Dialog>
