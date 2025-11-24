@@ -1,4 +1,4 @@
-import { Bell, ChevronRight, LogOut } from 'lucide-react';
+import { Bell, ChevronRight, LogOut, FlaskConical, Sprout, ShoppingCart, Package, FileText } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -46,7 +46,31 @@ export function Header({ breadcrumbs, user }: HeaderProps) {
 
   return (
     <div className="bg-white border-b border-gray-200">
-      <div className="h-16 px-6 flex items-center justify-end">
+      <div className="h-16 px-6 flex items-center justify-between">
+        {/* Left Side - Module Icons */}
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2 px-3 py-2 bg-green-50 rounded-lg border border-green-100">
+            <FlaskConical className="w-5 h-5 text-green-600" />
+            <span className="text-sm font-medium text-green-700">Indoor</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-2 bg-green-50 rounded-lg border border-green-100">
+            <Sprout className="w-5 h-5 text-green-600" />
+            <span className="text-sm font-medium text-green-700">Outdoor</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100">
+            <ShoppingCart className="w-5 h-5 text-blue-600" />
+            <span className="text-sm font-medium text-blue-700">Sales</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-2 bg-purple-50 rounded-lg border border-purple-100">
+            <Package className="w-5 h-5 text-purple-600" />
+            <span className="text-sm font-medium text-purple-700">Inventory</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-2 bg-orange-50 rounded-lg border border-orange-100">
+            <FileText className="w-5 h-5 text-orange-600" />
+            <span className="text-sm font-medium text-orange-700">Reports</span>
+          </div>
+        </div>
+
         {/* Right Side */}
         <div className="flex items-center gap-4">
           {/* Notification Bell */}
