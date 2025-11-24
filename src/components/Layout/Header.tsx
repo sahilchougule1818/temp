@@ -150,7 +150,7 @@ export function Header({ breadcrumbs, user }: HeaderProps) {
       </div>
 
       {/* Breadcrumbs */}
-      <div className="px-6 py-3 bg-gray-50 flex items-center gap-2 text-sm">
+      <div className="px-6 py-3 bg-gray-100 flex items-center gap-2 text-sm">
         {breadcrumbs.map((crumb, index) => (
           <div key={index} className="flex items-center gap-2">
             {index > 0 && <ChevronRight className="w-4 h-4 text-gray-400" />}
