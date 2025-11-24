@@ -636,27 +636,27 @@ export function SupplierDetail() {
                   <table className="w-full divide-y divide-gray-200 text-sm">
                     <thead className="bg-gray-50 border-b">
                       <tr>
-                        <th className="px-4 py-3 text-left font-medium text-foreground">ID</th>
-                        <th className="px-4 py-3 text-left font-medium text-foreground">Date of Purchase</th>
-                        <th className="px-4 py-3 text-left font-medium text-foreground">Item Name</th>
-                        <th className="px-4 py-3 text-left font-medium text-foreground">Quantity Purchased</th>
-                        <th className="px-4 py-3 text-left font-medium text-foreground">Pricing</th>
-                        <th className="px-4 py-3 text-left font-medium text-foreground">Supplier Name</th>
+                        <th className="w-[8%] px-4 py-3 text-left font-medium text-foreground">ID</th>
+                        <th className="w-[18%] px-4 py-3 text-left font-medium text-foreground">Date of Purchase</th>
+                        <th className="w-[22%] px-4 py-3 text-left font-medium text-foreground">Item Name</th>
+                        <th className="w-[17%] px-4 py-3 text-left font-medium text-foreground">Quantity Purchased</th>
+                        <th className="w-[13%] px-4 py-3 text-left font-medium text-foreground">Pricing</th>
+                        <th className="w-[22%] px-4 py-3 text-left font-medium text-foreground">Supplier Name</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {purchaseRecords.map((record) => (
                         <tr key={record.id} className="hover:bg-muted/50">
-                          <td className="px-4 py-4">{record.id}</td>
-                          <td className="px-4 py-4">{record.dateOfPurchase}</td>
-                          <td className="px-4 py-4">
+                          <td className="w-[8%] px-4 py-4">{record.id}</td>
+                          <td className="w-[18%] px-4 py-4">{record.dateOfPurchase}</td>
+                          <td className="w-[22%] px-4 py-4">
                             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                               {record.itemName}
                             </Badge>
                           </td>
-                          <td className="px-4 py-4">{record.quantityPurchased}</td>
-                          <td className="px-4 py-4">₹{record.pricing}</td>
-                          <td className="px-4 py-4">{record.supplierName}</td>
+                          <td className="w-[17%] px-4 py-4">{record.quantityPurchased}</td>
+                          <td className="w-[13%] px-4 py-4">₹{record.pricing}</td>
+                          <td className="w-[22%] px-4 py-4">{record.supplierName}</td>
                         </tr>
                       ))}
                     </tbody>

@@ -195,9 +195,10 @@ export function IndoorDashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Indoor Dashboard</h1>
-            <p className="text-sm text-gray-600 mt-1">
-              From: {dateRange.from} - Till: {dateRange.to}
-            </p>
+            <div className="text-sm text-gray-600 mt-1 space-y-0.5">
+              <p>From : {dateRange.from}</p>
+              <p>Till : {dateRange.to}</p>
+            </div>
           </div>
           <div className="flex gap-2">
             <Button
@@ -206,7 +207,7 @@ export function IndoorDashboard() {
               className="h-9 flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
-              Export Report
+              Export
             </Button>
             <Button
               variant={viewMode === 'monthly' ? 'default' : 'outline'}
