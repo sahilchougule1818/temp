@@ -1,4 +1,8 @@
-import { Bell, ChevronRight, LogOut, FlaskConical, Sprout, ShoppingCart, Package, FileText } from 'lucide-react';
+import { 
+  Bell, ChevronRight, LogOut, FlaskConical, Sprout, ShoppingCart, Package, FileText,
+  Home, TestTube, Microscope, Thermometer, ShieldCheck, Warehouse, TreePine,
+  ArrowRightLeft, Bug, Droplets, Clock, LayoutDashboard, Building
+} from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
@@ -44,32 +48,58 @@ export function Header({ breadcrumbs, user }: HeaderProps) {
       .slice(0, 2);
   };
 
+  const getModuleIcon = (pageName: string) => {
+    const iconMap: { [key: string]: any } = {
+      'Indoor Dashboard': Home,
+      'Media Preparation': TestTube,
+      'Subculturing': Microscope,
+      'Incubation': Thermometer,
+      'Cleaning Record': ShieldCheck,
+      'Sampling': TestTube,
+      'Outdoor Dashboard': Warehouse,
+      'Dashboard': Warehouse,
+      'Primary Hardening': TreePine,
+      'Secondary Hardening': Sprout,
+      'Shifting': ArrowRightLeft,
+      'Mortality': Bug,
+      'Fertilization': Droplets,
+      'Holding Area': Package,
+      'Batch Timeline': Clock,
+      'Inventory': LayoutDashboard,
+      'Buyer': ShoppingCart,
+      'Seller': FileText,
+      'Ledger': FileText,
+      'Inventory Record': Package,
+      'Supplier Detail': Building,
+      'Reports': FileText
+    };
+    return iconMap[pageName] || FileText;
+  };
+
+  const getModuleColor = (module: string) => {
+    if (module === 'Indoor') return { bg: 'bg-green-50', border: 'border-green-100', icon: 'text-green-600', text: 'text-green-700' };
+    if (module === 'Outdoor') return { bg: 'bg-green-50', border: 'border-green-100', icon: 'text-green-600', text: 'text-green-700' };
+    if (module === 'Sales') return { bg: 'bg-blue-50', border: 'border-blue-100', icon: 'text-blue-600', text: 'text-blue-700' };
+    if (module === 'Inventory & Supplier') return { bg: 'bg-purple-50', border: 'border-purple-100', icon: 'text-purple-600', text: 'text-purple-700' };
+    if (module === 'Reports') return { bg: 'bg-orange-50', border: 'border-orange-100', icon: 'text-orange-600', text: 'text-orange-700' };
+    return { bg: 'bg-gray-50', border: 'border-gray-100', icon: 'text-gray-600', text: 'text-gray-700' };
+  };
+
+  const currentModule = breadcrumbs[0] || '';
+  const currentPage = breadcrumbs[breadcrumbs.length - 1] || '';
+  const ModuleIcon = getModuleIcon(currentPage);
+  const colors = getModuleColor(currentModule);
+
   return (
     <div className="bg-white border-b border-gray-200">
       <div className="h-16 px-6 flex items-center justify-between">
-        {/* Left Side - Module Icons */}
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2 px-3 py-2 bg-green-50 rounded-lg border border-green-100">
-            <FlaskConical className="w-5 h-5 text-green-600" />
-            <span className="text-sm font-medium text-green-700">Indoor</span>
+        {/* Left Side - Current Module */}
+        {currentPage && (
+          <div className={`flex items-center gap-2 px-4 py-2 ${colors.bg} rounded-lg border ${colors.border}`}>
+            <ModuleIcon className={`w-5 h-5 ${colors.icon}`} />
+            <span className={`text-sm font-medium ${colors.text}`}>{currentPage}</span>
           </div>
-          <div className="flex items-center gap-2 px-3 py-2 bg-green-50 rounded-lg border border-green-100">
-            <Sprout className="w-5 h-5 text-green-600" />
-            <span className="text-sm font-medium text-green-700">Outdoor</span>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 rounded-lg border border-blue-100">
-            <ShoppingCart className="w-5 h-5 text-blue-600" />
-            <span className="text-sm font-medium text-blue-700">Sales</span>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-2 bg-purple-50 rounded-lg border border-purple-100">
-            <Package className="w-5 h-5 text-purple-600" />
-            <span className="text-sm font-medium text-purple-700">Inventory</span>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-2 bg-orange-50 rounded-lg border border-orange-100">
-            <FileText className="w-5 h-5 text-orange-600" />
-            <span className="text-sm font-medium text-orange-700">Reports</span>
-          </div>
-        </div>
+        )}
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
