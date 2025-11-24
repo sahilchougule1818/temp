@@ -56,6 +56,26 @@ This is a comprehensive ERP (Enterprise Resource Planning) UI application design
 - `npm run build` - Build for production
 
 ## Recent Changes
+- **2025-11-24**: Edit Dialog UX Enhancement and Table Spacing Fix
+  - **Media Preparation Module**:
+    - Implemented Search button pattern in edit dialogs for both Autoclave Cycle and Media Batch registers
+    - Changed workflow: users now select date and media code, click Search to load data, then see Save Changes/Delete buttons
+    - Initial state shows only Search and Cancel buttons; Save Changes and Delete buttons appear only after clicking Search
+  - **Outdoor Modules - Date Selector Implementation**:
+    - Updated all Outdoor modules (SecondaryHardening, Shifting, Fertilization, HoldingArea, OutdoorSampling, OutdoorContamination) to use `<Input type="date">` instead of date dropdown selectors
+    - Provides better user experience with native date picker across different browsers and devices
+  - **Outdoor Modules - Search Button Pattern**:
+    - Implemented consistent Search button functionality across all Outdoor modules
+    - Removed auto-loading behavior when batch/media code is selected
+    - Users must explicitly click Search button to load record data
+    - Save Changes and Delete buttons only appear after successful search
+  - **Inventory Record Table Improvements**:
+    - Fixed purchase/withdrawal register table column spacing to be symmetric and evenly distributed
+    - Applied `table-fixed` layout for consistent column widths (each column set to w-1/6 for 6 equal columns)
+    - Increased horizontal padding from px-4 to px-6 for better visual spacing
+    - Center-aligned numeric columns (quantities, dates) for better readability
+    - Kept Item Name column left-aligned as it contains text data
+
 - **2025-11-22**: Seven-Part UI Enhancement Update (Session 2)
   - **PART 5 - Subculturing Filter Simplification**:
     - Removed Media Name dropdown from Subculturing filter bar
