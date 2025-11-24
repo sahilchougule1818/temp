@@ -397,6 +397,23 @@ export function SupplierDetail() {
                     setIsEditModalOpen(false);
                     resetSupplierForm();
                   }}>Cancel</Button>
+                  <Button 
+                    className="bg-green-600 hover:bg-green-700"
+                    onClick={handleSaveSupplier}
+                    disabled={!editingSupplierId}
+                  >
+                    Save Changes
+                  </Button>
+                  <Button 
+                    variant="destructive"
+                    onClick={() => {
+                      setDeleteConfirmOpen(true);
+                    }}
+                    disabled={!editingSupplierId}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete
+                  </Button>
                 </div>
               </DialogContent>
             </Dialog>
@@ -621,6 +638,23 @@ export function SupplierDetail() {
                         setIsEditPurchaseModalOpen(false);
                         resetPurchaseForm();
                       }}>Cancel</Button>
+                      <Button 
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={handleSavePurchase}
+                        disabled={!editingPurchaseId}
+                      >
+                        Save Changes
+                      </Button>
+                      <Button 
+                        variant="destructive"
+                        onClick={() => {
+                          setDeleteConfirmOpen(true);
+                        }}
+                        disabled={!editingPurchaseId}
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete
+                      </Button>
                     </div>
                   </DialogContent>
                 </Dialog>

@@ -468,6 +468,23 @@ export function InventoryRecord() {
                         setIsEditWithdrawalModalOpen(false);
                         resetWithdrawalForm();
                       }}>Cancel</Button>
+                      <Button 
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={handleSaveWithdrawal}
+                        disabled={!editingWithdrawalId}
+                      >
+                        Save Changes
+                      </Button>
+                      <Button 
+                        variant="destructive"
+                        onClick={() => {
+                          setDeleteConfirmOpen(true);
+                        }}
+                        disabled={!editingWithdrawalId}
+                      >
+                        <Trash2 className="w-4 h-4 mr-2" />
+                        Delete
+                      </Button>
                     </div>
                   </DialogContent>
                 </Dialog>
