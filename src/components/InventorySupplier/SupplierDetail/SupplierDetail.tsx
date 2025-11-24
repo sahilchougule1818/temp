@@ -407,6 +407,7 @@ export function SupplierDetail() {
                   <Button 
                     variant="destructive"
                     onClick={() => {
+                      setSupplierToDelete(editingSupplierId);
                       setDeleteConfirmOpen(true);
                     }}
                     disabled={!editingSupplierId}
