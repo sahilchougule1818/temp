@@ -464,29 +464,11 @@ export function InventoryRecord() {
                         </div>
                       )}
                     </div>
-                    <div className="flex justify-between gap-3">
-                      <Button
-                        variant="destructive"
-                        onClick={() => {
-                          if (editingWithdrawalId) {
-                            setItemToDelete({ type: 'withdrawal', id: editingWithdrawalId });
-                            setDeleteConfirmOpen(true);
-                          }
-                        }}
-                        disabled={!withdrawalSearchClicked || !editingWithdrawalId}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
-                      </Button>
-                      <div className="flex gap-3">
-                        <Button variant="outline" onClick={() => {
-                          setIsEditWithdrawalModalOpen(false);
-                          resetWithdrawalForm();
-                        }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveWithdrawal} disabled={!withdrawalSearchClicked || !editingWithdrawalId}>
-                          Save Changes
-                        </Button>
-                      </div>
+                    <div className="flex justify-end gap-3">
+                      <Button variant="outline" onClick={() => {
+                        setIsEditWithdrawalModalOpen(false);
+                        resetWithdrawalForm();
+                      }}>Cancel</Button>
                     </div>
                   </DialogContent>
                 </Dialog>

@@ -380,29 +380,11 @@ export function SupplierDetail() {
                     />
                   </div>
                 </div>
-                <div className="flex justify-between gap-3">
-                  <Button
-                    variant="destructive"
-                    onClick={() => {
-                      if (editingSupplierId) {
-                        setSupplierToDelete(editingSupplierId);
-                        setDeleteConfirmOpen(true);
-                      }
-                    }}
-                    disabled={!editingSupplierId}
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete
-                  </Button>
-                  <div className="flex gap-3">
-                    <Button variant="outline" onClick={() => {
-                      setIsEditModalOpen(false);
-                      resetSupplierForm();
-                    }}>Cancel</Button>
-                    <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveSupplier} disabled={!editingSupplierId}>
-                      Save Changes
-                    </Button>
-                  </div>
+                <div className="flex justify-end gap-3">
+                  <Button variant="outline" onClick={() => {
+                    setIsEditModalOpen(false);
+                    resetSupplierForm();
+                  }}>Cancel</Button>
                 </div>
               </DialogContent>
             </Dialog>
