@@ -651,6 +651,7 @@ export function SupplierDetail() {
                           <Button 
                             variant="destructive"
                             onClick={() => {
+                              setPurchaseToDelete(editingPurchaseId);
                               setDeleteConfirmOpen(true);
                             }}
                           >

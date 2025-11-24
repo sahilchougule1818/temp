@@ -481,7 +481,10 @@ export function InventoryRecord() {
                           <Button 
                             variant="destructive"
                             onClick={() => {
-                              setDeleteConfirmOpen(true);
+                              if (editingWithdrawalId) {
+                                setItemToDelete({ type: 'withdrawal', id: editingWithdrawalId });
+                                setDeleteConfirmOpen(true);
+                              }
                             }}
                           >
                             <Trash2 className="w-4 h-4 mr-2" />
