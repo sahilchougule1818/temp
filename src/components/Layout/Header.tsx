@@ -91,31 +91,27 @@ export function Header({ breadcrumbs, user }: HeaderProps) {
 
   return (
     <div className="bg-gradient-to-r from-slate-50 via-blue-50 to-purple-50 border-b border-purple-100/50">
-      <div className="h-14 px-6 flex items-center">
-        {/* Container for centering between sidebar and notification */}
-        <div className="flex-1 flex items-center">
-          <div className="flex-1 flex items-center justify-center">
-            {/* Center - Current Module */}
-            {currentPage && (
-              <div className={`flex items-center gap-2 px-4 py-2 ${colors.bg} rounded-lg border ${colors.border}`}>
-                <ModuleIcon className={`w-5 h-5 ${colors.icon}`} />
-                <span className={`text-sm font-medium ${colors.text}`}>{currentPage}</span>
-              </div>
-            )}
+      <div className="h-14 px-6 flex items-center justify-center relative">
+        {/* Center - Current Module (centered in entire panel) */}
+        {currentPage && (
+          <div className={`flex items-center gap-2 px-4 py-2 ${colors.bg} rounded-lg border ${colors.border}`}>
+            <ModuleIcon className={`w-5 h-5 ${colors.icon}`} />
+            <span className={`text-sm font-medium ${colors.text}`}>{currentPage}</span>
           </div>
+        )}
 
-          {/* Notification Bell - part of the centering area */}
-          <button className="relative p-2 hover:bg-white/60 rounded-lg transition-colors flex-shrink-0">
+        {/* Right Side - Notification and User Profile (positioned absolutely) */}
+        <div className="absolute right-6 flex items-center gap-4">
+          {/* Notification Bell */}
+          <button className="relative p-2 hover:bg-white/60 rounded-lg transition-colors">
             <Bell className="w-5 h-5 text-black" />
             <Badge className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs">
               3
             </Badge>
           </button>
-        </div>
 
-        {/* User Profile - outside centering area */}
-        {user && (
-          <div className="flex items-center gap-4 flex-shrink-0 ml-4">
+          {/* User Profile */}
+          {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-3 pl-4 border-l border-green-200 hover:bg-white/60 px-2 py-1 rounded-lg transition-colors">
@@ -148,8 +144,8 @@ export function Header({ breadcrumbs, user }: HeaderProps) {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Breadcrumbs */}
