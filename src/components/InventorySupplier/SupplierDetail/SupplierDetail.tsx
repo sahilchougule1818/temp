@@ -559,15 +559,6 @@ export function SupplierDetail() {
                           )}
                         </div>
                       </div>
-                      
-                      <Button 
-                        className="w-full bg-green-600 hover:bg-green-700"
-                        onClick={handleSearchPurchaseRecord}
-                        disabled={!purchaseForm.dateOfPurchase || !purchaseForm.itemName}
-                      >
-                        <Search className="w-4 h-4 mr-2" />
-                        Search
-                      </Button>
 
                       {searchClicked && editingPurchaseId && (
                         <div className="grid grid-cols-2 gap-4 pt-4 border-t">
@@ -605,29 +596,19 @@ export function SupplierDetail() {
                         </div>
                       )}
                     </div>
-                    <div className="flex justify-between gap-3">
-                      <Button
-                        variant="destructive"
-                        onClick={() => {
-                          if (editingPurchaseId) {
-                            setPurchaseToDelete(editingPurchaseId);
-                            setDeleteConfirmOpen(true);
-                          }
-                        }}
-                        disabled={!searchClicked || !editingPurchaseId}
+                    <div className="flex justify-end gap-3">
+                      <Button 
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={handleSearchPurchaseRecord}
+                        disabled={!purchaseForm.dateOfPurchase || !purchaseForm.itemName}
                       >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
+                        <Search className="w-4 h-4 mr-2" />
+                        Search
                       </Button>
-                      <div className="flex gap-3">
-                        <Button variant="outline" onClick={() => {
-                          setIsEditPurchaseModalOpen(false);
-                          resetPurchaseForm();
-                        }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSavePurchase} disabled={!searchClicked || !editingPurchaseId}>
-                          Save Changes
-                        </Button>
-                      </div>
+                      <Button variant="outline" onClick={() => {
+                        setIsEditPurchaseModalOpen(false);
+                        resetPurchaseForm();
+                      }}>Cancel</Button>
                     </div>
                   </DialogContent>
                 </Dialog>

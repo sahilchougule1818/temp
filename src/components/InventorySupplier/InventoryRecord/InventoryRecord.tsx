@@ -412,15 +412,6 @@ export function InventoryRecord() {
                         </div>
                       </div>
 
-                      <Button 
-                        className="w-full bg-green-600 hover:bg-green-700"
-                        onClick={handleSearchWithdrawalRecord}
-                        disabled={!withdrawalForm.dateOfWithdrawal || !withdrawalForm.itemName}
-                      >
-                        <Search className="w-4 h-4 mr-2" />
-                        Search
-                      </Button>
-
                       {withdrawalSearchClicked && editingWithdrawalId && (
                         <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                           <div className="space-y-2">
@@ -465,6 +456,14 @@ export function InventoryRecord() {
                       )}
                     </div>
                     <div className="flex justify-end gap-3">
+                      <Button 
+                        className="bg-green-600 hover:bg-green-700"
+                        onClick={handleSearchWithdrawalRecord}
+                        disabled={!withdrawalForm.dateOfWithdrawal || !withdrawalForm.itemName}
+                      >
+                        <Search className="w-4 h-4 mr-2" />
+                        Search
+                      </Button>
                       <Button variant="outline" onClick={() => {
                         setIsEditWithdrawalModalOpen(false);
                         resetWithdrawalForm();
