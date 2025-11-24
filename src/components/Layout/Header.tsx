@@ -1,5 +1,5 @@
 import { 
-  Bell, ChevronRight, LogOut, FlaskConical, Sprout, ShoppingCart, Package, FileText,
+  Bell, LogOut, FlaskConical, Sprout, ShoppingCart, Package, FileText,
   Home, TestTube, Microscope, Thermometer, ShieldCheck, Warehouse, TreePine,
   ArrowRightLeft, Bug, Droplets, Clock, LayoutDashboard, Building
 } from 'lucide-react';
@@ -86,7 +86,7 @@ export function Header({ breadcrumbs, user }: HeaderProps) {
   const colors = getModuleColor(currentModule);
 
   return (
-    <div className="bg-gradient-to-r from-slate-50 via-blue-50 to-purple-50 border-b border-purple-100/50">
+    <div className="bg-gradient-to-r from-slate-50 via-blue-50 to-purple-50 border-b border-gray-200">
       <div className="h-16 px-6 flex items-center justify-between">
         {/* Left Side - Current Module */}
         {currentPage && (
@@ -142,18 +142,6 @@ export function Header({ breadcrumbs, user }: HeaderProps) {
             </DropdownMenu>
           )}
         </div>
-      </div>
-
-      {/* Breadcrumbs */}
-      <div className="px-6 py-3 bg-gray-100 flex items-center gap-2 text-sm">
-        {breadcrumbs.map((crumb, index) => (
-          <div key={index} className="flex items-center gap-2">
-            {index > 0 && <ChevronRight className="w-4 h-4 text-gray-400" />}
-            <span className={index === breadcrumbs.length - 1 ? 'text-green-600' : 'text-gray-600'}>
-              {crumb}
-            </span>
-          </div>
-        ))}
       </div>
     </div>
   );
