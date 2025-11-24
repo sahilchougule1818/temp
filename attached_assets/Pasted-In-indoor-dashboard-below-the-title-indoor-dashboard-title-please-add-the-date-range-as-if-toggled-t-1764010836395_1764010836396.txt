@@ -1,0 +1,17 @@
+In indoor dashboard below the title indoor dashboard title please add the date range as if toggled to monthly report then the from date and till date must be mentioned there and on left to the toggle show monthly report there must be an option as export the report 
+
+
+And please replace the name as wherever it is written in the form’s table haeading and in the search panel if there is written as Batch code please replace that name to Batch name
+
+
+And wherever the edit option is present in the indoor and outdoor module on tapping on it there present a drop down to select the date so please replace the dropdown to the date selecter you can refer or see from the media preparation’s edit option !! And one thing to change in the media preparation’s edit button is that in it when we tap on edit there present the save changes in green button and one red button to delete so the thing is this buttons must be visible when the form is opened to edit you can see this functionality in other indoor modules ! And please do one thing, in all the edit tab when we select the date and the media code it is directly  jupimng in the edit form but please add one button near to cancel button which should be named as search so the functionality is we select date from the date selecter we select media code from drop down then we either tap on search button to open the edit form or the cancel button to go back 
+
+
+
+And in the module of Inventory & Supplier there is a submodule called supplier detail in that purchase register add one column in between quantity and supplier name as pricing and must present the purchase price of respective item !! And the items which we are going to keep in the inventory are as follows :
+  Cocopeat , peatmoss , shaktiamla, kronen media , klasmann media , pot , plastic bag , protray , tray-104 (cavity),Tray-126 (cavity)
+,Tray-40(cavity) , paper pot paper , DAP , glass bottles , crate -18 kg, crate-20kg ,
+So in the add data tab of it it there is one field as item name there is text input but keep there a dropdown to select among this items only ! And add the price field also in it , ans so this changes must reflect in the edit form also 
+
+
+The purchase register and the dupplier detail register’s table’s heading there is no border between data and heading as present in all the remaining modules so please add same border as present in the rest 

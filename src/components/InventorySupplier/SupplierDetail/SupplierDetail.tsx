@@ -23,8 +23,28 @@ type PurchaseRecord = {
   dateOfPurchase: string;
   itemName: string;
   quantityPurchased: number;
+  pricing: number;
   supplierName: string;
 };
+
+const INVENTORY_ITEMS = [
+  'Cocopeat',
+  'Peatmoss',
+  'Shaktiamla',
+  'Kronen media',
+  'Klasmann media',
+  'Pot',
+  'Plastic bag',
+  'Protray',
+  'Tray-104 (cavity)',
+  'Tray-126 (cavity)',
+  'Tray-40 (cavity)',
+  'Paper pot paper',
+  'DAP',
+  'Glass bottles',
+  'Crate-18kg',
+  'Crate-20kg'
+];
 
 export function SupplierDetail() {
   const getTodayDate = () => {
@@ -43,8 +63,8 @@ export function SupplierDetail() {
   ]);
 
   const [purchaseRecords, setPurchaseRecords] = useState<PurchaseRecord[]>([
-    { id: 1, dateOfPurchase: todayDate, itemName: 'Item A', quantityPurchased: 100, supplierName: 'Supplier A' },
-    { id: 2, dateOfPurchase: '2024-11-15', itemName: 'Item B', quantityPurchased: 200, supplierName: 'Supplier B' },
+    { id: 1, dateOfPurchase: todayDate, itemName: 'Cocopeat', quantityPurchased: 100, pricing: 250, supplierName: 'Supplier A' },
+    { id: 2, dateOfPurchase: '2024-11-15', itemName: 'Peatmoss', quantityPurchased: 200, pricing: 500, supplierName: 'Supplier B' },
   ]);
 
   const [activeTab, setActiveTab] = useState('purchase');
@@ -69,6 +89,7 @@ export function SupplierDetail() {
     dateOfPurchase: todayDate,
     itemName: '',
     quantityPurchased: '',
+    pricing: '',
     supplierName: ''
   });
 
@@ -148,6 +169,7 @@ export function SupplierDetail() {
       dateOfPurchase: todayDate,
       itemName: '',
       quantityPurchased: '',
+      pricing: '',
       supplierName: ''
     });
   };
@@ -155,7 +177,8 @@ export function SupplierDetail() {
   const handleSavePurchase = () => {
     const newRecord = {
       ...purchaseForm,
-      quantityPurchased: parseInt(purchaseForm.quantityPurchased) || 0
+      quantityPurchased: parseInt(purchaseForm.quantityPurchased) || 0,
+      pricing: parseFloat(purchaseForm.pricing) || 0
     };
 
     if (editingPurchaseId) {
@@ -178,7 +201,7 @@ export function SupplierDetail() {
   };
 
   const handlePurchaseDateSelect = (date: string) => {
-    setPurchaseForm({ ...purchaseForm, dateOfPurchase: date, itemName: '' });
+    setPurchaseForm({ ...purchaseForm, dateOfPurchase: date, itemName: '', quantityPurchased: '', pricing: '', supplierName: '' });
     if (isEditPurchaseModalOpen) {
       setEditingPurchaseId(null);
     }
@@ -194,12 +217,13 @@ export function SupplierDetail() {
           dateOfPurchase: record.dateOfPurchase,
           itemName: record.itemName,
           quantityPurchased: String(record.quantityPurchased),
+          pricing: String(record.pricing),
           supplierName: record.supplierName
         });
         setEditingPurchaseId(record.id);
       } else {
         setEditingPurchaseId(null);
-        setPurchaseForm(prev => ({ ...prev, itemName, quantityPurchased: '', supplierName: '' }));
+        setPurchaseForm(prev => ({ ...prev, itemName, quantityPurchased: '', pricing: '', supplierName: '' }));
       }
     } else {
       setPurchaseForm({ ...purchaseForm, itemName });
@@ -379,7 +403,7 @@ export function SupplierDetail() {
 
             <div className="border rounded-lg overflow-hidden">
               <table className="w-full divide-y divide-gray-200 text-sm">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 border-b">
                   <tr>
                     <th scope="col" className="w-1/12 px-4 py-3 text-left font-medium text-foreground">ID</th>
                     <th scope="col" className="w-3/12 px-4 py-3 text-left font-medium text-foreground">Supplier Name</th>
@@ -448,11 +472,16 @@ export function SupplierDetail() {
                         </div>
                         <div className="space-y-2">
                           <Label>Item Name</Label>
-                          <Input
-                            placeholder="Enter item name"
-                            value={purchaseForm.itemName}
-                            onChange={(e) => setPurchaseForm({ ...purchaseForm, itemName: e.target.value })}
-                          />
+                          <Select value={purchaseForm.itemName} onValueChange={(value) => setPurchaseForm({ ...purchaseForm, itemName: value })}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select item" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {INVENTORY_ITEMS.map(item => (
+                                <SelectItem key={item} value={item}>{item}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div className="space-y-2">
                           <Label>Quantity Purchased</Label>
@@ -464,6 +493,15 @@ export function SupplierDetail() {
                           />
                         </div>
                         <div className="space-y-2">
+                          <Label>Price</Label>
+                          <Input
+                            type="number"
+                            placeholder="e.g., 250"
+                            value={purchaseForm.pricing}
+                            onChange={(e) => setPurchaseForm({ ...purchaseForm, pricing: e.target.value })}
+                          />
+                        </div>
+                        <div className="space-y-2 col-span-2">
                           <Label>Supplier Name</Label>
                           <Select value={purchaseForm.supplierName} onValueChange={(value) => setPurchaseForm({ ...purchaseForm, supplierName: value })}>
                             <SelectTrigger>
@@ -544,6 +582,16 @@ export function SupplierDetail() {
                         />
                       </div>
                       <div className="space-y-2">
+                        <Label>Price</Label>
+                        <Input
+                          type="number"
+                          placeholder="e.g., 250"
+                          value={purchaseForm.pricing}
+                          onChange={(e) => setPurchaseForm({ ...purchaseForm, pricing: e.target.value })}
+                          disabled={!editingPurchaseId}
+                        />
+                      </div>
+                      <div className="space-y-2 col-span-2">
                         <Label>Supplier Name</Label>
                         <Select value={purchaseForm.supplierName} onValueChange={(value) => setPurchaseForm({ ...purchaseForm, supplierName: value })} disabled={!editingPurchaseId}>
                           <SelectTrigger>
@@ -586,12 +634,13 @@ export function SupplierDetail() {
 
                 <div className="border rounded-lg overflow-hidden">
                   <table className="w-full divide-y divide-gray-200 text-sm">
-                    <thead className="bg-gray-50">
+                    <thead className="bg-gray-50 border-b">
                       <tr>
                         <th className="px-4 py-3 text-left font-medium text-foreground">ID</th>
                         <th className="px-4 py-3 text-left font-medium text-foreground">Date of Purchase</th>
                         <th className="px-4 py-3 text-left font-medium text-foreground">Item Name</th>
                         <th className="px-4 py-3 text-left font-medium text-foreground">Quantity Purchased</th>
+                        <th className="px-4 py-3 text-left font-medium text-foreground">Pricing</th>
                         <th className="px-4 py-3 text-left font-medium text-foreground">Supplier Name</th>
                       </tr>
                     </thead>
@@ -606,6 +655,7 @@ export function SupplierDetail() {
                             </Badge>
                           </td>
                           <td className="px-4 py-4">{record.quantityPurchased}</td>
+                          <td className="px-4 py-4">₹{record.pricing}</td>
                           <td className="px-4 py-4">{record.supplierName}</td>
                         </tr>
                       ))}

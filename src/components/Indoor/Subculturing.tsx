@@ -62,7 +62,7 @@ export function Subculturing() {
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedBatch, setSelectedBatch] = useState('');
 
-  // Search filter (Crop Name → Batch Code)
+  // Search filter (Crop Name → Batch Name)
   const subcultureFilter = useSearchFilter({
     sourceData: subcultureData,
     field1Accessor: (item) => item.cropName,
@@ -109,7 +109,7 @@ export function Subculturing() {
     return Array.from(new Set(subcultureData.map(record => record.transferDate))).sort();
   }, [subcultureData]);
 
-  // Get available batch codes for selected date
+  // Get available batch names for selected date
   const availableBatches = useMemo(() => {
     if (!selectedDate) return [];
     return Array.from(new Set(subcultureData.filter(record => record.transferDate === selectedDate).map(record => record.batchCode)));
@@ -204,11 +204,11 @@ export function Subculturing() {
           placeholder: 'Select crop'
         }}
         field2={{
-          label: 'Batch Code',
+          label: 'Batch Name',
           value: subcultureFilter.selectedField2,
           onChange: subcultureFilter.handleField2Change,
           options: subcultureFilter.field2Options,
-          placeholder: 'Select batch code'
+          placeholder: 'Select batch name'
         }}
         onSearch={subcultureFilter.handleSearch}
       />
@@ -279,7 +279,7 @@ export function Subculturing() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Batch Code</Label>
+                      <Label>Batch Name</Label>
                       <Input 
                         placeholder="BTH-2024-001" 
                         value={subcultureForm.batchCode}
@@ -387,7 +387,7 @@ export function Subculturing() {
                     </Select>
                   </div>
                   <div>
-                    <Label>Select Batch Code</Label>
+                    <Label>Select Batch Name</Label>
                     <Select value={selectedBatch} onValueChange={handleBatchSelect} disabled={!selectedDate}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select batch" />
@@ -422,7 +422,7 @@ export function Subculturing() {
                       </Select>
                     </div>
                     <div>
-                      <Label>Batch Code</Label>
+                      <Label>Batch Name</Label>
                       <Input value={subcultureForm.batchCode} onChange={(e) => setSubcultureForm({...subcultureForm, batchCode: e.target.value})} />
                     </div>
                     <div>
@@ -488,7 +488,7 @@ export function Subculturing() {
                 <tr>
                   <th className="px-4 py-3 text-left text-xs text-gray-600">Transfer Date</th>
                   <th className="px-4 py-3 text-left text-xs text-gray-600">Stage Number</th>
-                  <th className="px-4 py-3 text-left text-xs text-gray-600">Batch Code</th>
+                  <th className="px-4 py-3 text-left text-xs text-gray-600">Batch Name</th>
                   <th className="px-4 py-3 text-left text-xs text-gray-600">Media Code</th>
                   <th className="px-4 py-3 text-left text-xs text-gray-600">Crop Name</th>
                   <th className="px-4 py-3 text-left text-xs text-gray-600">No. of Vessels</th>

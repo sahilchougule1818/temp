@@ -221,7 +221,7 @@ export function PrimaryHardening() {
                       </Select>
                     </div>
                     <div>
-                      <Label>Select Batch Code</Label>
+                      <Label>Select Batch Name</Label>
                       <Select value={selectedBatch} onValueChange={handleBatchSelect} disabled={!selectedDate}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select batch" />

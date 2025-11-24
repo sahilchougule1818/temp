@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Users, FlaskConical, Package, TrendingUp } from 'lucide-react';
+import { Users, FlaskConical, Package, TrendingUp, Download } from 'lucide-react';
 
 // This would normally come from shared state or API
 // For now, we'll use sample data that matches the structure
@@ -57,6 +57,36 @@ export function IndoorDashboard() {
   };
 
   const today = getToday();
+
+  // Calculate date range based on view mode
+  const dateRange = useMemo(() => {
+    const now = new Date();
+    const endDate = now;
+    
+    let startDate: Date;
+    if (viewMode === 'monthly') {
+      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    } else {
+      startDate = new Date(now);
+      startDate.setDate(now.getDate() - 6);
+    }
+    
+    const formatDate = (date: Date) => {
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}/${month}/${year}`;
+    };
+    
+    return {
+      from: formatDate(startDate),
+      to: formatDate(endDate)
+    };
+  }, [viewMode]);
+
+  const handleExportReport = () => {
+    alert('Export functionality will be implemented here');
+  };
 
   // Calculate operator statistics
   const operatorStats = useMemo(() => {
@@ -161,23 +191,38 @@ export function IndoorDashboard() {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Indoor Dashboard</h1>
-        <div className="flex gap-2">
-          <Button
-            variant={viewMode === 'monthly' ? 'default' : 'outline'}
-            onClick={() => setViewMode('monthly')}
-            className="h-9"
-          >
-            Show Monthly Report
-          </Button>
-          <Button
-            variant={viewMode === 'weekly' ? 'default' : 'outline'}
-            onClick={() => setViewMode('weekly')}
-            className="h-9"
-          >
-            Show Weekly Report
-          </Button>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Indoor Dashboard</h1>
+            <p className="text-sm text-gray-600 mt-1">
+              From: {dateRange.from} - Till: {dateRange.to}
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={handleExportReport}
+              className="h-9 flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Export Report
+            </Button>
+            <Button
+              variant={viewMode === 'monthly' ? 'default' : 'outline'}
+              onClick={() => setViewMode('monthly')}
+              className="h-9"
+            >
+              Show Monthly Report
+            </Button>
+            <Button
+              variant={viewMode === 'weekly' ? 'default' : 'outline'}
+              onClick={() => setViewMode('weekly')}
+              className="h-9"
+            >
+              Show Weekly Report
+            </Button>
+          </div>
         </div>
       </div>
 
