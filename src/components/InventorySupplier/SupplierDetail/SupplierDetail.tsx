@@ -307,11 +307,16 @@ export function SupplierDetail() {
                     </div>
                     <div className="space-y-2">
                       <Label>Supplies</Label>
-                      <Input
-                        placeholder="e.g., Item A, Item B"
-                        value={supplierForm.supplies}
-                        onChange={(e) => setSupplierForm({ ...supplierForm, supplies: e.target.value })}
-                      />
+                      <Select value={supplierForm.supplies} onValueChange={(value) => setSupplierForm({ ...supplierForm, supplies: value })}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select item" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {INVENTORY_ITEMS.map(item => (
+                            <SelectItem key={item} value={item}>{item}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                   <div className="flex justify-end gap-3">
