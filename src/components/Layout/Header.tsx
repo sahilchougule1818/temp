@@ -77,12 +77,7 @@ export function Header({ breadcrumbs, user }: HeaderProps) {
   };
 
   const getModuleColor = (module: string) => {
-    if (module === 'Indoor') return { bg: 'bg-green-50', border: 'border-green-100', icon: 'text-green-600', text: 'text-green-700' };
-    if (module === 'Outdoor') return { bg: 'bg-amber-50', border: 'border-amber-100', icon: 'text-amber-700', text: 'text-amber-800' };
-    if (module === 'Sales') return { bg: 'bg-blue-50', border: 'border-blue-100', icon: 'text-blue-600', text: 'text-blue-700' };
-    if (module === 'Inventory & Supplier') return { bg: 'bg-purple-50', border: 'border-purple-100', icon: 'text-purple-600', text: 'text-purple-700' };
-    if (module === 'Reports') return { bg: 'bg-orange-50', border: 'border-orange-100', icon: 'text-orange-600', text: 'text-orange-700' };
-    return { bg: 'bg-gray-50', border: 'border-gray-100', icon: 'text-gray-600', text: 'text-gray-700' };
+    return { bg: 'bg-green-50', border: 'border-green-100', icon: 'text-green-600', text: 'text-green-700' };
   };
 
   const currentModule = breadcrumbs[0] || '';
@@ -105,7 +100,7 @@ export function Header({ breadcrumbs, user }: HeaderProps) {
         <div className="flex items-center gap-4">
           {/* Notification Bell */}
           <button className="relative p-2 hover:bg-white/60 rounded-lg transition-colors">
-            <Bell className="w-5 h-5 text-purple-600" />
+            <Bell className="w-5 h-5 text-black" />
             <Badge className="absolute -top-1 -right-1 w-5 h-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs">
               3
             </Badge>
@@ -115,14 +110,14 @@ export function Header({ breadcrumbs, user }: HeaderProps) {
           {user && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-3 pl-4 border-l border-purple-200 hover:bg-white/60 px-2 py-1 rounded-lg transition-colors">
+                <button className="flex items-center gap-3 pl-4 border-l border-green-200 hover:bg-white/60 px-2 py-1 rounded-lg transition-colors">
                   <div className="text-right">
                     <div className="text-sm font-medium text-slate-900">{user.name}</div>
-                    <div className="text-xs text-purple-600">{getRoleLabel(user.role)}</div>
+                    <div className="text-xs text-green-600">{getRoleLabel(user.role)}</div>
                   </div>
                   <Avatar>
                     <AvatarImage src="" />
-                    <AvatarFallback className="bg-gradient-to-br from-blue-100 to-purple-100 text-purple-700">
+                    <AvatarFallback className="bg-gradient-to-br from-green-100 to-green-200 text-green-700">
                       {getInitials(user.name)}
                     </AvatarFallback>
                   </Avatar>
