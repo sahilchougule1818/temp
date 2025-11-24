@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { Button } from '../../ui/button';
-import { Plus, Edit, Trash2, Eye } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Search } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../ui/dialog';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
@@ -49,14 +49,13 @@ export function InventoryRecord() {
 
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
   const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
-  const [isEditPurchaseModalOpen, setIsEditPurchaseModalOpen] = useState(false);
   const [isEditWithdrawalModalOpen, setIsEditWithdrawalModalOpen] = useState(false);
-  const [editingPurchaseId, setEditingPurchaseId] = useState<number | null>(null);
   const [editingWithdrawalId, setEditingWithdrawalId] = useState<number | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ type: 'purchase' | 'withdrawal', id: number } | null>(null);
   const [showAllPurchaseRecords, setShowAllPurchaseRecords] = useState(false);
   const [showAllWithdrawalRecords, setShowAllWithdrawalRecords] = useState(false);
+  const [withdrawalSearchClicked, setWithdrawalSearchClicked] = useState(false);
 
   const [purchaseForm, setPurchaseForm] = useState({
     dateOfPurchase: todayDate,
@@ -82,49 +81,14 @@ export function InventoryRecord() {
   }, [purchaseRecords, withdrawalRecords]);
 
   const handlePurchaseItemSelect = (itemName: string) => {
-    // When an item is selected in the edit modal, find the full record to pre-fill the form
-    if (isEditPurchaseModalOpen && purchaseForm.dateOfPurchase) {
-      const record = purchaseRecords.find(rec =>
-        rec.dateOfPurchase === purchaseForm.dateOfPurchase && rec.itemName === itemName
-      );
-      if (record) {
-        setPurchaseForm({
-          dateOfPurchase: record.dateOfPurchase,
-          itemName: record.itemName,
-          quantityPurchased: String(record.quantityPurchased),
-          currentStock: String(record.currentStock)
-        });
-        setEditingPurchaseId(record.id);
-      } else {
-        // If no record found for selected date and item, reset editing ID and clear quantities
-        setEditingPurchaseId(null);
-        setPurchaseForm(prev => ({ ...prev, itemName, quantityPurchased: '', currentStock: '' }));
-      }
-    } else {
-      setPurchaseForm({ ...purchaseForm, itemName });
-    }
+    setPurchaseForm({ ...purchaseForm, itemName });
   };
 
   const handleWithdrawalItemSelect = (itemName: string) => {
-    // When an item is selected in the edit modal, find the full record to pre-fill the form
-    if (isEditWithdrawalModalOpen && withdrawalForm.dateOfWithdrawal) {
-      const record = withdrawalRecords.find(rec =>
-        rec.dateOfWithdrawal === withdrawalForm.dateOfWithdrawal && rec.itemName === itemName
-      );
-      if (record) {
-        setWithdrawalForm({
-          itemName: record.itemName,
-          previousStock: String(record.previousStock),
-          withdrawQuantity: String(record.withdrawQuantity),
-          currentStock: String(record.currentStock),
-          dateOfWithdrawal: record.dateOfWithdrawal
-        });
-        setEditingWithdrawalId(record.id);
-      } else {
-        // If no record found for selected date and item, reset editing ID and clear quantities
-        setEditingWithdrawalId(null);
-        setWithdrawalForm(prev => ({ ...prev, itemName, previousStock: '', withdrawQuantity: '', currentStock: '' }));
-      }
+    if (isEditWithdrawalModalOpen) {
+      setWithdrawalForm({ ...withdrawalForm, itemName, previousStock: '', withdrawQuantity: '', currentStock: '' });
+      setWithdrawalSearchClicked(false);
+      setEditingWithdrawalId(null);
     } else {
       // Auto-populate Previous Stock from the most recent withdrawal record for this item
       const latestWithdrawalRecord = withdrawalRecords
@@ -152,17 +116,33 @@ export function InventoryRecord() {
 
   const handlePurchaseDateChange = (date: string) => {
     setPurchaseForm({ ...purchaseForm, dateOfPurchase: date, itemName: '' });
-    // Reset editing ID when date changes in edit mode to ensure a new item is selected for the new date
-    if (isEditPurchaseModalOpen) {
-      setEditingPurchaseId(null);
-    }
   };
 
   const handleWithdrawalDateChange = (date: string) => {
-    setWithdrawalForm({ ...withdrawalForm, dateOfWithdrawal: date, itemName: '' });
+    setWithdrawalForm({ ...withdrawalForm, dateOfWithdrawal: date, itemName: '', previousStock: '', withdrawQuantity: '', currentStock: '' });
     // Reset editing ID when date changes in edit mode
     if (isEditWithdrawalModalOpen) {
       setEditingWithdrawalId(null);
+      setWithdrawalSearchClicked(false);
+    }
+  };
+
+  const handleSearchWithdrawalRecord = () => {
+    if (withdrawalForm.dateOfWithdrawal && withdrawalForm.itemName) {
+      const record = withdrawalRecords.find(rec =>
+        rec.dateOfWithdrawal === withdrawalForm.dateOfWithdrawal && rec.itemName === withdrawalForm.itemName
+      );
+      if (record) {
+        setWithdrawalForm({
+          itemName: record.itemName,
+          previousStock: String(record.previousStock),
+          withdrawQuantity: String(record.withdrawQuantity),
+          currentStock: String(record.currentStock),
+          dateOfWithdrawal: record.dateOfWithdrawal
+        });
+        setEditingWithdrawalId(record.id);
+        setWithdrawalSearchClicked(true);
+      }
     }
   };
 
@@ -173,17 +153,10 @@ export function InventoryRecord() {
       currentStock: parseInt(purchaseForm.currentStock) || 0
     };
 
-    if (editingPurchaseId) {
-      setPurchaseRecords(purchaseRecords.map(rec =>
-        rec.id === editingPurchaseId ? { ...rec, ...newRecord } : rec
-      ));
-    } else {
-      const maxId = purchaseRecords.length > 0 ? Math.max(...purchaseRecords.map(r => r.id)) : 0;
-      const newId = maxId + 1;
-      setPurchaseRecords([...purchaseRecords, { id: newId, ...newRecord }]);
-    }
+    const maxId = purchaseRecords.length > 0 ? Math.max(...purchaseRecords.map(r => r.id)) : 0;
+    const newId = maxId + 1;
+    setPurchaseRecords([...purchaseRecords, { id: newId, ...newRecord }]);
     setIsPurchaseModalOpen(false);
-    setIsEditPurchaseModalOpen(false);
     resetPurchaseForm();
   };
 
@@ -216,6 +189,7 @@ export function InventoryRecord() {
 
   const handleEditRegister = () => {
     setEditingWithdrawalId(null);
+    setWithdrawalSearchClicked(false);
     setWithdrawalForm({
       itemName: '',
       previousStock: '',
@@ -228,18 +202,9 @@ export function InventoryRecord() {
 
   const handleDelete = () => {
     if (!itemToDelete) return;
-    if (itemToDelete.type === 'purchase') {
-      setPurchaseRecords(purchaseRecords.filter(rec => rec.id !== itemToDelete.id));
-    } else {
-      setWithdrawalRecords(withdrawalRecords.filter(rec => rec.id !== itemToDelete.id));
-    }
+    setWithdrawalRecords(withdrawalRecords.filter(rec => rec.id !== itemToDelete.id));
     setDeleteConfirmOpen(false);
     setItemToDelete(null);
-    // After deletion, if an edit modal was open, ensure it closes and resets
-    if (isEditPurchaseModalOpen) {
-      setIsEditPurchaseModalOpen(false);
-      resetPurchaseForm();
-    }
     if (isEditWithdrawalModalOpen) {
       setIsEditWithdrawalModalOpen(false);
       resetWithdrawalForm();
@@ -247,7 +212,6 @@ export function InventoryRecord() {
   };
 
   const resetPurchaseForm = () => {
-    setEditingPurchaseId(null);
     setPurchaseForm({
       dateOfPurchase: todayDate,
       itemName: '',
@@ -258,6 +222,7 @@ export function InventoryRecord() {
 
   const resetWithdrawalForm = () => {
     setEditingWithdrawalId(null);
+    setWithdrawalSearchClicked(false);
     setWithdrawalForm({
       itemName: '',
       previousStock: '',
@@ -411,79 +376,93 @@ export function InventoryRecord() {
                     <DialogHeader>
                       <DialogTitle>Edit Inventory Withdrawal Record</DialogTitle>
                     </DialogHeader>
-                    <div className="grid grid-cols-2 gap-4 py-4">
-                      <div className="space-y-2">
-                        <Label>Date of Withdrawal</Label>
-                        <Input
-                          type="date"
-                          value={withdrawalForm.dateOfWithdrawal}
-                          onChange={(e) => handleWithdrawalDateChange(e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Item Name</Label>
-                        {withdrawalForm.dateOfWithdrawal ? (
-                          <Select value={withdrawalForm.itemName} onValueChange={handleWithdrawalItemSelect}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select item name" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {availableWithdrawalItemNamesForDate.length > 0 ? (
-                                availableWithdrawalItemNamesForDate.map(name => (
-                                  <SelectItem key={name} value={name}>{name}</SelectItem>
-                                ))
-                              ) : (
-                                <SelectItem value="no-records" disabled>No records for this date</SelectItem>
-                              )}
-                            </SelectContent>
-                          </Select>
-                        ) : (
+                    <div className="space-y-4 py-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Date of Withdrawal</Label>
                           <Input
-                            placeholder="Select date first"
-                            disabled
+                            type="date"
+                            value={withdrawalForm.dateOfWithdrawal}
+                            onChange={(e) => handleWithdrawalDateChange(e.target.value)}
                           />
-                        )}
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Item Name</Label>
+                          {withdrawalForm.dateOfWithdrawal ? (
+                            <Select value={withdrawalForm.itemName} onValueChange={handleWithdrawalItemSelect}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select item name" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {availableWithdrawalItemNamesForDate.length > 0 ? (
+                                  availableWithdrawalItemNamesForDate.map(name => (
+                                    <SelectItem key={name} value={name}>{name}</SelectItem>
+                                  ))
+                                ) : (
+                                  <SelectItem value="no-records" disabled>No records for this date</SelectItem>
+                                )}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Input
+                              placeholder="Select date first"
+                              disabled
+                            />
+                          )}
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label>Previous Stock</Label>
-                        <Input
-                          type="number"
-                          placeholder="e.g., 500"
-                          value={withdrawalForm.previousStock}
-                          onChange={(e) => setWithdrawalForm({ ...withdrawalForm, previousStock: e.target.value })}
-                          disabled={!editingWithdrawalId}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Withdraw Quantity</Label>
-                        <Input
-                          type="number"
-                          placeholder="e.g., 50"
-                          value={withdrawalForm.withdrawQuantity}
-                          onChange={(e) => {
-                            const withdrawQty = e.target.value;
-                            const prevStock = parseInt(withdrawalForm.previousStock) || 0;
-                            const withdrawNum = parseInt(withdrawQty) || 0;
-                            const newCurrentStock = prevStock - withdrawNum;
-                            setWithdrawalForm({ 
-                              ...withdrawalForm, 
-                              withdrawQuantity: withdrawQty,
-                              currentStock: newCurrentStock >= 0 ? String(newCurrentStock) : '0'
-                            });
-                          }}
-                          disabled={!editingWithdrawalId}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Current Stock (After Withdrawal)</Label>
-                        <Input
-                          value={
-                            (parseInt(withdrawalForm.previousStock) || 0) -
-                            (parseInt(withdrawalForm.withdrawQuantity) || 0)
-                          }
-                          disabled
-                        />
-                      </div>
+
+                      <Button 
+                        className="w-full bg-green-600 hover:bg-green-700"
+                        onClick={handleSearchWithdrawalRecord}
+                        disabled={!withdrawalForm.dateOfWithdrawal || !withdrawalForm.itemName}
+                      >
+                        <Search className="w-4 h-4 mr-2" />
+                        Search
+                      </Button>
+
+                      {withdrawalSearchClicked && editingWithdrawalId && (
+                        <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+                          <div className="space-y-2">
+                            <Label>Previous Stock</Label>
+                            <Input
+                              type="number"
+                              placeholder="e.g., 500"
+                              value={withdrawalForm.previousStock}
+                              onChange={(e) => setWithdrawalForm({ ...withdrawalForm, previousStock: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Withdraw Quantity</Label>
+                            <Input
+                              type="number"
+                              placeholder="e.g., 50"
+                              value={withdrawalForm.withdrawQuantity}
+                              onChange={(e) => {
+                                const withdrawQty = e.target.value;
+                                const prevStock = parseInt(withdrawalForm.previousStock) || 0;
+                                const withdrawNum = parseInt(withdrawQty) || 0;
+                                const newCurrentStock = prevStock - withdrawNum;
+                                setWithdrawalForm({ 
+                                  ...withdrawalForm, 
+                                  withdrawQuantity: withdrawQty,
+                                  currentStock: newCurrentStock >= 0 ? String(newCurrentStock) : '0'
+                                });
+                              }}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Current Stock (After Withdrawal)</Label>
+                            <Input
+                              value={
+                                (parseInt(withdrawalForm.previousStock) || 0) -
+                                (parseInt(withdrawalForm.withdrawQuantity) || 0)
+                              }
+                              disabled
+                            />
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <div className="flex justify-between gap-3">
                       <Button
@@ -494,7 +473,7 @@ export function InventoryRecord() {
                             setDeleteConfirmOpen(true);
                           }
                         }}
-                        disabled={!editingWithdrawalId}
+                        disabled={!withdrawalSearchClicked || !editingWithdrawalId}
                       >
                         <Trash2 className="w-4 h-4 mr-2" />
                         Delete
@@ -504,7 +483,7 @@ export function InventoryRecord() {
                           setIsEditWithdrawalModalOpen(false);
                           resetWithdrawalForm();
                         }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveWithdrawal} disabled={!editingWithdrawalId}>
+                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSaveWithdrawal} disabled={!withdrawalSearchClicked || !editingWithdrawalId}>
                           Save Changes
                         </Button>
                       </div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
 import { Button } from '../../ui/button';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../ui/dialog';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
@@ -77,6 +77,7 @@ export function SupplierDetail() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [supplierToDelete, setSupplierToDelete] = useState<number | null>(null);
   const [purchaseToDelete, setPurchaseToDelete] = useState<number | null>(null);
+  const [searchClicked, setSearchClicked] = useState(false);
 
   const [supplierForm, setSupplierForm] = useState({
     name: '',
@@ -165,6 +166,7 @@ export function SupplierDetail() {
 
   const resetPurchaseForm = () => {
     setEditingPurchaseId(null);
+    setSearchClicked(false);
     setPurchaseForm({
       dateOfPurchase: todayDate,
       itemName: '',
@@ -197,20 +199,14 @@ export function SupplierDetail() {
 
   const handleEditPurchaseRegister = () => {
     resetPurchaseForm();
+    setSearchClicked(false);
     setIsEditPurchaseModalOpen(true);
   };
 
-  const handlePurchaseDateSelect = (date: string) => {
-    setPurchaseForm({ ...purchaseForm, dateOfPurchase: date, itemName: '', quantityPurchased: '', pricing: '', supplierName: '' });
-    if (isEditPurchaseModalOpen) {
-      setEditingPurchaseId(null);
-    }
-  };
-
-  const handlePurchaseItemSelect = (itemName: string) => {
-    if (isEditPurchaseModalOpen && purchaseForm.dateOfPurchase) {
+  const handleSearchPurchaseRecord = () => {
+    if (purchaseForm.dateOfPurchase && purchaseForm.itemName) {
       const record = purchaseRecords.find(rec =>
-        rec.dateOfPurchase === purchaseForm.dateOfPurchase && rec.itemName === itemName
+        rec.dateOfPurchase === purchaseForm.dateOfPurchase && rec.itemName === purchaseForm.itemName
       );
       if (record) {
         setPurchaseForm({
@@ -221,13 +217,23 @@ export function SupplierDetail() {
           supplierName: record.supplierName
         });
         setEditingPurchaseId(record.id);
-      } else {
-        setEditingPurchaseId(null);
-        setPurchaseForm(prev => ({ ...prev, itemName, quantityPurchased: '', pricing: '', supplierName: '' }));
+        setSearchClicked(true);
       }
-    } else {
-      setPurchaseForm({ ...purchaseForm, itemName });
     }
+  };
+
+  const handlePurchaseDateSelect = (date: string) => {
+    setPurchaseForm({ ...purchaseForm, dateOfPurchase: date, itemName: '', quantityPurchased: '', pricing: '', supplierName: '' });
+    if (isEditPurchaseModalOpen) {
+      setEditingPurchaseId(null);
+      setSearchClicked(false);
+    }
+  };
+
+  const handlePurchaseItemSelect = (itemName: string) => {
+    setPurchaseForm({ ...purchaseForm, itemName, quantityPurchased: '', pricing: '', supplierName: '' });
+    setSearchClicked(false);
+    setEditingPurchaseId(null);
   };
 
   const availablePurchaseItemNames = Array.from(new Set(purchaseRecords.map(rec => rec.itemName)));
@@ -530,80 +536,92 @@ export function SupplierDetail() {
 
                 <Dialog open={isEditPurchaseModalOpen} onOpenChange={(open: boolean) => {
                   setIsEditPurchaseModalOpen(open);
-                  if (!open) resetPurchaseForm();
+                  if (!open) {
+                    resetPurchaseForm();
+                    setSearchClicked(false);
+                  }
                 }}>
                   <DialogContent className="max-w-2xl">
                     <DialogHeader>
                       <DialogTitle>Edit Purchase Record</DialogTitle>
                     </DialogHeader>
-                    <div className="grid grid-cols-2 gap-4 py-4">
-                      <div className="space-y-2">
-                        <Label>Date of Purchase</Label>
-                        <Select value={purchaseForm.dateOfPurchase} onValueChange={handlePurchaseDateSelect}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select date" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {availablePurchaseDates.map(date => (
-                              <SelectItem key={date} value={date}>{date}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                    <div className="space-y-4 py-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Date of Purchase</Label>
+                          <Input
+                            type="date"
+                            value={purchaseForm.dateOfPurchase}
+                            onChange={(e) => handlePurchaseDateSelect(e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Item Name</Label>
+                          {purchaseForm.dateOfPurchase ? (
+                            <Select value={purchaseForm.itemName} onValueChange={handlePurchaseItemSelect}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select item" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {availablePurchaseItemNamesForDate.length > 0 ? (
+                                  availablePurchaseItemNamesForDate.map(name => (
+                                    <SelectItem key={name} value={name}>{name}</SelectItem>
+                                  ))
+                                ) : (
+                                  <SelectItem value="no-records" disabled>No records for this date</SelectItem>
+                                )}
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Input placeholder="Select date first" disabled />
+                          )}
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label>Item Name</Label>
-                        {purchaseForm.dateOfPurchase ? (
-                          <Select value={purchaseForm.itemName} onValueChange={handlePurchaseItemSelect}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select item" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {availablePurchaseItemNamesForDate.length > 0 ? (
-                                availablePurchaseItemNamesForDate.map(name => (
-                                  <SelectItem key={name} value={name}>{name}</SelectItem>
-                                ))
-                              ) : (
-                                <SelectItem value="no-records" disabled>No records for this date</SelectItem>
-                              )}
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <Input placeholder="Select date first" disabled />
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Quantity Purchased</Label>
-                        <Input
-                          type="number"
-                          placeholder="e.g., 100"
-                          value={purchaseForm.quantityPurchased}
-                          onChange={(e) => setPurchaseForm({ ...purchaseForm, quantityPurchased: e.target.value })}
-                          disabled={!editingPurchaseId}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Price</Label>
-                        <Input
-                          type="number"
-                          placeholder="e.g., 250"
-                          value={purchaseForm.pricing}
-                          onChange={(e) => setPurchaseForm({ ...purchaseForm, pricing: e.target.value })}
-                          disabled={!editingPurchaseId}
-                        />
-                      </div>
-                      <div className="space-y-2 col-span-2">
-                        <Label>Supplier Name</Label>
-                        <Select value={purchaseForm.supplierName} onValueChange={(value) => setPurchaseForm({ ...purchaseForm, supplierName: value })} disabled={!editingPurchaseId}>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select supplier" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {suppliers.map(supplier => (
-                              <SelectItem key={supplier.id} value={supplier.name}>{supplier.name}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                      
+                      <Button 
+                        className="w-full bg-green-600 hover:bg-green-700"
+                        onClick={handleSearchPurchaseRecord}
+                        disabled={!purchaseForm.dateOfPurchase || !purchaseForm.itemName}
+                      >
+                        <Search className="w-4 h-4 mr-2" />
+                        Search
+                      </Button>
+
+                      {searchClicked && editingPurchaseId && (
+                        <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+                          <div className="space-y-2">
+                            <Label>Quantity Purchased</Label>
+                            <Input
+                              type="number"
+                              placeholder="e.g., 100"
+                              value={purchaseForm.quantityPurchased}
+                              onChange={(e) => setPurchaseForm({ ...purchaseForm, quantityPurchased: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label>Price</Label>
+                            <Input
+                              type="number"
+                              placeholder="e.g., 250"
+                              value={purchaseForm.pricing}
+                              onChange={(e) => setPurchaseForm({ ...purchaseForm, pricing: e.target.value })}
+                            />
+                          </div>
+                          <div className="space-y-2 col-span-2">
+                            <Label>Supplier Name</Label>
+                            <Select value={purchaseForm.supplierName} onValueChange={(value) => setPurchaseForm({ ...purchaseForm, supplierName: value })}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select supplier" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {suppliers.map(supplier => (
+                                  <SelectItem key={supplier.id} value={supplier.name}>{supplier.name}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      )}
                     </div>
                     <div className="flex justify-between gap-3">
                       <Button
@@ -614,7 +632,7 @@ export function SupplierDetail() {
                             setDeleteConfirmOpen(true);
                           }
                         }}
-                        disabled={!editingPurchaseId}
+                        disabled={!searchClicked || !editingPurchaseId}
                       >
                         <Trash2 className="w-4 h-4 mr-2" />
                         Delete
@@ -624,7 +642,7 @@ export function SupplierDetail() {
                           setIsEditPurchaseModalOpen(false);
                           resetPurchaseForm();
                         }}>Cancel</Button>
-                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSavePurchase} disabled={!editingPurchaseId}>
+                        <Button className="bg-green-600 hover:bg-green-700" onClick={handleSavePurchase} disabled={!searchClicked || !editingPurchaseId}>
                           Save Changes
                         </Button>
                       </div>

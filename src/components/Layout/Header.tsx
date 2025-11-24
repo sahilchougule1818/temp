@@ -1,6 +1,5 @@
-import { Search, Bell, ChevronRight, LogOut } from 'lucide-react';
+import { Bell, ChevronRight, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
-import { Input } from '../ui/input';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { useAuth, User } from '../../contexts/AuthContext';
@@ -47,17 +46,7 @@ export function Header({ breadcrumbs, user }: HeaderProps) {
 
   return (
     <div className="bg-white border-b border-gray-200">
-      <div className="h-16 px-6 flex items-center justify-between">
-        {/* Search Bar */}
-        <div className="relative w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <Input
-            type="text"
-            placeholder="Search batches, orders, reports..."
-            className="pl-10 bg-gray-50 border-gray-200"
-          />
-        </div>
-
+      <div className="h-16 px-6 flex items-center justify-end">
         {/* Right Side */}
         <div className="flex items-center gap-4">
           {/* Notification Bell */}

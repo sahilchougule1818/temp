@@ -2,7 +2,10 @@ import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Users, FlaskConical, Package, TrendingUp, Download } from 'lucide-react';
+import { Users, FlaskConical, Package, TrendingUp, Download, Calendar } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 
 // This would normally come from shared state or API
 // For now, we'll use sample data that matches the structure
@@ -44,8 +47,16 @@ const sampleIncubationData = [
 ];
 
 export function IndoorDashboard() {
-  // State for toggling between monthly and weekly views
-  const [viewMode, setViewMode] = useState<'monthly' | 'weekly'>('monthly');
+  // State for date range selection
+  const [isReportRangeDialogOpen, setIsReportRangeDialogOpen] = useState(false);
+  const [reportDateRange, setReportDateRange] = useState({
+    from: '',
+    till: ''
+  });
+  const [appliedDateRange, setAppliedDateRange] = useState({
+    from: '',
+    till: ''
+  });
 
   // Get today's date
   const getToday = () => {
@@ -58,41 +69,30 @@ export function IndoorDashboard() {
 
   const today = getToday();
 
-  // Calculate date range based on view mode
-  const dateRange = useMemo(() => {
-    const now = new Date();
-    const endDate = now;
-    
-    let startDate: Date;
-    if (viewMode === 'monthly') {
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-    } else {
-      startDate = new Date(now);
-      startDate.setDate(now.getDate() - 6);
-    }
-    
-    const formatDate = (date: Date) => {
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const year = date.getFullYear();
-      return `${day}/${month}/${year}`;
-    };
-    
-    return {
-      from: formatDate(startDate),
-      to: formatDate(endDate)
-    };
-  }, [viewMode]);
-
   const handleExportReport = () => {
     alert('Export functionality will be implemented here');
   };
 
+  const handleViewReport = () => {
+    setAppliedDateRange({
+      from: reportDateRange.from,
+      till: reportDateRange.till
+    });
+    setIsReportRangeDialogOpen(false);
+  };
+
+  const isDateInRange = (dateStr: string) => {
+    if (!appliedDateRange.from || !appliedDateRange.till) {
+      return dateStr === today;
+    }
+    const date = new Date(dateStr);
+    const fromDate = new Date(appliedDateRange.from);
+    const tillDate = new Date(appliedDateRange.till);
+    return date >= fromDate && date <= tillDate;
+  };
+
   // Calculate operator statistics
   const operatorStats = useMemo(() => {
-    // Multiplier based on view mode (monthly = 4x weekly for approximation)
-    const multiplier = viewMode === 'monthly' ? 4 : 1;
-    
     const stats: Record<string, {
       name: string;
       mediaPrepared: number;
@@ -104,7 +104,7 @@ export function IndoorDashboard() {
 
     // Process autoclave data (media prepared in litres)
     sampleAutoclaveData
-      .filter(item => item.date === today)
+      .filter(item => isDateInRange(item.date))
       .forEach(item => {
         if (!stats[item.operator]) {
           stats[item.operator] = {
@@ -116,13 +116,13 @@ export function IndoorDashboard() {
             mediaTypes: new Set()
           };
         }
-        stats[item.operator].mediaPrepared += item.litres * multiplier;
+        stats[item.operator].mediaPrepared += item.litres;
         stats[item.operator].mediaTypes.add(item.typeOfMedia);
       });
 
     // Process batch data (bottles)
     sampleBatchData
-      .filter(item => item.date === today)
+      .filter(item => isDateInRange(item.date))
       .forEach(item => {
         if (!stats[item.operator]) {
           stats[item.operator] = {
@@ -134,12 +134,12 @@ export function IndoorDashboard() {
             mediaTypes: new Set()
           };
         }
-        stats[item.operator].totalBottles += item.bottles * multiplier;
+        stats[item.operator].totalBottles += item.bottles;
       });
 
     // Process subculture data (vessels and shoots)
     sampleSubcultureData
-      .filter(item => item.transferDate === today)
+      .filter(item => isDateInRange(item.transferDate))
       .forEach(item => {
         if (!stats[item.operator]) {
           stats[item.operator] = {
@@ -151,13 +151,13 @@ export function IndoorDashboard() {
             mediaTypes: new Set()
           };
         }
-        stats[item.operator].totalVessels += item.vessels * multiplier;
-        stats[item.operator].totalShoots += item.shoots * multiplier;
+        stats[item.operator].totalVessels += item.vessels;
+        stats[item.operator].totalShoots += item.shoots;
       });
 
     // Process incubation data (vessels and shoots)
     sampleIncubationData
-      .filter(item => item.subcultureDate === today)
+      .filter(item => isDateInRange(item.subcultureDate))
       .forEach(item => {
         if (!stats[item.operator]) {
           stats[item.operator] = {
@@ -169,15 +169,15 @@ export function IndoorDashboard() {
             mediaTypes: new Set()
           };
         }
-        stats[item.operator].totalVessels += item.vessels * multiplier;
-        stats[item.operator].totalShoots += item.shoots * multiplier;
+        stats[item.operator].totalVessels += item.vessels;
+        stats[item.operator].totalShoots += item.shoots;
       });
 
     return Object.values(stats).map(stat => ({
       ...stat,
       mediaTypes: Array.from(stat.mediaTypes)
     }));
-  }, [today, viewMode]);
+  }, [today, appliedDateRange]);
 
   // Calculate totals
   const totals = useMemo(() => {
@@ -195,10 +195,6 @@ export function IndoorDashboard() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Indoor Dashboard</h1>
-            <div className="text-sm text-gray-600 mt-1 space-y-0.5">
-              <p>From : {dateRange.from}</p>
-              <p>Till : {dateRange.to}</p>
-            </div>
           </div>
           <div className="flex gap-2">
             <Button
@@ -209,20 +205,48 @@ export function IndoorDashboard() {
               <Download className="w-4 h-4" />
               Export
             </Button>
-            <Button
-              variant={viewMode === 'monthly' ? 'default' : 'outline'}
-              onClick={() => setViewMode('monthly')}
-              className="h-9"
-            >
-              Show Monthly Report
-            </Button>
-            <Button
-              variant={viewMode === 'weekly' ? 'default' : 'outline'}
-              onClick={() => setViewMode('weekly')}
-              className="h-9"
-            >
-              Show Weekly Report
-            </Button>
+            <Dialog open={isReportRangeDialogOpen} onOpenChange={setIsReportRangeDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-9 flex items-center gap-2"
+                >
+                  <Calendar className="w-4 h-4" />
+                  Report Range
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Select Report Date Range</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-2">
+                    <Label>From</Label>
+                    <Input 
+                      type="date" 
+                      value={reportDateRange.from}
+                      onChange={(e) => setReportDateRange({ ...reportDateRange, from: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Till</Label>
+                    <Input 
+                      type="date" 
+                      value={reportDateRange.till}
+                      onChange={(e) => setReportDateRange({ ...reportDateRange, till: e.target.value })}
+                    />
+                  </div>
+                  {reportDateRange.from && reportDateRange.till && (
+                    <Button 
+                      className="w-full bg-green-600 hover:bg-green-700"
+                      onClick={handleViewReport}
+                    >
+                      View Report
+                    </Button>
+                  )}
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
@@ -310,7 +334,7 @@ export function IndoorDashboard() {
                 {operatorStats.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-500">
-                      No data available for today
+                      No data available for the selected date range
                     </td>
                   </tr>
                 ) : (
