@@ -626,35 +626,39 @@ export function SupplierDetail() {
                       )}
                     </div>
                     <div className="flex justify-end gap-3">
-                      <Button 
-                        className="bg-green-600 hover:bg-green-700"
-                        onClick={handleSearchPurchaseRecord}
-                        disabled={!purchaseForm.dateOfPurchase || !purchaseForm.itemName}
-                      >
-                        <Search className="w-4 h-4 mr-2" />
-                        Search
-                      </Button>
+                      {!searchClicked && (
+                        <Button 
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={handleSearchPurchaseRecord}
+                          disabled={!purchaseForm.dateOfPurchase || !purchaseForm.itemName}
+                        >
+                          <Search className="w-4 h-4 mr-2" />
+                          Search
+                        </Button>
+                      )}
                       <Button variant="outline" onClick={() => {
                         setIsEditPurchaseModalOpen(false);
                         resetPurchaseForm();
                       }}>Cancel</Button>
-                      <Button 
-                        className="bg-green-600 hover:bg-green-700"
-                        onClick={handleSavePurchase}
-                        disabled={!editingPurchaseId}
-                      >
-                        Save Changes
-                      </Button>
-                      <Button 
-                        variant="destructive"
-                        onClick={() => {
-                          setDeleteConfirmOpen(true);
-                        }}
-                        disabled={!editingPurchaseId}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
-                      </Button>
+                      {searchClicked && editingPurchaseId && (
+                        <>
+                          <Button 
+                            className="bg-green-600 hover:bg-green-700"
+                            onClick={handleSavePurchase}
+                          >
+                            Save Changes
+                          </Button>
+                          <Button 
+                            variant="destructive"
+                            onClick={() => {
+                              setDeleteConfirmOpen(true);
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </DialogContent>
                 </Dialog>

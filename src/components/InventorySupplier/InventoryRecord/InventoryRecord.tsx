@@ -456,35 +456,39 @@ export function InventoryRecord() {
                       )}
                     </div>
                     <div className="flex justify-end gap-3">
-                      <Button 
-                        className="bg-green-600 hover:bg-green-700"
-                        onClick={handleSearchWithdrawalRecord}
-                        disabled={!withdrawalForm.dateOfWithdrawal || !withdrawalForm.itemName}
-                      >
-                        <Search className="w-4 h-4 mr-2" />
-                        Search
-                      </Button>
+                      {!withdrawalSearchClicked && (
+                        <Button 
+                          className="bg-green-600 hover:bg-green-700"
+                          onClick={handleSearchWithdrawalRecord}
+                          disabled={!withdrawalForm.dateOfWithdrawal || !withdrawalForm.itemName}
+                        >
+                          <Search className="w-4 h-4 mr-2" />
+                          Search
+                        </Button>
+                      )}
                       <Button variant="outline" onClick={() => {
                         setIsEditWithdrawalModalOpen(false);
                         resetWithdrawalForm();
                       }}>Cancel</Button>
-                      <Button 
-                        className="bg-green-600 hover:bg-green-700"
-                        onClick={handleSaveWithdrawal}
-                        disabled={!editingWithdrawalId}
-                      >
-                        Save Changes
-                      </Button>
-                      <Button 
-                        variant="destructive"
-                        onClick={() => {
-                          setDeleteConfirmOpen(true);
-                        }}
-                        disabled={!editingWithdrawalId}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" />
-                        Delete
-                      </Button>
+                      {withdrawalSearchClicked && editingWithdrawalId && (
+                        <>
+                          <Button 
+                            className="bg-green-600 hover:bg-green-700"
+                            onClick={handleSaveWithdrawal}
+                          >
+                            Save Changes
+                          </Button>
+                          <Button 
+                            variant="destructive"
+                            onClick={() => {
+                              setDeleteConfirmOpen(true);
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </DialogContent>
                 </Dialog>
