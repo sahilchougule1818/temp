@@ -78,7 +78,7 @@ export function Header({ breadcrumbs, user }: HeaderProps) {
 
   const getModuleColor = (module: string) => {
     if (module === 'Indoor') return { bg: 'bg-green-50', border: 'border-green-100', icon: 'text-green-600', text: 'text-green-700' };
-    if (module === 'Outdoor') return { bg: 'bg-teal-50', border: 'border-teal-100', icon: 'text-teal-600', text: 'text-teal-700' };
+    if (module === 'Outdoor') return { bg: 'bg-amber-50', border: 'border-amber-100', icon: 'text-amber-700', text: 'text-amber-800' };
     if (module === 'Sales') return { bg: 'bg-blue-50', border: 'border-blue-100', icon: 'text-blue-600', text: 'text-blue-700' };
     if (module === 'Inventory & Supplier') return { bg: 'bg-purple-50', border: 'border-purple-100', icon: 'text-purple-600', text: 'text-purple-700' };
     if (module === 'Reports') return { bg: 'bg-orange-50', border: 'border-orange-100', icon: 'text-orange-600', text: 'text-orange-700' };
