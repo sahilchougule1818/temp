@@ -56,6 +56,22 @@ This is a comprehensive ERP (Enterprise Resource Planning) UI application design
 - `npm run build` - Build for production
 
 ## Recent Changes
+- **2025-11-24**: Dashboard UX Improvements and Search-Gated Edit Workflow
+  - **Indoor Dashboard Enhancements**:
+    - Removed date display (from/till) that appeared below the heading
+    - Removed monthly/weekly report toggle buttons
+    - Added "Report Range" button that opens a dialog with date selectors
+    - Dialog contains From Date and Till Date inputs with a "View Report" button
+    - Dashboard data now filters based on the selected date range
+  - **Header Simplification**:
+    - Removed search panel from the top of all modules for cleaner interface
+  - **Inventory & Supplier - Search-Gated Edit Workflow**:
+    - Implemented date → item → Search button flow for Purchase Register (SupplierDetail)
+    - Implemented date → item → Search button flow for Inventory Record withdrawal edit
+    - Form fields remain disabled until Search button is clicked and a record is found
+    - Save Changes and Delete buttons only become active after successful search
+    - This ensures intentional, explicit record selection before editing
+
 - **2025-11-24**: Edit Dialog UX Enhancement and Table Spacing Fix
   - **Media Preparation Module**:
     - Implemented Search button pattern in edit dialogs for both Autoclave Cycle and Media Batch registers
