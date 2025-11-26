@@ -39,9 +39,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Get users from localStorage
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
-    const foundUser = users.find((u: any) => u.email === email && u.password === password);
+    // Get users from localStorage with error handling
+    let users: Array<{ id: string; email: string; password: string; name: string; role: UserRole }> = [];
+    try {
+      const storedUsers = localStorage.getItem('users');
+      if (storedUsers) {
+        users = JSON.parse(storedUsers);
+      }
+    } catch (error) {
+      console.error('Error parsing users from localStorage:', error);
+      return false;
+    }
+    const foundUser = users.find((u) => u.email === email && u.password === password);
     
     if (foundUser) {
       const userData: User = {
@@ -58,11 +67,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signup = async (email: string, password: string, name: string, role: UserRole): Promise<boolean> => {
-    // Get existing users
-    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    // Get existing users with error handling
+    let users: Array<{ id: string; email: string; password: string; name: string; role: UserRole }> = [];
+    try {
+      const storedUsers = localStorage.getItem('users');
+      if (storedUsers) {
+        users = JSON.parse(storedUsers);
+      }
+    } catch (error) {
+      console.error('Error parsing users from localStorage:', error);
+      users = [];
+    }
     
     // Check if email already exists
-    if (users.some((u: any) => u.email === email)) {
+    if (users.some((u) => u.email === email)) {
       return false;
     }
 

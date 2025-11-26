@@ -86,10 +86,6 @@ export function Mortality() {
     { key: 'notes', label: 'Notes' },
   ];
 
-  const availableDates = useMemo(() => {
-    return Array.from(new Set(mortalityData.map(record => record.date))).sort();
-  }, []);
-
   const availableBatches = useMemo(() => {
     if (!selectedDate) return [];
     return Array.from(new Set(mortalityData.filter(record => record.date === selectedDate).map(record => record.batch)));
@@ -280,7 +276,7 @@ export function Mortality() {
                       </div>
                       <div>
                         <Label>Mortality Type</Label>
-                        <Select value={formData.mortalityType} onValueChange={(value) => setFormData({...formData, mortalityType: value})}>
+                        <Select value={formData.mortalityType} onValueChange={(value: string) => setFormData({...formData, mortalityType: value})}>
                           <SelectTrigger>
                             <SelectValue placeholder="Select type" />
                           </SelectTrigger>
