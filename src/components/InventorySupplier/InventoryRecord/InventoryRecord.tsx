@@ -11,6 +11,7 @@ import { Badge } from '../../ui/badge';
 import { FilterBar } from '../../common/FilterBar';
 import { BackToMainDataButton } from '../../common/BackToMainDataButton';
 import { useSearchFilter } from '../../../hooks/useSearchFilter';
+import { INVENTORY_ITEMS } from '../../../constants/inventoryItems';
 
 type PurchaseRecord = {
   id: number;
@@ -41,13 +42,13 @@ export function InventoryRecord() {
   const todayDate = getTodayDate();
 
   const [purchaseRecords, setPurchaseRecords] = useState<PurchaseRecord[]>([
-    { id: 1, dateOfPurchase: todayDate, itemName: 'Item A', quantityPurchased: 100, currentStock: 500 },
-    { id: 2, dateOfPurchase: '2024-11-15', itemName: 'Item B', quantityPurchased: 200, currentStock: 800 },
+    { id: 1, dateOfPurchase: todayDate, itemName: 'Cocopeat', quantityPurchased: 100, currentStock: 500 },
+    { id: 2, dateOfPurchase: '2024-11-15', itemName: 'Peatmoss', quantityPurchased: 200, currentStock: 800 },
   ]);
 
   const [withdrawalRecords, setWithdrawalRecords] = useState<WithdrawalRecord[]>([
-    { id: 1, itemName: 'Item A', previousStock: 500, withdrawQuantity: 50, currentStock: 450, dateOfWithdrawal: todayDate },
-    { id: 2, itemName: 'Item C', previousStock: 300, withdrawQuantity: 30, currentStock: 270, dateOfWithdrawal: '2024-11-15' },
+    { id: 1, itemName: 'Cocopeat', previousStock: 500, withdrawQuantity: 50, currentStock: 450, dateOfWithdrawal: todayDate },
+    { id: 2, itemName: 'Pot', previousStock: 300, withdrawQuantity: 30, currentStock: 270, dateOfWithdrawal: '2024-11-15' },
   ]);
 
   const inventoryFilter = useSearchFilter({
@@ -329,13 +330,9 @@ export function InventoryRecord() {
                           <SelectValue placeholder="Select item name" />
                         </SelectTrigger>
                         <SelectContent>
-                          {availableItemNames.length > 0 ? (
-                            availableItemNames.map(name => (
-                              <SelectItem key={name} value={name}>{name}</SelectItem>
-                            ))
-                          ) : (
-                            <SelectItem value="no-items" disabled>No items available</SelectItem>
-                          )}
+                          {INVENTORY_ITEMS.map(name => (
+                            <SelectItem key={name} value={name}>{name}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -420,7 +417,9 @@ export function InventoryRecord() {
                                     <SelectItem key={name} value={name}>{name}</SelectItem>
                                   ))
                                 ) : (
-                                  <SelectItem value="no-records" disabled>No records for this date</SelectItem>
+                                  INVENTORY_ITEMS.map(name => (
+                                    <SelectItem key={name} value={name}>{name}</SelectItem>
+                                  ))
                                 )}
                               </SelectContent>
                             </Select>

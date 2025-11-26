@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { FilterBar } from '../../common/FilterBar';
 import { BackToMainDataButton } from '../../common/BackToMainDataButton';
 import { useSearchFilter } from '../../../hooks/useSearchFilter';
+import { INVENTORY_ITEMS } from '../../../constants/inventoryItems';
 
 type Supplier = {
   id: number;
@@ -30,25 +31,6 @@ type PurchaseRecord = {
   supplierName: string;
 };
 
-const INVENTORY_ITEMS = [
-  'Cocopeat',
-  'Peatmoss',
-  'Shaktiamla',
-  'Kronen media',
-  'Klasmann media',
-  'Pot',
-  'Plastic bag',
-  'Protray',
-  'Tray-104 (cavity)',
-  'Tray-126 (cavity)',
-  'Tray-40 (cavity)',
-  'Paper pot paper',
-  'DAP',
-  'Glass bottles',
-  'Crate-18kg',
-  'Crate-20kg'
-];
-
 export function SupplierDetail() {
   const getTodayDate = () => {
     const now = new Date();
@@ -61,8 +43,8 @@ export function SupplierDetail() {
   const todayDate = getTodayDate();
 
   const [suppliers, setSuppliers] = useState<Supplier[]>([
-    { id: 1, name: 'Supplier A', contact: '1234567890', location: 'City A', supplies: 'Item X, Item Y' },
-    { id: 2, name: 'Supplier B', contact: '0987654321', location: 'City B', supplies: 'Item Z' },
+    { id: 1, name: 'Supplier A', contact: '1234567890', location: 'City A', supplies: 'Cocopeat' },
+    { id: 2, name: 'Supplier B', contact: '0987654321', location: 'City B', supplies: 'Peatmoss' },
   ]);
 
   const [purchaseRecords, setPurchaseRecords] = useState<PurchaseRecord[]>([
