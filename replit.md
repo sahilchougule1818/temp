@@ -56,6 +56,23 @@ This is a comprehensive ERP (Enterprise Resource Planning) UI application design
 - `npm run build` - Build for production
 
 ## Recent Changes
+- **2025-11-26**: Code Quality and Stability Improvements
+  - **AuthContext.tsx**:
+    - Added try/catch error handling for localStorage JSON.parse operations
+    - Prevents application crashes from corrupted localStorage data
+    - Added proper TypeScript typing for user arrays
+  - **Mortality.tsx**:
+    - Removed unused `availableDates` variable
+    - Added explicit type annotations for Select components
+  - **QualityControl.tsx**:
+    - Removed unused state variables and functions
+    - Added proper TypeScript type annotations for callback parameters
+    - Cleaned up dead code for better maintainability
+  - **General Cleanup**:
+    - Removed attached_assets folder (development notes and screenshots)
+    - Fixed all 22 LSP/TypeScript diagnostics
+    - Project now compiles with zero warnings
+
 - **2025-11-24**: Dashboard UX Improvements and Search-Gated Edit Workflow
   - **Indoor Dashboard Enhancements**:
     - Removed date display (from/till) that appeared below the heading
