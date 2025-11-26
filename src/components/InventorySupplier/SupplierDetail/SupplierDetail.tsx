@@ -58,6 +58,12 @@ export function SupplierDetail() {
     field2Accessor: (record) => record.itemName
   });
 
+  const supplierFilter = useSearchFilter({
+    sourceData: suppliers,
+    field1Accessor: (record) => record.name,
+    field2Accessor: (record) => record.supplies
+  });
+
   const [activeTab, setActiveTab] = useState('purchase');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -235,23 +241,43 @@ export function SupplierDetail() {
 
   return (
     <div className="p-6 space-y-6">
-      <FilterBar 
-        field1={{
-          label: 'Date',
-          value: purchaseFilter.selectedField1,
-          onChange: purchaseFilter.handleField1Change,
-          options: purchaseFilter.field1Options,
-          placeholder: 'Select date'
-        }}
-        field2={{
-          label: 'Item Name',
-          value: purchaseFilter.selectedField2,
-          onChange: purchaseFilter.handleField2Change,
-          options: purchaseFilter.field2Options,
-          placeholder: 'Select item'
-        }}
-        onSearch={purchaseFilter.handleSearch}
-      />
+      {activeTab === 'purchase' ? (
+        <FilterBar 
+          field1={{
+            label: 'Date',
+            value: purchaseFilter.selectedField1,
+            onChange: purchaseFilter.handleField1Change,
+            options: purchaseFilter.field1Options,
+            placeholder: 'Select date'
+          }}
+          field2={{
+            label: 'Item Name',
+            value: purchaseFilter.selectedField2,
+            onChange: purchaseFilter.handleField2Change,
+            options: purchaseFilter.field2Options,
+            placeholder: 'Select item'
+          }}
+          onSearch={purchaseFilter.handleSearch}
+        />
+      ) : (
+        <FilterBar 
+          field1={{
+            label: 'Supplier Name',
+            value: supplierFilter.selectedField1,
+            onChange: supplierFilter.handleField1Change,
+            options: supplierFilter.field1Options,
+            placeholder: 'Select supplier'
+          }}
+          field2={{
+            label: 'Supplies',
+            value: supplierFilter.selectedField2,
+            onChange: supplierFilter.handleField2Change,
+            options: supplierFilter.field2Options,
+            placeholder: 'Select item'
+          }}
+          onSearch={supplierFilter.handleSearch}
+        />
+      )}
 
       <Card>
         <CardHeader>
@@ -267,6 +293,10 @@ export function SupplierDetail() {
             <TabsContent value="suppliers">
           <div className="space-y-4">
             <div className="flex justify-end gap-2">
+              <BackToMainDataButton 
+                isVisible={supplierFilter.isFiltered}
+                onClick={supplierFilter.handleReset}
+              />
               <Button
                 variant="outline"
                 className="flex items-center gap-2"
@@ -440,7 +470,7 @@ export function SupplierDetail() {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {suppliers.map((supplier) => (
+                  {supplierFilter.visibleData.map((supplier) => (
                     <tr key={supplier.id} className="hover:bg-muted/50">
                       <td className="w-1/12 px-4 py-4">{supplier.id}</td>
                       <td className="w-3/12 px-4 py-4">
