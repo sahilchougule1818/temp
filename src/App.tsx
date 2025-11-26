@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Login } from './components/Auth/Login';
-import { FlaskConical } from 'lucide-react';
 import { Sidebar } from './components/Layout/Sidebar';
 import { Header } from './components/Layout/Header';
 import { IndoorDashboard } from './components/Indoor/IndoorDashboard';
@@ -13,7 +12,7 @@ import { Sampling } from './components/Indoor/Sampling/Sampling';
 import { OutdoorDashboard } from './components/Outdoor/OutdoorDashboard';
 import { PrimaryHardening } from './components/Outdoor/PrimaryHardening';
 import { SecondaryHardening } from './components/Outdoor/SecondaryHardening';
-import { Mortality } from './components/Outdoor/OutdoorContamination';
+import { Mortality } from './components/Outdoor/Mortality';
 import { Fertilization } from './components/Outdoor/Fertilization';
 import { Shifting } from './components/Outdoor/Shifting';
 import { HoldingArea } from './components/Outdoor/HoldingArea';
