@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../ui/tabs';
 import { Button } from '../../ui/button';
@@ -9,6 +9,9 @@ import { Label } from '../../ui/label';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../ui/alert-dialog';
 import { Badge } from '../../ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
+import { FilterBar } from '../../common/FilterBar';
+import { BackToMainDataButton } from '../../common/BackToMainDataButton';
+import { useSearchFilter } from '../../../hooks/useSearchFilter';
 
 type Supplier = {
   id: number;
@@ -66,6 +69,12 @@ export function SupplierDetail() {
     { id: 1, dateOfPurchase: todayDate, itemName: 'Cocopeat', quantityPurchased: 100, pricing: 250, supplierName: 'Supplier A' },
     { id: 2, dateOfPurchase: '2024-11-15', itemName: 'Peatmoss', quantityPurchased: 200, pricing: 500, supplierName: 'Supplier B' },
   ]);
+
+  const purchaseFilter = useSearchFilter({
+    sourceData: purchaseRecords,
+    field1Accessor: (record) => record.dateOfPurchase,
+    field2Accessor: (record) => record.itemName
+  });
 
   const [activeTab, setActiveTab] = useState('purchase');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -243,7 +252,25 @@ export function SupplierDetail() {
     : [];
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
+      <FilterBar 
+        field1={{
+          label: 'Date',
+          value: purchaseFilter.selectedField1,
+          onChange: purchaseFilter.handleField1Change,
+          options: purchaseFilter.field1Options,
+          placeholder: 'Select date'
+        }}
+        field2={{
+          label: 'Item Name',
+          value: purchaseFilter.selectedField2,
+          onChange: purchaseFilter.handleField2Change,
+          options: purchaseFilter.field2Options,
+          placeholder: 'Select item'
+        }}
+        onSearch={purchaseFilter.handleSearch}
+      />
+
       <Card>
         <CardHeader>
           <CardTitle>Supplier Management</CardTitle>
@@ -453,6 +480,10 @@ export function SupplierDetail() {
             <TabsContent value="purchase">
               <div className="space-y-4">
                 <div className="flex justify-end gap-2">
+                  <BackToMainDataButton 
+                    isVisible={purchaseFilter.isFiltered}
+                    onClick={purchaseFilter.handleReset}
+                  />
                   <Button
                     variant="outline"
                     onClick={handleEditPurchaseRegister}
@@ -678,7 +709,7 @@ export function SupplierDetail() {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {purchaseRecords.map((record) => (
+                      {purchaseFilter.visibleData.map((record) => (
                         <tr key={record.id} className="hover:bg-muted/50">
                           <td className="w-[8%] px-4 py-4">{record.id}</td>
                           <td className="w-[18%] px-4 py-4">{record.dateOfPurchase}</td>

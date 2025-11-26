@@ -1,13 +1,16 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { Button } from '../../ui/button';
-import { Plus, Edit, Trash2, Eye, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, Search } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../../ui/dialog';
 import { Input } from '../../ui/input';
 import { Label } from '../../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '../../ui/alert-dialog';
 import { Badge } from '../../ui/badge';
+import { FilterBar } from '../../common/FilterBar';
+import { BackToMainDataButton } from '../../common/BackToMainDataButton';
+import { useSearchFilter } from '../../../hooks/useSearchFilter';
 
 type PurchaseRecord = {
   id: number;
@@ -47,14 +50,18 @@ export function InventoryRecord() {
     { id: 2, itemName: 'Item C', previousStock: 300, withdrawQuantity: 30, currentStock: 270, dateOfWithdrawal: '2024-11-15' },
   ]);
 
+  const inventoryFilter = useSearchFilter({
+    sourceData: withdrawalRecords,
+    field1Accessor: (record) => record.dateOfWithdrawal,
+    field2Accessor: (record) => record.itemName
+  });
+
   const [isPurchaseModalOpen, setIsPurchaseModalOpen] = useState(false);
   const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
   const [isEditWithdrawalModalOpen, setIsEditWithdrawalModalOpen] = useState(false);
   const [editingWithdrawalId, setEditingWithdrawalId] = useState<number | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<{ type: 'purchase' | 'withdrawal', id: number } | null>(null);
-  const [showAllPurchaseRecords, setShowAllPurchaseRecords] = useState(false);
-  const [showAllWithdrawalRecords, setShowAllWithdrawalRecords] = useState(false);
   const [withdrawalSearchClicked, setWithdrawalSearchClicked] = useState(false);
 
   const [purchaseForm, setPurchaseForm] = useState({
@@ -232,14 +239,6 @@ export function InventoryRecord() {
     });
   };
 
-  const filteredPurchaseData = showAllPurchaseRecords
-    ? purchaseRecords
-    : purchaseRecords.filter(item => item.dateOfPurchase === todayDate);
-
-  const filteredWithdrawalData = showAllWithdrawalRecords
-    ? withdrawalRecords
-    : withdrawalRecords.filter(item => item.dateOfWithdrawal === todayDate);
-
   // Get available item names for the selected date for purchase edit modal
   const availablePurchaseItemNamesForDate = useMemo(() => {
     if (!purchaseForm.dateOfPurchase) return [];
@@ -256,7 +255,25 @@ export function InventoryRecord() {
 
 
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
+      <FilterBar 
+        field1={{
+          label: 'Date',
+          value: inventoryFilter.selectedField1,
+          onChange: inventoryFilter.handleField1Change,
+          options: inventoryFilter.field1Options,
+          placeholder: 'Select date'
+        }}
+        field2={{
+          label: 'Item Name',
+          value: inventoryFilter.selectedField2,
+          onChange: inventoryFilter.handleField2Change,
+          options: inventoryFilter.field2Options,
+          placeholder: 'Select item'
+        }}
+        onSearch={inventoryFilter.handleSearch}
+      />
+
       <Card>
         <CardHeader>
           <CardTitle>Inventory Record</CardTitle>
@@ -264,6 +281,10 @@ export function InventoryRecord() {
         <CardContent>
           <div className="space-y-4">
             <div className="flex justify-end gap-2">
+              <BackToMainDataButton 
+                isVisible={inventoryFilter.isFiltered}
+                onClick={inventoryFilter.handleReset}
+              />
               <Button
                 variant="outline"
                 onClick={handleEditRegister}
@@ -509,7 +530,7 @@ export function InventoryRecord() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredWithdrawalData.map((record) => (
+                      {inventoryFilter.visibleData.map((record) => (
                         <tr key={record.id} className="border-b hover:bg-gray-50">
                           <td className="px-6 py-3 text-sm">
                             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
